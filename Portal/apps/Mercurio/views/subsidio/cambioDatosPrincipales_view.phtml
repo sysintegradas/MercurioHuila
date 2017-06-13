@@ -1,0 +1,255 @@
+<?php echo View::getContent(); ?>
+<script>
+$(document).ready(function(){ 
+    $('#modalInfo').modal('show')
+    calendars();
+    $('#tr_nomrep').hide();
+    $('#actualizar').hide();
+});
+    $("#form").validate({
+        rules: {
+            razsoc: { required:true},
+            nit: { required:true},
+            //nomrep: { required:true},
+            cedrep: { required:true},
+            priape: { required:true},
+            prinom: { required:true},
+        },
+    });
+
+
+Guardar = function(){
+    if(!$("#form").valid()){
+        Messages.display("Faltan Campos por Digitar","error");
+        return;
+    }
+    if($('#archivo_28') != undefined){
+        if($('#archivo_28').val() == ''){
+            Messages.display("Se debe anexar SOLICITUD POR ESCRITO ","warning");
+            return;
+        }
+    }if($('#archivo_24') != undefined){
+        if($('#archivo_24').val() == ''){
+            Messages.display("Se debe anexar la FOTOCOPIA DE LA CEDULA DEL NUEVO REPRESENTANTE LEGAL","warning");
+            return;
+        }
+    }if($('#archivo_21') != undefined){
+        if($('#archivo_21').val() == ''){
+            Messages.display("Se debe anexar el ACTA CONSORCIAL","warning");
+            return;
+        }
+    }if($('#archivo_22') != undefined){
+        if($('#archivo_22').val() == ''){
+            Messages.display("Se debe anexar el ACTA DE CONFORMACION DE LA UNION TEMPORAL","warning");
+            return;
+        }
+    }if($('#archivo_23') != undefined){
+        if($('#archivo_23').val() == ''){
+            Messages.display("Se debe anexar el ACTA DE NOMBRAMIENTO DEL NUEVO ADMINISTRADOR","warning");
+            return;
+        }
+    }if($('#archivo_25') != undefined){
+        if($('#archivo_25').val() == ''){
+            Messages.display("Se debe anexar el CAMARA DE COMERCIO Y/O CERTIFICADO DE SUPERINTENDENCIA DE EC","warning");
+            return;
+        }
+    }
+    var fecnac =new Date($('#fecnac').val());
+    var fecha = new Date();
+    if(fecnac > fecha){
+        $("#fecnac").val("");
+        $("#fecnac").focus();
+        Messages.display("La fecha de nacimiento no puede ser mayor a la actual","warning");
+        return;
+    }
+    if($('#tipdoc').val()=="@"){
+        Messages.display("el tipo de documento no puede ser vacio","warning");
+        return;
+    }
+    $('#form').submit();
+    return;
+}
+    function dattra(){
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/dattra"),
+            data: {
+                cedtra: $('#cedrep').val(), 
+                coddoc: $('#tipdoc').val(), 
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            console.log(response);
+            if(response['flag'] == true){
+                if(response['data'] != ''){
+                    /*
+                    $('#nomrep').val(response['data']['priape']+' '+response['data']['segape']+' '+response['data']['prinom']+' '+response['data']['segnom']);
+                    $('.ocl_tr').hide('slow');
+                    $/('#shw_tr').show('slow');
+                    */
+                    $('#priape').val(response['data']['priape']);
+                    $('#segape').val(response['data']['segape']);
+                    $('#prinom').val(response['data']['prinom']);
+                    $('#segnom').val(response['data']['segnom']);
+                    $('#fecnac').val(response['data']['fecnac']);
+                    $('#sexo').val(response['data']['sexo']);
+                }else{
+                /*
+                    $('#nomrep').val('');
+                    $('.ocl_tr').show('slow');
+                    $('#shw_tr').hide('slow');
+                    */
+                    $('#priape').val('');
+                    $('#segape').val('');
+                    $('#prinom').val('');
+                    $('#segnom').val('');
+                    $('#fecnac').val('');
+                    $('#sexo').val('@');
+                }
+            }else{
+                /*
+                $('#nomrep').val('');
+                $('.ocl_tr').show('slow');
+                $('#shw_tr').hide('slow');
+                */
+                $('#priape').val('');
+                $('#segape').val('');
+                $('#prinom').val('');
+                $('#segnom').val('');
+                $('#fecnac').val('');
+                $('#sexo').val('@');
+                Messages.display(response['msg'],"warning");
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+
+valrep = function(){
+    $('#nomrep').val($('#prinom').val().toUpperCase()+" "+$('#segnom').val().toUpperCase()+" "+$('#priape').val().toUpperCase()+" "+$('#segape').val().toUpperCase());
+}
+    adjuntos = function(){
+        if(!$("#form").valid()){
+            Messages.display("Faltan Campos por Digitar","error");
+        }else{
+            if($('#adjdoc').val() == '@'){
+                Messages.display("El tipo de Documentos a adjuntar no puede ser vacio","error");
+                return;
+            }
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("subsidio/adjuntoCam"),
+                data: $("#form").serialize(),
+                   
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response != false){
+                    $('.ocl_tr').show();
+                    $('#actualizar').show();
+                    $('#adjuntos').html(response);
+                }else{
+                    $('#adjuntos').html('');
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+    }
+function doc(){
+    if($('#tipdoc').val() != '@'){
+        $("#cedrep").attr("readonly",false);
+        if($('#cedrep').val() != ''){
+            dattra();
+        }
+    }else{
+        $("#cedrep").attr("readonly",true);
+        //dattra();
+    }
+}
+function adj(){
+    if($('#adjuntos').html() != ""){
+        adjuntos();
+    }
+}
+</script>
+<br>
+<?php echo Tag::form(Router::getController()."/cambioDatosPrincipales","id: form","autocomplete: off","enctype: multipart/form-data"); ?>
+    <div>
+        <table cellpadding="10" style='width: 85%;'>
+            <tr>
+  	            <td colspan="4" align="center">
+                <?php echo Tag::hiddenField("codare","value: $codare"); ?>
+                <?php echo Tag::hiddenField("codope","value: $codope"); ?>
+                <?php echo Tag::hiddenField("tipapo","value: $tipapo"); ?>
+                </td>
+            </tr>
+             <tr >
+                <?php echo $html ?>  
+            </tr>
+            <tr class='ocl_tr'>
+                <td colspan="2"><?php echo Tag::Button("Actualizar Datos Principales","id: actualizar",'class: btn btn-primary','style: margin-top: 2%; text-align: center ',"onclick: Guardar();") ?></td>
+            </tr>
+        </table>
+    </div>
+<?php echo Tag::endForm(); ?>
+    <div class="modal fade" id="modalInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog  modal-lg" role="document" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">    
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title barra barra-center" id="myModalLabel" style='text-align:center;'>Informaci&oacute;n</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="width: 90%; margin-left: auto; margin-right: auto;";>
+                        <form class="form-horizontal" >
+                            <div class="form-group">
+                                <p style="text-align: justify;">Señor empresario, en caso de cambiar de representante legal deberá actualizar esta información adjuntando la siguiente documentación:</p>
+                                <br>
+                                <h4 style='margin: 15px;'>PERSONA JURIDICA</h4>
+                                <ul style='margin-left:20px;'>
+                                    <li type="disc" style="text-align: justify;">Solicitud por escrito</li>
+                                    <li type="disc" style="text-align: justify;">Fotocopia de cedula del nuevo representante legal</li>
+                                    <li type="disc" style="text-align: justify;">Cámara de comercio.</li>
+                                </ul>
+                                <br>
+                                <h4 style='margin: 15px;'>CONSORCIO</h4>
+                                <ul style='margin-left:20px;'>
+                                    <li type="disc" style="text-align: justify;">Solicitud por escrito</li>
+                                    <li type="disc" style="text-align: justify;">Acta Consorcial</li>
+                                    <li type="disc" style="text-align: justify;">Fotocopia de la cedula del nuevo representante legal</li>
+                                </ul>
+                                <br>
+                                <h4 style='margin: 15px;'>UNI&Oacute;N TEMPORAL</h4>
+                                <ul style='margin-left:20px;'>
+                                    <li type="disc" style="text-align: justify;">Solicitud por escrito</li>
+                                    <li type="disc" style="text-align: justify;">Acta de conformación de la unión temporal</li>
+                                    <li type="disc" style="text-align: justify;">Fotocopia de la cedula del nuevo representante legal</li>
+                                </ul>
+                                <br>
+                                <h4 style='margin: 15px;'>PROPIEDAD HORIZONTAL</h4>
+                                <ul style='margin-left:20px;'>
+                                    <li type="disc" style="text-align: justify;">Solicitud por escrito</li>
+                                    <li type="disc" style="text-align: justify;">Acta de nombramiento del nuevo administrador</li>
+                                    <li type="disc" style="text-align: justify;">Fotocopia de la cedula del nuevo representante legal</li>
+                                </ul>
+                                <br>
+                                <h4 style='margin: 15px;'>COOPERATIVA</h4>
+                                <ul style='margin-left:20px;'>
+                                    <li type="disc" style="text-align: justify;">Solicitud por escrito</li>
+                                    <li type="disc" style="text-align: justify;">Cámara de comercio y/o Certificado de la Superintendencia de Economía Solidaria</li>
+                                    <li type="disc" style="text-align: justify;">Fotocopia de la cedula del nuevo representante legal</li>
+                                </ul>
+                                <br>
+                            </div>
+                        </form>
+                    </div >
+                </div>
+            </div>
+        </div>
+    </div>

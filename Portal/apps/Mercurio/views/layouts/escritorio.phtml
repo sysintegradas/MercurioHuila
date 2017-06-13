@@ -1,0 +1,68 @@
+<?php 
+    Tag::stylesheetLink('portal/escritorio'); 
+    Tag::stylesheetLink('portal/menu'); 
+?>
+<script>
+</script>
+<div class='general_portal'> <!-- inicia general -->
+    <header class='header'> <!-- inicia header -->
+        <div class='logo'>
+            <?php echo Tag::image("img_portal_nuevo/logo.png"); ?>
+        </div>
+        <div class='salir'>
+            <?php echo Tag::linkTo("login/salir","Salir"); ?>
+            <?php //echo Tag::button("Salir","class: btn btn-default","onclick: salir()");?>
+        </div>
+        <div class="barra"> <!-- inicia barra -->
+            <div class="barra-left"> <!-- inicia barra -->
+            <?php 
+                $estado = "ACTIVO";
+                 if(SESSION::getData("estado") == 'A')$estado = "ACTIVO";
+                 else if(SESSION::getData("estado") == 'I')$estado = "INACTIVO";
+                 if(SESSION::getData("estado") == 'I' && SESSION::getData("codest") == '4118')$estado = "EXPULSADO";
+            ?>
+              <?php echo SESSION::getData("nombre")." - ".$tipafi." - ".$estado ?>  
+            </div> <!-- fin barra -->
+            <div class="barra-right"> <!-- inicia barra -->
+                <?php 
+                    setlocale(LC_ALL,"es_ES");
+                    echo strftime("%d de %B del %Y");
+                    //echo date('j \d\e %b \d\e Y'); 
+                ?>
+                <?php //echo date('j \d\e F \d\e Y g\:i a'); ?>
+                &nbsp;&nbsp;SERVICIO EN LÍNEA                
+            </div> <!-- fin barra -->
+        </div> <!-- fin barra -->
+    </header> <!-- fin header -->
+    <div class='container'> <!-- inicia cuerpo -->
+        <div class="contmenu">
+            <aside> 
+                <div id="menu2"style="width: 100%; height:400px;">
+                    <?php if(!isset($menu)) $menu="";?>
+                    <?php echo $menu;?>
+                </div>
+            </aside>
+	    </div><!-- menu-->
+
+        <div class='contenido'> <!-- inicia video y banner -->
+            <div id='consulta' class="panel panel-primary">
+                <?php echo View::getContent();?>    
+            </div>
+        </div> <!-- fin video y banner -->
+    </div> <!-- fin cuerpo -->
+</div> <!-- fin general -->
+<footer> <!-- inicio footer -->
+    <div class="politicas"> 
+        <strong>Políticas de Privacidad</strong>
+    </div> 
+    <div class="terminos_condiciones"> 
+        <strong>Términos y Condiciones</strong>
+    </div> 
+    <div class="linea"> 
+        Atención al usuario a través de nuestra línea gratuita 01 8000 918869
+    </div> 
+    <div class="vigilado"> 
+        <?php echo Tag::image("icontec.png","style: width: 20%; height: 30%;")?>
+        <?php echo Tag::image("portal/logos/vigilado2014.png","style: width: 46%; height: 100%;")?>
+    </div> 
+</footer> <!-- fin footer -->

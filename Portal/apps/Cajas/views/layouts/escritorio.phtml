@@ -1,0 +1,71 @@
+<section id="user-bg">
+    <header id="content-head">
+        <div class="task-bar">
+            <div id="content-off"><?php echo Tag::image("opciones/cerrar_sesion1.png","id: img-off","title: Cerrar Session") ?></div>
+            <div id="content-user"><span id="welcome">Bienvenido, <?php echo Session::getDATA('nombre_caja'); ?></span>
+            </div>
+            <div id="content-time"><?php echo date("Y-m-d")."<br> ".date("h:i")." ".date("A");?></div>
+        </div> <!-- .task-bar -->
+    </header><!-- #content-head-->
+<div id="menu">
+</div>
+<div id="captura">
+    <div class="title">
+        <?php
+            if(!isset($titulo)) $titulo="";
+        ?>
+        <div class="titulo" style="vertical-align: middle;"><b><?php echo $titulo; ?></b></div>
+        <?php SESSION::setDATA("title",$titulo); ?>
+    </div>
+    <div id="vista" align="center" style='overflow-y: scroll; height: 500px;'>
+        <?php echo View::getContent(); ?>
+    </div>
+</div>
+<div class="dock">
+    <ul>
+        <li>
+            <span onclick="traerMenu('1');" id='1'>
+                <em><span>Subsidio</span></em>
+                <?php echo Tag::image("dock/subsidio.png","alt: datosBasicos") ?>
+            </span>
+        </li>
+<!--
+        <li>
+            <span onclick="traerMenu('2')" id='2'>
+                <em><span>Creditos</span></em>
+                <?php //echo Tag::image("dock/credito.png","alt: Configuracion") ?>
+            </span>
+        </li>
+		<li>
+            <span onclick="traerMenu('3')" id='3'>
+                <em><span>Vivienda</span></em>
+                <?php //echo Tag::image("dock/vivienda_mer.png","alt: publicidad") ?>
+            </span>
+        </li>
+-->
+        <li>
+            <span onclick="traerMenu('6')" id='6'>
+                <em><span>Servicio en linea</span></em>
+                <?php echo Tag::image("dock/ico_mercurio.png","alt: Opciones Mercurio") ?>
+            </span>
+        </li>
+        <li>
+            <span onclick="traerMenu('4')" id='4'>
+                <em><span>Reportes</span></em>
+                <?php echo Tag::image("dock/pdf.png","alt: reportes") ?>
+            </span>
+        </li>
+        <li>
+            <span onclick="traerMenu('5')" id='5'>
+                <em><span>Ajustes</span></em>
+                <?php echo Tag::image("dock/ajustes-ios1.png","alt: Ajustes") ?>
+            </span>
+        </li>
+    </ul>
+</div>
+<script>
+    Event.observe(document, 'dom:loaded', function(){
+        <?php echo Tag::addJavascript('cajas/cajas');?>
+        traerMenu("<?php echo Session::getDATA('menu')?>",1);
+    });
+</script>

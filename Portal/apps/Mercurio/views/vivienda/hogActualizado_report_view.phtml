@@ -1,0 +1,30 @@
+<?php echo View::getContent(); ?>
+<script>
+  desFormulario = function(){
+    win = window.open($Kumbia.path+"public/docs/vivienda/hogActualizado.pdf","Descarga_credito", 'width=800, height=750, toolbar=no, statusbar=no, scrollbars=yes, Menubar=yes');
+      /*
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("vivienda/hogActualizado_report"),
+                data: {
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response['flag']==true){
+                    Messages.display(Array(response['msg']),"success");
+                win = window.open(Utils.getKumbiaURL("../"+response['data']),"Descarga", 'width=800, height=750, toolbar=no, statusbar=no, scrollbars=yes, Menubar=yes');
+                }else{
+                    Messages.display(Array(response['msg']),"warning");
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+            */
+  }
+</script>
+<br>
+<div align="center">
+<?php echo Tag::button("Descargar formato de conformaci&oacute;n de nuevo hogar","class: btn btn-success","onclick: desFormulario();"); ?>
+</div>

@@ -1,0 +1,26 @@
+<?php echo View::getContent(); ?>
+
+<script type="text/javascript">
+    Event.observe(window, 'load',function(){
+        $('codcaj').focus();
+    });
+ </script>
+
+<div id='botones' align='right'>
+    <table>
+        <tr>
+            <td><?php echo Tag::image("buscar.png","title: Buscar","onclick: $('form').submit();","class: boton") ?></td>
+        </tr>
+    </table>
+</div>
+
+<?php echo Tag::form(Router::getController()."/buscar","id: form","autocomplete: off"); ?>
+    <div align='center'>
+        <table align='center'>
+            <tr>
+                <td align="right"><b>Caja:</b></td>
+                <td align='left'><?php echo Tag::select("codcaj",$Mercurio02->find(),"using: codcaj,razsoc","use_dummy: true") ?></td>
+            </tr>
+        </table>
+    </div>
+ <?php echo Tag::endForm() ?>

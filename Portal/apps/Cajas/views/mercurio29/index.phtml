@@ -1,0 +1,23 @@
+<?php View::getContent(); ?>
+
+<?php echo Tag::form(Router::getController()."/noticias","id: form","autocomplete: off","enctype: multipart/form-data", "style: margin-top: 40px;"); ?>
+	<table>
+		<tr>
+			<td><label for="titulo" style="font-family: Arial, sans-serif; font-size: 0.95em;">Título:</label></td>
+		</tr>
+		<tr>
+			<td><?php echo Tag::textField("titulo", "style: width: 98%;"); ?></td>
+		</tr>
+		<tr>
+			<td><label for="mensaje" style="font-family: Arial, sans-serif; font-size: 0.95em;">Mensaje:</label></td>
+		</tr>
+		<tr>
+			<td><?php echo Tag::textArea("mensaje", "cols: 55", "rows: 18"); ?></td>
+		</tr>
+		<tr>
+			<td align="right">
+				<?php echo Tag::submitButton("Ingresar")?>
+			</td>
+		</tr>
+	</table>
+<?php echo Tag::endForm(); ?>

@@ -1,0 +1,1197 @@
+<?php View::getContent(); ?>
+<script type="text/javascript">
+var relacionesHijo = 0;
+var relacionesPadre = 0;
+var responseHijastros = true;
+var responseHermano = true;
+
+$(document).ready(function(){   
+        $('#modalInfo').modal('show')
+        calendars();
+        $("#ciunac").attr("disabled",true);
+    	$("#ciures").attr('disabled',true);
+    	$("#form").validate({
+        rules: {
+            cedtra: { required:true},
+            //cedcon: { required:true},
+            coddoc: { required:true},
+            documento: { required:true},
+            priape: { required:true},
+            prinom: { required:true},
+            sexo: { required:true},
+            fecnac: { required:true},
+            ciunac: { required:true},
+            huerfano: { required:true},
+            parent: { required:true},
+            nivedu: { required:true},
+            calendario: { required:true},
+            captra: { required:true},
+            //coddocmb: { required:true},
+            departn: { required:true},
+        },
+    });
+        $(".padbio").hide();
+});
+
+var validarParentescos = function(){
+    if(($('#parent').val() == '36' && relacionesPadre >= 1) || ($('#parent').val() != '36' && relacionesHijo >= 2)){
+        return false;
+    }
+    else{
+        return true;
+    }
+}
+
+function validarHijastros(){
+    if($('#parent').val() == '38'){
+        var request  = $.ajax({
+            type: "POST",
+            async: false,
+            url:Utils.getKumbiaURL("subsidio/validarHijastros"),
+            data: {
+                documentop: $('#documentop').val(), 
+                coddocmb: $('#coddocmb').val(), 
+                documento: $('#documento').val(), 
+                coddoc: $('#coddoc').val()
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            console.log(response);
+            if(response['flag'] == true){
+                if(!response.data){
+                    Messages.display("Padre biologico ya tiene registrado el beneficiario","warning");
+                    responseHijastros = false;
+                }
+                else{
+                    responseHijastros = true;
+                }
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+}
+
+function validarHermanohuerfano(){
+    if($('#parent').val() == '37'){
+        var request  = $.ajax({
+            type: "POST",
+            async: false,
+            url:Utils.getKumbiaURL("subsidio/validarHermanohuerfano"),
+            data: {
+                documento: $('#documento').val(), 
+                coddoc: $('#coddoc').val()
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            console.log(response);
+            if(response['flag'] == true){
+                if(!response.data){
+                    Messages.display("El beneficiario ya ha sido registrado como hermano en otro trabajador","warning");
+                    responseHermano = false;
+                }
+                else{
+                    responseHermano = true;
+                }
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+}
+
+    //changeSelect();
+    adjuntar = function(){
+        if(!$("#form").valid()){
+            Messages.display("Faltan Campos por Digitar","error");
+            return;
+        }else{
+            $('.ocl_tr').show();
+        }
+        if($('#cedcon').val()=="" && $('#numdoccon').val()==""){
+            $("#cedcon").focus();
+            Messages.display("debe de seleccionar o registrar una conyuge ","warning");
+            return;
+        }
+        if($("#priape").val== ''){
+            $("#priape").focus();
+            Messages.display("El primer apellido no puede ser vacio ","warning");
+            return;
+        }if($("#parent").val==''){
+            $("#parent").focus();
+            Messages.display("El campo parentesco no puede estar vacio","warning");
+            return;
+        }if($("#fecnac").val() == ""){
+            $("#fecnac").focus();
+            Messages.display("Fecha de Nacimiento no puede ser vacio","warning");
+            return;
+        }if($("#ciunac").val==""){
+            $("#ciunac").focus();
+            Messages.display("Ciudad de Nacimiento no puede ser vacio","warning");	
+            return;
+        }if($("#departn").val() == ""){
+            $("#departn").focus();
+            Messages.display("El Departamento no puede ser vacio ","warning");
+            return;
+        }
+    } 
+
+adjuntos = function(){
+    if(validarParentescos()){
+        validarHijastros();
+        validarHermanohuerfano();
+        if(responseHijastros && responseHermano){
+            edad();
+            if($('#fecnac').val() == ""){
+                Messages.display("La edad no cumple con los requerimientos del tipo de beneficiario","warning");
+                return;
+            }
+            if(!$("#form").valid()){
+                Messages.display("Faltan Campos por Digitar","error");
+            }else{
+                if($('#cedcon').val()=="" && $('#numdoccon').val()==""){
+                    $("#cedcon").focus();
+                    Messages.display("debe de seleccionar o registrar una conyuge ","warning");
+                    return;
+                }
+                if($("#parent").val==''){
+                    $("#parent").focus();
+                    Messages.display("El campo parentesco no puede estar vacio","warning");
+                    return;
+                }
+                if($("#fecnac").val==''){
+                    $("#fecnac").focus();
+                    Messages.display("El campo fecha de nacimiento no puede estar vacio","warning");
+                    return;
+                }
+                var request  = $.ajax({
+                    type: "POST",
+                    url:Utils.getKumbiaURL("subsidio/valpadbio"),
+                    async: false,
+                    data: $("#form").serialize(),
+                });
+                request.done(function( transport ) {
+                    var response = jQuery.parseJSON(transport);
+                    if(response['flag'] != false){
+                        var request  = $.ajax({
+                            type: "POST",
+                            url:Utils.getKumbiaURL("subsidio/adjuntoben"),
+                            async: false,
+                            data: $("#form").serialize(),
+                        });
+                        request.done(function( transport ) {
+                            var response = jQuery.parseJSON(transport);
+                            if(response != false){
+                                $('.ocl_tr').show();
+                                $('#adjuntos').html(response);
+                            }else{
+                                $('#adjuntos').html('');
+                            }
+                        });
+                        request.fail(function( jqXHR, textStatus ) {
+                            Messages.display(response['msg'],"error");
+                        });
+                    }else{
+                        $('#adjuntos').html('');
+                        $('.ocl_tr').hide();
+                        Messages.display(response['msg'],"error");
+                        return;
+                    }
+                });
+                request.fail(function( jqXHR, textStatus ) {
+                    Messages.display(response['msg'],"error");
+                });
+            }
+        }
+    }
+    else{
+        if($("#parent").val() == '36' && relacionesPadre >= 1){
+            Messages.display("Beneficiario ya ha sido registrado como padre con otro trabajador","error");
+        }
+        else if($("#parent").val() != '36' && relacionesHijo >= 2){
+            Messages.display("Beneficiario ya tiene dos (2) relaciones activas","error");
+        }
+        else{
+            Messages.display("No se permite","error");
+        }
+    }
+}
+
+validadoc = function(){
+    if($('#coddoc').val() == 2){
+        if($('#documento').val().length < 9 || $('#documento').val().length > 12){
+            $('#documento').val('');
+            $('#documento').focus();
+            Messages.display("Los datos ingresados no concuerdan con los de la tarjeta de identidad.","warning");
+            return;
+        }
+    }
+    if($('#coddoc').val() == 1){
+        if($('#documento').val().length < 3 || $('documento').val().length > 10){
+            $('#documento').val('');
+            $('#documento').focus();
+            Messages.display("Los datos ingresados no concuerdan con los de una cedula de ciudadania.","warning");
+            return;
+        }
+    }
+    if($('#coddoc').val() == 4){
+        if($('#documento').val().length < 7){
+            $('#documento').val('');
+            $('#documento').focus();
+            Messages.display("Los datos ingresados no concuerdan con los de una cedula extrangera.","warning");
+            return;
+        }
+    }
+    if($('#coddoc').val() == 3){
+        if($('#documento').val().length < 17){
+            $('#documento').val('');
+            $('#documento').focus();
+            Messages.display("Los datos ingresados no concuerdan con los de un pasaporte.","warning");
+            return;
+        }
+    }
+
+    }
+     
+    validadocp = function(){
+        if($('#coddocpb').val() == 2){
+            if($F('#documentop').val().length > 9 || $F('documentop').val().length < 12){
+                $('#documentop').val('');
+                $('#documentop').focus();
+                Messages.display("Los datos ingresados no concuerdan con los de la tarjeta de identidad.","warning");
+            }
+        }
+        if($('#coddocpb').val() == 1){
+            if($('#documentop').val().length < 3 || $('#documentop').val().length > 10){
+                $('#documentop').val('');
+                $('#documentop').focus();
+                Messages.display("Los datos ingresados no concuerdan con los de una cedula de ciudadania.","warning");
+            }
+        }
+        if($('#coddocpb').val() == 4){
+            if($('#documentop').val().length < 7){
+                $('#documentop').val('');
+                $('#documentop').focus();
+                Messages.display("Los datos ingresados no concuerdan con los de una cedula extrangera.","warning");
+            }
+        }
+        if($('#coddocpb').val() == 3){
+            if($('#documentop').val().length < 17){
+                $('#documentop').val('');
+                $('#documentop').focus();
+                Messages.display("Los datos ingresados no concuerdan con los de un pasaporte.","warning");
+            }
+        }
+    }   
+    validadocm = function(){
+        if($('#coddocmb').val() == 2){
+            if($('#documentom').val().length > 9 || $('#documento').val().length < 12){
+                $('#documentom').val('');
+                $('#documentom').focus();
+                Messages.display("Los datos ingresados no concuerdan con los de la tarjeta de identidad.","warning");
+            }
+        }
+        if($('#coddocmb') == 1){
+            if($('#documentom').val().length < 3 || $('#documentom').val().length > 10){
+                $('#documentom').val('');
+                $('#documentom').focus();
+                Messages.display("Los datos ingresados no concuerdan con los de una cedula de ciudadania.","warning");
+            }
+        }
+        if($('#coddocmb').val() == 4){
+            if($('#documentom').val().length < 7){
+                $('#documentom').val('');
+                $('#documentom').focus();
+                Messages.display("Los datos ingresados no concuerdan con los de una cedula extrangera.","warning");
+            }
+        }
+        if($('#coddocmb').val() == 3){
+            if($('#documentom').val().length < 17){
+                $('#documentom').val('');
+                $('#documentom').focus();
+                Messages.display("Los datos ingresados no concuerdan con los de un pasaporte.","warning");
+            }
+        }
+    }
+
+    valida= function(){
+        var flag = true;
+        $("input[type='file']").each(function(elem){
+                if($(elem)==""){
+                    $(elem).focus();
+                    Messages.display("Por favor adjunte los archivos solicitados ","warning");
+                    flag=false;
+                }
+        });
+        return flag;
+    }
+
+    addFormulario = function(){
+        if(validarParentescos()){
+            validarHijastros();
+            validarHermanohuerfano();
+            if(responseHijastros && responseHermano){
+                edad();
+                if(!$("#form").valid()){
+                    Messages.display("Faltan Campos por Digitar","error");
+                    return;
+                }if($("#archivo_2").val()==""){
+                    Messages.display("Falta Anexar el Certificado","error");
+                }else{
+                var fecnac =new Date($('#fecnac').val());
+                var fecha = new Date();
+                if($('#archivo_18') != undefined){
+                    if($('#archivo_18').val() == ''){
+                        Messages.display("Se deben anexar todos los documentos","warning");
+                        return;
+                    }
+                }if($('#archivo_26') != undefined){
+                    if($('#archivo_26').val() == ''){
+                        Messages.display("Se deben anexar todos los documentos","warning");
+                        return;
+                    }
+                }if($('#archivo_2') != undefined){
+                    if($('#archivo_2').val() == ''){
+                        Messages.display("Se deben anexar todos los documentos","warning");
+                        return;
+                    }
+                }if($('#archivo_13') != undefined){
+                    if($('#archivo_13').val() == ''){
+                        Messages.display("Se deben anexar todos los documentos","warning");
+                        return;
+                    }
+                }if($('#archivo_14') != undefined){
+                    if($('#archivo_14').val() == ''){
+                        Messages.display("Se deben anexar todos los documentos","warning");
+                        return;
+                    }
+                }if($('#archivo_19') != undefined){
+                    if($('#archivo_19').val() == ''){
+                        Messages.display("Se deben anexar todos los documentos","warning");
+                        return;
+                    }
+                }if($('#archivo_15') != undefined){
+                    if($('#archivo_15').val() == ''){
+                        Messages.display("Se deben anexar todos los documentos","warning");
+                        return;
+                    }
+                }if($('#archivo_20') != undefined){
+                    if($('#archivo_20').val() == ''){
+                        Messages.display("Se deben anexar todos los documentos","warning");
+                        return;
+                    }
+                }
+                if(fecnac > fecha){
+                    $("#fecnac").val("");
+                    $("#fecnac").focus();
+                    Messages.display("La fecha de nacimiento no puede ser mayor a la actual","warning");
+                }if($('#parent').val() == "@"){
+                    $('#parent').focus();
+                    Messages.display("El parentesco no puede ser vacio","warning");
+                    return;
+                }if($('#captra').val() == "@"){
+                    $('#captra').focus();
+                    Messages.display("El tipo de discapacidad no puede ser vacio ","warning");
+                    return;
+                }
+                    $('#ciunac').attr('disabled',false);
+                    $('#barrio').attr('disabled',false);
+                    $('#form').submit();
+                    /*
+                    $('#ciunac').attr('disabled',false);
+                    $('#ciures').attr('disabled',false);
+                    $('#barrio').attr('disabled',false);
+                    var request  = $.ajax({
+                        type: "POST",
+                        url:Utils.getKumbiaURL("subsidio/ingcon"),
+                        data: $("#form").serialize(),
+                    });
+                    request.done(function( transport ) {
+                        var response = jQuery.parseJSON(transport);
+                        if(response['flag'] == true){
+                            Messages.display(response['msg'],"success");
+                        }else{
+                            Messages.display(response['msg'],"error");
+                        }
+                        window.location = Utils.getKumbiaURL("principal/index");
+                    });
+                    request.fail(function( jqXHR, textStatus ) {
+                        Messages.display(response['msg'],"error");
+                    });
+                    */
+                }
+            }
+        }
+        else{
+            if($("#parent").val() == '36' && relacionesPadre >= 1){
+                Messages.display("Beneficiario ya ha sido registrado como padre con otro trabajador","error");
+            }
+            else if($("#parent").val() != '36' && relacionesHijo >= 2){
+                Messages.display("Beneficiario ya tiene dos (2) relaciones activas","error");
+            }
+            else{
+                Messages.display("No se permite","error");
+            }
+        }
+    }
+
+    traerCiudad2 = function(){
+        if($('#departn').val() == ""){
+            $('departn').focus();
+                Messages.display("Por favor seleccionar el departamento de nacimiento. ","warning");
+        }else{
+            var coddep = $('#departn').val();
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("particular/traerCiudad"),
+                data: {
+                    coddep :coddep,
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response != false){
+                    $("#ciunac").attr("disabled",false)
+                    $('#ciunac').html(response);
+                    $('#ciunac').trigger("chosen:updated");
+                    $('#ciunac').focus();
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+    }
+
+    discapa = function(){
+        if($('#captra').val() == 'I'){
+            $('#tipdis').val('01');
+       
+        }else{
+            $('#tipdis').value = '00';
+        }
+    }
+
+    tipdispo = function(){
+        if($('#tipdis').val() == '00'){
+            Messages.display("El tipo de discapacidad no concuerda con la capasidad de trabajo","warning");
+            $('#tipdis').val('01');
+        }
+    }
+function validarCaracteres(caract){
+    var expr = /[0-9`~!@#$%^&*()_°¬|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
+    var carac = $('#'+caract).val();
+    if(expr.test(carac) || $("#"+caract).val()==""){
+        Messages.display("Este campo no debe llevar caracteres especiales","warning");
+        $('#'+caract).focus();
+        $('#'+caract).val("");
+    }
+}
+function hijtr(){
+	if($("#parent").val() == "38"){
+	    $("#hijnat").val('N');
+	    $("#hijnat").attr('disabled',true);
+		$(".padbio").show();
+		$("#enviar").hide();
+	}else{
+        //adjuntos();
+        if($("#parent").val() != "35"){
+            $("#hijnat").val('N');
+            $("#hijnat").attr('disabled',true);
+        }else{
+            if($("#parent").val() == "35")$("#hijnat").val('S');
+            $("#hijnat").attr('disabled',false);
+        }
+        $('#archivo_2').attr('required',false);
+        $('#archivo_13').attr('required',false);
+        $("#archivo_2").val("");
+        $("#archivo_13").val("");
+        $(".padbio").hide();
+        $('.ocl_tr').hide();
+        //$("#enviar").show();
+    }
+}
+function conyuge(){
+    $("#ventane_conyuge").show();
+    if($("#parent").val()=="38"){
+        if($("#cedcon").val()=="@"){
+            $("#cedcon").focus();
+            Messages.display("Cedula conyuge no puede ser vacio","warning");	
+        }	
+    }if($("#parent").val()=="36" || $("#parent").val()=="37"){
+        $("#ventane_conyuge").hide();
+        $("#cedcon").val("@")
+        $("#numdoccon").val("")
+        $("#cedcon").attr('disabled',true);
+            //Messages.display("Cedula conyuge no puede ser vacio","warning");	
+        	
+    }else{
+        $("#cedcon").attr('disabled',false);
+    }
+
+}	
+    function fecnacc(){
+        var fecnac =new Date($('#fecnac').val());
+        var fecha = new Date();
+        if(fecnac > fecha){
+            $("#fecnac").val("");
+            $("#fecnac").focus();
+            Messages.display("La fecha de nacimiento no puede ser mayor a la actual","warning");
+        }
+    }
+    
+    function validaBeneficiarios(){
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/validaBeneficiarios"),
+            data: {
+                cedtra: $('#documento').val(), 
+                coddoc: $('#coddoc').val(), 
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            if(response['flag'] == false){
+                Messages.display(response['msg'],"error");
+                $('#documento').val("");
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+    function dattracon(){
+        if($('#numdoccon').val()==$("#cedtra").val()){
+            $('#numdoccon').val("");
+            Messages.display("La cedula de la conyuge es la misma que el afiliado","error");
+            return;
+        }
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/dattracon"),
+            data: {
+                cedtra: $('#numdoccon').val(), 
+                coddoc: $('#coddoccon').val(), 
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            console.log(response);
+            if(response['flag'] == true){
+                if(response['data'] != ''){
+                    $('#prinomcon').val(response['data']['prinom']);
+                    $('#segnomcon').val(response['data']['segnom']);
+                    $('#priapecon').val(response['data']['priape']);
+                    $('#segapecon').val(response['data']['segape']);
+                    $('#sexocon').val(response['data']['sexo']);
+                    $('#fecnaccon').val(response['data']['fecnac']);
+                }else{
+                    $('#prinomcon').val('');
+                    $('#segnomcon').val('');
+                    $('#priapecon').val('');
+                    $('#segapecon').val('');
+                    $('#sexocon').val('');
+                    $('#fecnaccon').val('');
+                }
+            }else{
+                $('#prinomcon').val('');
+                $('#segnomcon').val('');
+                $('#priapecon').val('');
+                $('#segapecon').val('');
+                $('#sexocon').val('');
+                $('#fecnaccon').val('');
+                Messages.display(response['msg'],"warning");
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+
+    function dattra(){
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/dattra"),
+            data: {
+                cedtra: $('#documento').val(), 
+                coddoc: $('#coddoc').val(), 
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            console.log(response);
+            if(response['flag'] == true){
+                if(response['data'] != ''){
+                    $('#prinom').val(response['data']['prinom']);
+                    $('#segnom').val(response['data']['segnom']);
+                    $('#priape').val(response['data']['priape']);
+                    $('#segape').val(response['data']['segape']);
+                    $('#direccion').val(response['data']['direccion']);
+                    $('#fecing').val(response['data']['fecafi']);
+                    $('#fecnac').val(response['data']['fecnac']);
+                    $('#telefono').val(response['data']['telefono']);
+                    $('#salario').val(response['data']['salario']);
+                    $('#sexo').val(response['data']['sexo']);
+                    if(response['data']['depart'] != '')
+                    $('#depart').val(response['data']['depart']);
+                    if(response['data']['departn'] != '')
+                    $('#departn').val(response['data']['departn']);
+                    if(response['data']['ciunac'] != '')
+                    $('#ciunac').val(response['data']['ciunac']);
+                    if(response['data']['codciu'] != '')
+                    $('#codciu').val(response['data']['codciu']);
+                    if(response['data']['barrio'] != '')
+                    $('#barrio').val(response['data']['barrio']);
+                    if(response['data']['estciv'] != '')
+                    $('#estciv').val(response['data']['estciv']);
+                    $('#zona').val(response['data']['zona']);
+                    $('#profesion').val(response['data']['profesion']);
+                    $('#email').val(response['data']['email']);
+                }else{
+                    $('#prinom').val('');
+                    $('#segnom').val('');
+                    $('#priape').val('');
+                    $('#segape').val('');
+                    $('#direccion').val('');
+                    $('#fecing').val('');
+                    $('#fecnac').val('');
+                    $('#telefono').val('');
+                    $('#salario').val('');
+                    $('#sexo').val('');
+                    $('#depart').val('');
+                    $('#departn').val('');
+                    $('#ciunac').val('');
+                    $('#codciu').val('');
+                    $('#barrio').val('');
+                    $('#estciv').val('');
+                    $('#zona').val('');
+                    $('#profesion').val('');
+                    $('#email').val('');
+                    $('#captra').val('');
+                    $('#nivedu').val('');
+                }
+            }else{
+                $('#cedtra').val('');
+                $('#prinom').val('');
+                $('#segnom').val('');
+                $('#priape').val('');
+                $('#segape').val('');
+                $('#direccion').val('');
+                $('#fecing').val('');
+                $('#fecnac').val('');
+                $('#telefono').val('');
+                $('#salario').val('');
+                $('#sexo').val('');
+                $('#depart').val('');
+                $('#departn').val('');
+                $('#ciunac').val('');
+                $('#codciu').val('');
+                $('#barrio').val('');
+                $('#estciv').val('');
+                $('#zona').val('');
+                $('#profesion').val('');
+                $('#email').val('');
+                $('#captra').val('');
+                $('#nivedu').val('');
+                Messages.display(response['msg'],"warning");
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+    function datben(){
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/datben"),
+            data: {
+                documento: $('#documento').val(), 
+                coddoc: $('#coddoc').val(), 
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            console.log(response);
+            if(response['flag'] == true){
+                if(response['data'] != ''){
+                    $('#prinom').val(response['data']['prinom']);
+                    $('#segnom').val(response['data']['segnom']);
+                    $('#priape').val(response['data']['priape']);
+                    $('#segape').val(response['data']['segape']);
+                    $('#direccion').val(response['data']['direccion']);
+                    $('#fecing').val(response['data']['fecafi']);
+                    $('#fecnac').val(response['data']['fecnac']);
+                    $('#telefono').val(response['data']['telefono']);
+                    $('#salario').val(response['data']['salario']);
+                    $('#sexo').val(response['data']['sexo']);
+                    if(response['data']['depart'] != '')
+                    $('#depart').val(response['data']['depart']);
+                    if(response['data']['departn'] != '')
+                    $('#departn').val(response['data']['departn']);
+                    if(response['data']['ciunac'] != '')
+                    $('#ciunac').val(response['data']['ciunac']);
+                    if(response['data']['codciu'] != '')
+                    $('#codciu').val(response['data']['codciu']);
+                    if(response['data']['barrio'] != '')
+                    $('#barrio').val(response['data']['barrio']);
+                    if(response['data']['estciv'] != '')
+                    $('#estciv').val(response['data']['estciv']);
+                    $('#zona').val(response['data']['zona']);
+                    $('#profesion').val(response['data']['profesion']);
+                    $('#email').val(response['data']['email']);
+                    relacionesHijo = response['data']['relacionesHijo'];
+                    relacionesPadre = response['data']['relacionesPadre'];
+                }else{
+                    $('#prinom').val('');
+                    $('#segnom').val('');
+                    $('#priape').val('');
+                    $('#segape').val('');
+                    $('#direccion').val('');
+                    $('#fecing').val('');
+                    $('#fecnac').val('');
+                    $('#telefono').val('');
+                    $('#salario').val('');
+                    $('#sexo').val('');
+                    $('#depart').val('');
+                    $('#departn').val('');
+                    $('#ciunac').val('');
+                    $('#codciu').val('');
+                    $('#barrio').val('');
+                    $('#estciv').val('');
+                    $('#zona').val('');
+                    $('#profesion').val('');
+                    $('#email').val('');
+                    $('#captra').val('');
+                    $('#nivedu').val('');
+                }
+            }else{
+                $('#cedtra').val('');
+                $('#prinom').val('');
+                $('#segnom').val('');
+                $('#priape').val('');
+                $('#segape').val('');
+                $('#direccion').val('');
+                $('#fecing').val('');
+                $('#fecnac').val('');
+                $('#telefono').val('');
+                $('#salario').val('');
+                $('#sexo').val('');
+                $('#depart').val('');
+                $('#departn').val('');
+                $('#ciunac').val('');
+                $('#codciu').val('');
+                $('#barrio').val('');
+                $('#estciv').val('');
+                $('#zona').val('');
+                $('#profesion').val('');
+                $('#email').val('');
+                $('#captra').val('');
+                $('#nivedu').val('');
+                Messages.display(response['msg'],"warning");
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+    function dattra2(){
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/dattra"),
+            data: {
+                cedtra: $('#documentop').val(), 
+                coddoc: $('#coddocmb').val(), 
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            console.log(response);
+            if(response['flag'] == true){
+                if(response['data'] != ''){
+                    $('#prinombio').val(response['data']['prinom']);
+                    $('#segnombio').val(response['data']['segnom']);
+                    $('#priapebio').val(response['data']['priape']);
+                    $('#segapebio').val(response['data']['segape']);
+                    $('#fecnacbio').val(response['data']['fecnac']);
+                    $('#sexobio').val(response['data']['sexo']);
+                }else{
+                    $('#prinombio').val('');
+                    $('#segnombio').val('');
+                    $('#priapebio').val('');
+                    $('#segapebio').val('');
+                    $('#fecnacbio').val('');
+                    $('#sexobio').val('@');
+                }
+            }else{
+                $('#prinombio').val('');
+                $('#segnombio').val('');
+                $('#priapebio').val('');
+                $('#segapebio').val('');
+                $('#fecnacbio').val('');
+                $('#sexobio').val('@');
+                Messages.display(response['msg'],"warning");
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+
+function modalinfo(){
+        $('#modalInfo').modal('show')
+}
+    function edad(){
+            var parent = $('#parent').val();
+            var fecnac = $('#fecnac').val();
+            var captra = $('#captra').val();
+            if(parent=="" || fecnac=="")return;
+            var request  = $.ajax({
+                type: "POST",
+                async: false,
+                url:Utils.getKumbiaURL("particular/edad"),
+                data: {
+                    parent :parent,
+                    fecnac :fecnac,
+                    captra :captra,
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response['flag'] == true){
+                    //Messages.display(response['msg'],"success");
+                }else{
+                    $("#fecnac").val("");
+                    Messages.display(response['msg'],"warning");
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+    }
+    function nuecon(){
+        var con = $('#numdoccon').val()+" - "+$('#prinomcon').val()+" "+$('#segnomcon').val()+" "+$('#priapecon').val()+" "+$('#segapecon').val();
+        var cedcon = $('#numdoccon').val();
+        var response = "<option value="+cedcon+"=>"+con+"</option>";
+        $("#cedcon").attr("disabled",false)
+        $('#cedcon').html(response);
+        $('#cedcon').trigger("chosen:updated");
+        $('#cedcon').focus();
+    }
+
+    function doc(){
+        if($('#documento').val() != ''){
+            dattra();
+        }
+    }
+
+
+function guardarConyuge(){
+    if($("#coddoccon").val()=="" || $("#numdoccon").val()=="" || $("#priapecon").val()==""  || $("#prinomcon").val()==""  || $("#sexocon").val()=="" || $("#fecnaccon").val()=="" ){
+        Messages.display("Digite todos los campos","error");
+        return;
+    }
+    var nombre = "";
+    nombre = $("#priapecon").val()+" "+$("#segapecon").val()+" "+$("#prinomcon").val()+" "+$("#segnomcon").val();
+    $("#cedcon").append($("<option></option>").val($("#numdoccon").val()).html($("#numdoccon").val()+" - "+nombre));
+    $("#modalConyuge").modal('hide');
+    $("#cedcon").val($("#numdoccon").val());
+}
+</script>
+ <br>
+ <?php echo Tag::form(Router::getController()."/ingben","id: form","autocomplete: off","enctype: multipart/form-data"); ?>
+<div>
+        <table class='table table-condensed'>
+            <tr>
+                <td><p>Los Campos marcados con un asterico(*) son obligatorios</p></td>
+                <td>
+                    <?php echo Tag::button("Mas informaci&oacute;n","onclick: $('#modalInfo').modal('show');","class: btn btn-info"); ?>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+        <table style="margin: auto; border-collapse: separate; border-spacing: 7px">
+            <tr>
+                <td colspan="4"><h4>1-Datos del Trabajador</h4></td>
+            </tr>
+            <tr>
+                <td colspan="4"></td>
+            </tr>
+            <tr>
+                <td style='text-align:right;'><label>Cédula:</label></td>
+                <td><?php echo Tag::numericField("cedtra","readonly: true","maxlength: 15","readonly: true","class: form-control"); ?></td>
+                <td style='text-align:right;'><label>Nombre:</label></td>
+                <td><?php echo Tag::textField("nombre","size: 50","onkeydown: validOnlyLetter();","readonly: true","style: width: 250px","class: form-control"); ?></td>
+            </tr>
+            <tr>
+                <td colspan="4"></td>
+            </tr>
+ 		    <center>
+                <td colspan="4"><h4>2-Parentesco con Beneficiario</h4></td>
+            <center>
+	        </tr>
+            <tr>
+                <td colspan="4"></td>
+            </tr>
+            <tr>
+                <td style='text-align:right;'><label for="parent">*Parentesco:</label></td>
+                <td><?php echo Tag::selectStatic("parent",array("35"=>"HIJO","36"=>"PADRE/MADRE","37"=>"HERMANO(A)","38"=>"HIJASTRO"),"useDummy: yes","style: width: 190px;","class: form-control","onchange: hijtr(), conyuge()","dummyValue: "); ?></td>
+            </tr>
+            <tr>
+ 		    <center>
+                <td colspan="4"><h4>3-Datos del Conyuge</h4></td>
+            <center>
+	        </tr>
+            <tr>
+                <td colspan="4"></td>
+            </tr>
+            <tr>
+                <td style='text-align:right;'><label>Cédula:</label></td>
+                <td colspan='2'><?php echo Tag::selectStatic("cedcon",$conyuge,"useDummy: yes","style: width: 350px","class: form-control","dummyValue: "); ?></td>
+                <td id='ventane_conyuge'>
+                    <?php echo Tag::button("Crear conyuge","onclick: $('#modalConyuge').modal('show');","class: btn btn-info"); ?>
+                </td>
+            </tr>
+            <tr>
+            </tr>
+            <tr>
+                <td colspan="4"><h4>4-Datos del Beneficiario</h4></td>
+            </tr>
+            <tr>
+                <td colspan="4"></td>
+            </tr>
+            <tr>
+                <td style='text-align:right;'><label>*Tipo de Documento:</label></td>
+                <td><?php echo Tag::selectStatic("coddoc",$coddoc,"useDummy: yes","class: form-control","dummyValue: ","onchange: doc();"); ?></td>
+                <td style='text-align:right;'><label>*Documento:</label></td>
+                <td><?php echo Tag::textField("documento","maxlength: 15","onchange: validadoc()","style: width: 183px","class: form-control","onchange: validaBeneficiarios();datben();");?>
+     	        </td>
+            </tr>
+                <td style='text-align:right;'><label>*Primer Apellido:</label></td>
+                <td><?php echo Tag::textUpperField("priape","size: 20","style: width: 183px","onkeydown: validOnlyLetter(event);","class: form-control"); ?></td>
+                <td style='text-align:right;'><label>Segundo Apellido:</label></td>
+                <td><?php echo Tag::textUpperField("segape","size: 20","style: width: 183px","onkeydown: validOnlyLetter(event);","class: form-control"); ?></td>
+            <br>
+	        </tr>
+            <tr>
+                <td style='text-align:right;'><label>*Primer Nombre:</label></td>
+                <td><?php echo Tag::textUpperField("prinom","size: 20","style: width: 183px","onkeydown: validOnlyLetter(event);","class: form-control"); ?></td>
+                <td style='text-align:right;'><label>Segundo Nombre:</label></td>
+                <td><?php echo Tag::textUpperField("segnom","size: 20","style: width: 183px","onkeydown: validOnlyLetter(event);","class: form-control"); ?></td>
+            </tr>
+            <tr>
+                <td style='text-align:right;'><label>*Genero:</label></td>
+                <td><?php echo Tag::selectStatic("sexo",array("F"=>"Femenino","M"=>"Masculino"), "useDummy: yes","style: width: 190px;","class: form-control","dummyValue: "); ?></td>
+                <td style='text-align:right;'><label>*Fecha Nacimiento:</label></td>
+                <td><?php echo TagUser::Calendar("fecnac","style: width: 165px","class: form-control","readonly: readonly","onblur: edad();"); ?></td>
+            </tr>
+                <td style='text-align:right;'><label>*Departamento Nacimiento:</label></td>
+                <td><?php echo Tag::selectStatic("departn",$coddep,"style: width: 190px","useDummy: yes","onchange: traerCiudad2()","class: form-control","dummyValue: "); ?></td>
+                <td style='text-align:right;'><label>*Ciudad Nacimiento:</label></td>
+                <td><?php echo Tag::selectStatic("ciunac",$codciu,"style: width: 190px;","use_dummy: true","class: form-control","dummyValue: "); ?></td>
+            </tr>
+            <tr>
+                <!--
+                <td style='text-align:right;'><label for="parent">*Parentesco:</label></td>
+                <td><?php //echo Tag::selectStatic("parent",array("35"=>"HIJO","36"=>"PADRE/MADRE","37"=>"HERMANO(A)","38"=>"HIJASTRO"),"useDummy: yes","style: width: 190px;","class: form-control","onchange: hijtr(), conyuge()"); ?></td>
+                -->
+                <td style='text-align:right;'><label for="huerfano">*Huerfano:</label></td>
+                <td><?php echo Tag::selectStatic("huerfano",$huerfano,"useDummy: yes","style: width: 190px;","class: form-control","dummyValue: "); ?></td>
+            <tr>
+                <td style='text-align:right;'><label>Hijo Natural :</label></td>
+                <td><?php echo Tag::selectStatic("hijnat",array('S'=>'SI','N'=>'NO'),"useDummy: yes","style: width: 190px;","class: form-control","dummyValue: ") ?></td>
+                <td style='text-align:right;'><label for="nivedu">*Nivel Educación:</label></td>
+                <td><?php echo Tag::selectStatic("nivedu",$nivedu, "useDummy: yes","style: width: 190px;","class: form-control","dummyValue: "); ?></td>
+            </tr>
+            <tr>
+                <td style='text-align:right;'><label>*Discapacitado:</label></td>
+                <td><?php echo Tag::selectStatic("captra",array("I"=>"SI","N"=>"NO"),"style: width: 190px;","use_dummy: true","class: form-control","dummyValue: "); ?></td>
+                <td style='text-align:right;'><label for="calendario">*Calendario Escolar :</label></td>
+                <td><?php echo Tag::selectStatic("calendario",$calendario,"useDummy: yes","style: width: 190px;","class: form-control","dummyValue: ") ?></td>
+            </tr>
+	    <tr>
+            <tr class="padbio">
+                <td colspan="4"><h4>4-Datos de Padres Biologicos</h4></td>
+            </tr>
+            <tr class="padbio"> 
+                <td colspan="4">&nbsp;</td>
+            </tr>
+            <tr class="padbio">
+                <td style='text-align:right;'><label>*Tipo de Documento:</label></td>
+                <td><?php echo Tag::selectStatic("coddocmb",$coddoc,"useDummy: yes","class: form-control","dummyValue: "); ?></td>
+                <td style='text-align:right;'><label>Documento Padre/Madre:</label></td>
+                <td><?php echo Tag::textField("documentop","maxlength: 12","onchange: dattra2()","class: form-control"); ?></td>
+            </tr>
+            <tr class="padbio">
+                <td style='text-align:right;'><label>*Primer Apellido:</label></td>
+                <td><?php echo Tag::textUpperField("priapebio","size: 20","style: width: 183px","onkeydown: validOnlyLetter(event);","class: form-control"); ?></td>
+                <td style='text-align:right;'><label>Segundo Apellido:</label></td>
+                <td><?php echo Tag::textUpperField("segapebio","size: 20","style: width: 183px","onkeydown: validOnlyLetter(event);","class: form-control"); ?></td>
+	        </tr>
+            <tr class="padbio">
+                <td style='text-align:right;'><label>*Primer Nombre:</label></td>
+                <td><?php echo Tag::textUpperField("prinombio","size: 20","style: width: 183px","onkeydown: validOnlyLetter(event);","class: form-control"); ?></td>
+                <td style='text-align:right;'><label>Segundo Nombre:</label></td>
+                <td><?php echo Tag::textUpperField("segnombio","size: 20","style: width: 183px","onkeydown: validOnlyLetter(event);","class: form-control"); ?></td>
+            </tr>
+            <tr class="padbio">
+                <td style='text-align:right;'><label>*Genero:</label></td>
+                <td><?php echo Tag::selectStatic("sexobio",array("F"=>"Femenino","M"=>"Masculino"), "useDummy: yes","style: width: 190px;","class: form-control","dummyValue: "); ?></td>
+                <td style='text-align:right;'><label>*Fecha Nacimiento:</label></td>
+                <td><?php echo TagUser::Calendar("fecnacbio","style: width: 165px","class: form-control","readonly: readonly"); ?></td>
+            </tr>
+            <tr>
+                <td colspan="4">&nbsp;</td>
+            </tr>
+            <tr>
+                <td colspan="4" align="center">
+                    <?php echo Tag::hiddenField("codare","value: $codare");?>
+                    <?php echo Tag::hiddenField("codope", "value: $codope");?>
+                    <?php echo Tag::button("Adjuntar Documentos","class: submit ","onclick: adjuntos();","class: btn btn-success"); ?>
+                </td>
+            </tr>
+            <tr class="ocl_tr">
+                <td colspan="6">
+                    <table id="adjuntos" style="width: 100%;">
+                    </table>
+                </td>
+            </tr>
+	    <tr>
+            <tr id="enviar" class="ocl_tr" style="display: none;">
+                <td colspan='4' align="center"><?php echo Tag::button("Enviar","onclick: addFormulario();","class: btn btn-success","style: width: 20%"); ?></td>
+            </tr>
+    </div>
+    <div class="modal fade" id="modalConyuge" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog  modal-lg" role="document" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">    
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title barra barra-center" id="myModalLabel" style='text-align:center;'>Crear conyuge</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="width: 90%; margin-left: auto; margin-right: auto;";>
+                        <form class="form-horizontal" >
+                            <div class="form-group">
+                                <div class="col-sm-6" style="margin-top: 2%">
+                                    <label class="col-sm-12 control-label">Tipo de Documento</label>
+                                </div>
+                                <div class="col-sm-6">
+                                    <?php echo Tag::selectStatic("coddoccon",$coddoc,"useDummy: yes","class: form-control","style: margin-top: 2%;","dummyValue: ","onchange: dattracon();"); ?>
+                                </div>
+                                <div class="col-sm-6" style="margin-top: 2%">
+                                    <label class="col-sm-12 control-label">Numero de Documento</label>
+                                </div>
+                                <div class="col-sm-6">
+                                    <?php echo Tag::numericField("numdoccon","placeholder: Numero de documento","style: margin-top: 2%","class: form-control","maxlength: 13","onchange: dattracon();") ?>
+                                </div>
+                                <div class="col-sm-6" style="margin-top: 2%">
+                                    <label class="col-sm-12 control-label">Primer Apellido</label>
+                                </div>
+                                <div class="col-sm-6">
+                                    <?php echo Tag::textField("priapecon","placeholder: Primer Apellido","style: margin-top: 2%","class: form-control") ?>
+                                </div>
+                                <div class="col-sm-6" style="margin-top: 2%">
+                                    <label class="col-sm-12 control-label">Segundo Apellido</label>
+                                </div>
+                                <div class="col-sm-6">
+                                    <?php echo Tag::textField("segapecon","placeholder: Segundo Apellido","style: margin-top: 2%","class: form-control") ?>
+                                </div>
+                                <div class="col-sm-6" style="margin-top: 2%">
+                                    <label class="col-sm-12 control-label">Primer Nombre</label>
+                                </div>
+                                <div class="col-sm-6">
+                                    <?php echo Tag::textField("prinomcon","placeholder: Primer Nombre","style: margin-top: 2%","class: form-control") ?>
+                                </div>
+                                <div class="col-sm-6" style="margin-top: 2%">
+                                    <label class="col-sm-12 control-label">Segundo Nombre</label>
+                                </div>
+                                <div class="col-sm-6">
+                                    <?php echo Tag::textField("segnomcon","placeholder: Segundo Nombre","style: margin-top: 2%","class: form-control") ?>
+                                </div>
+                                <div class="col-sm-6" style="margin-top: 2%">
+                                    <label class="col-sm-12 control-label">Genero</label>
+                                </div>
+                                <div class="col-sm-6">
+                                    <?php echo Tag::selectStatic("sexocon",array("M"=>"Masculino","F"=>"Femenino"),"use_dummy: true","class: form-control","style: margin-top: 2%","dummyValue: ") ?>
+                                </div>
+                                <div class="col-sm-6" style="margin-top: 2%">
+                                    <label class="col-sm-12 control-label">Fecha de nacimiento</label>
+                                </div>
+                                <div class="col-sm-6">
+                                    <?php echo TagUser::calendar("fecnaccon","class: form-control","readonly: readonly","style: margin-top: 2%"); ?>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="guardarConyuge();">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php echo Tag::endForm(); ?>
+    <div class="modal fade" id="modalInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog  modal-lg" role="document" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">    
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title barra barra-center" id="myModalLabel" style='text-align:center;'>Informaci&oacute;n</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="width: 90%; margin-left: auto; margin-right: auto;";>
+                        <form class="form-horizontal" >
+                            <div class="form-group">
+                            <p style="text-align: justify;">Señor afiliado recuerde que para usted poder afiliar a sus beneficiarios deberá diligenciar el formato de dependencia económica y anexarlo en todos los casos que se relacionan a continuación, siempre y cuando cumpla con los requisitos previamente establecidos.</p>
+                            <h4 style='margin: 15px;'>HIJOS</h4>
+                            <ul style='margin-left:20px;'>
+                                <li type="disc" style="text-align: justify;">Registro civil de nacimiento.</li>
+                                <li type="disc" style="text-align: justify;">Tarjeta de identidad si es igual o mayor de 7 años .</li>
+                                <li type="disc" style="text-align: justify;">Cedula si es igual o mayor a 18 años .</li>
+                                <li type="disc" style="text-align: justify;">Certificado de estudio despu&eacute;s de los 12 a&ntilde;os cumplidos</li>
+                            </ul>
+                            <br>
+                            <h4 style='margin: 15px;'>PADRES MAYORES DE 60 A&Ntilde;OS, NO PENSIONADOS SIN NINGUN TIPO DE RENTA</h4>
+                            <ul style='margin-left:20px;'>
+                                <li type="disc" style="text-align: justify;">Registro civil de nacimiento del trabajador</li>
+                                <li type="disc" style="text-align: justify;">Fotocopia de cedula de los padres </li>
+                                <li type="disc" style="text-align: justify;">Certificado de la EPS.</li>
+                            </ul>
+                            <br>
+                            <p style="text-align: justify;"><b>Recuerde:</b> Esta persona No puede estar afiliado como beneficiario de otro hijo</p>
+                            <br>
+                            <h4 style='margin: 15px;'>HERMANOS HU&Eacute;RFANOS DE PADRE Y MADRES</h4>
+                            <ul style='margin-left:20px;'>
+                                <li type="disc" style="text-align: justify;">Registro civil de nacimiento del trabajador</li>
+                                <li type="disc" style="text-align: justify;">Registro civil de nacimiento del hermano </li>
+                                <li type="disc" style="text-align: justify;">Registro civil de defunción de los padres</li>
+                                <li type="disc" style="text-align: justify;">Tarjeta de identidad si tiene 7 a&ntilde;os o cedula de ciudadan&iacute;a si es mayor de 18 a&ntilde;os</li>
+                                <li type="disc" style="text-align: justify;">Certificado de estudio despu&eacute;s de los 12 a&ntilde;os cumplidos</li>
+                            </ul>
+                            <br>
+                            <h4 style='margin: 15px;'>HIJASTROS</h4>
+                            <ul style='margin-left:20px;'>
+                                <li type="disc" style="text-align: justify;">Registro civil de nacimiento</li>
+                                <li type="disc" style="text-align: justify;">Custodia </li>
+                                <li type="disc" style="text-align: justify;">Tarjeta de identidad si tiene 7 años o cedula de ciudadanía si es mayor de 18 años</li>
+                                <li type="disc" style="text-align: justify;">Certificado de estudio después de los 12 años cumplidos</li>
+                            </ul>
+                            <br>
+                            <p style="text-align: justify;">Si algún beneficiario mencionado anteriormente presenta alguna discapacidad, deberá presentar de manera obligatoria el certificado de discapacidad emitido por la EPS.</p>
+                            </div>
+                        </form>
+                    </div >
+                </div>
+            </div>
+        </div>
+    </div>

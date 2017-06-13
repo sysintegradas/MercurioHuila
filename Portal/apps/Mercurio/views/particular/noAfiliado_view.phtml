@@ -1,0 +1,36 @@
+<?php echo View::getContent(); ?>
+<script type="text/javascript">
+    $("#form").validate({
+        rules: {
+             nombre: { required:true},
+        },
+    });
+    function validaNombre(){
+        var nombre = $("#nombre").val();
+        var exp = /^([0-9])*$/;
+        console.log(nombre.search(exp)); 
+        if(nombre.search(exp) == 0){
+            alert("Debe ingresar un Nombre o Razon Social Valido.");
+            $("#nombre").val("");
+            $("#nombre").focus();
+        } 
+    }
+</script>
+<br>
+<?php echo Tag::form(Router::getController()."/noAfiliado","id: form","autocomplete: off","enctype: multipart/form-data"); ?>
+<div>
+    <table style="margin: auto; border-collapse: separate; border-spacing: 7px;">
+        <tr>
+            <td><label>Nombre &oacute; Razón Social:</label></td>
+            <td colspan="3"><?php echo Tag::textUpperField("nombre","size: 60","style: width: 190px","class: form-control","onchange: validaNombre()"); ?></td>
+        </tr>
+        <tr>
+        </tr>
+        <tr class="ocl_tr">
+            <td colspan="2" align="center">
+                <?php echo Tag::submitButton("Empresa","class: submit","style= width:100px;","class: btn btn-success"); ?>
+            </td>
+        </tr>
+    </table>
+</div>
+<?php echo Tag::endForm(); ?>

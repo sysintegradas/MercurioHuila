@@ -1,0 +1,68 @@
+<?php echo View::getContent(); ?>
+
+<script type="text/javascript">
+    var val = new Validator();
+    Event.observe(window, 'load',function(){
+        val.addField("codcaj","text",null,{'alias': 'Caja','isNull': false});
+        val.addField("nit","text",null,{'alias': 'Nit','isNull': false});
+        val.addField("razsoc","text",null,{'alias': 'Razon Social','isNull': false});
+        val.addField("email","text",null,{'alias': 'Email','isNull': false,'doToUpperCase': false});
+        val.addField("direccion","text",null,{'alias': 'Direccion','isNull': false});
+        val.addField("telefono","number",null,{'alias': 'Telefono','isNull': false});
+        val.addField("codciu","select",null,{'alias': 'Ciudad','isNull': false});
+        $('razsoc').focus();
+    });
+
+    function Guardar(){
+        if(!val.valide()){
+            Messages.valide(val);
+        }else{
+            $('form').submit();
+        }
+    }
+    
+ </script>
+
+<div id='botones' align='right'>
+    <table>
+        <tr>
+            <td><?php echo Tag::image("guardar.png","title: Guardar","onclick: Guardar();","class: boton") ?></td>
+            <td><?php echo Tag::linkTo(Router::getController()."/index",Tag::image("exit.png","title: Cancelar","class: boton")) ?></td>
+        </tr>
+    </table>
+</div>
+
+<?php echo Tag::form(Router::getController()."/guardar","id: form","autocomplete: off"); ?>
+    <div align='center'>
+        <table align='center'>
+            <tr>
+                <td align="right"><b>Cod.Caja:</b></td>
+                <td colspan="2"><?php echo Tag::textUpperField("codcaj","size: 6","maxlength: 6","readonly: true") ?></td>
+            </tr>
+            <tr>
+                <td align='right'><b>Nit:</b></td>
+                <td align='left'><?php echo Tag::textUpperField("nit","size: 15","maxlength: 13") ?></td>
+            </tr>
+            <tr>
+                <td align='right'><b>Razon Social:</b></td>
+                <td align='left'><?php echo Tag::textUpperField("razsoc","size: 30","maxlength: 35") ?></td>
+            </tr>
+            <tr>
+                <td align='right'><b>Email:</b></td>
+                <td align='left'><?php echo Tag::textField("email","size: 20","maxlength: 30") ?></td>
+            </tr>
+            <tr>
+                <td align="right"><b>Direccion:</b></td>
+                <td align="left"><?php echo Tag::textUpperField("direccion","size: 20","maxlength: 30") ?></td>
+            </tr>
+            <tr>
+                <td align='right'><b>Telefono:</b></td>
+                <td align='left'><?php echo Tag::numericField("telefono","size: 15","maxlength: 15") ?></td>
+            </tr>
+            <tr>
+                <td align="right"><b>Ciudad:</b></td>
+                <td align='left'><?php echo Tag::select("codciu",$Gener08->find(),"using: codciu,detciu","use_dummy: true") ?></td>
+            </tr>
+        </table>
+    </div>
+ <?php echo Tag::endForm() ?>

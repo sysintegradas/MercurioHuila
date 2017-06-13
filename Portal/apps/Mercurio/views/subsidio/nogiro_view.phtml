@@ -1,0 +1,103 @@
+<?php View::getContent(); ?>
+<script>
+$(document).ready(function(){   
+    $('[data-toggle="tooltip"]').tooltip();
+});
+
+buscar = function(){
+    if($('#perini').val() == ""){
+        $('#perini').focus();
+        Messages.display("El periodo inicial no puede ser vacio","warning");
+        return;
+    }if($('#perfin').val() == ""){
+        $('#perfin').focus();
+        Messages.display("El periodo final no puede ser vacio","warning");
+        return;
+    }if($('#perini').val().substring(4,6) == 00){
+        $('#perini').focus();
+        Messages.display("Verifique que el periodo el mes sea diferente a 00","warning");
+        return;
+    }if($('#perfin').val().substring(4,6) == 00){
+        $('#perfin').focus();
+        Messages.display("Verifique que el periodo el mes sea diferente a 00","warning");
+        return;
+    }else{
+        if($('#perini').val() > $('#perfin').val()){
+            $('#perini').focus();
+            Messages.display("El periodo inicial no puede ser mayor al periodo final","warning");
+            return;
+        }else{
+            var perini = $('#perini').val();
+            var perfin = $('#perfin').val();
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("subsidio/nogiro"),
+                data: {
+                    perini: perini,
+                    perfin: perfin,
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response == false){
+                    Messages.display("El ano ingresado no existe, digite un año valido","warning");
+                }
+                $("#respuesta").html(response); 
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+    }
+}
+valperini = function(){
+    if($('#perini').val().length !='6'){
+        Messages.display("El ano dingresado no es valido, digite un año valido","warning");
+        $('#perini').val("");
+        $('#perini').focus();
+    }
+    if($('#perini').val().substring(4,6) == 00){
+        $('#perini').focus();
+        Messages.display("Verifique que el periodo el mes sea diferente a 00","warning");
+        return;
+    }        
+}
+valperfin = function(){
+    if($('#perfin').val().length !='6'){
+        Messages.display("El ano dingresado no es valido, digite un año valido","warning");
+        $('#perfin').val("");
+        $('#perfin').focus();
+    }
+    if($('#perfin').val().substring(4,6) == 00){
+        $('#perfin').focus();
+        Messages.display("Verifique que el periodo el mes sea diferente a 00","warning");
+        return;
+    }        
+}
+</script>
+<?php echo Tag::form(Router::getController()."/nogiro","id: form","autocomplete: off","enctype: multipart/form-data"); ?>
+<div class="col-sm-12">
+    <table class="contenedor" style="margin: auto; border-collapse: separate; border-spacing: 5px;" width="95%">
+        <div class="col-sm-12" > 
+            <div class="col-sm-2"><label>Periodo Inicial:</label></div>
+            <div class="col-sm-3">
+                <div class="input-group" >
+                    <div class="input-group-addon"  ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"  data-toggle="tooltip" title="Debe ingresar el per&iacute;odo para realizar la consulta, el per&iacute;odo se compone de a&ntilde;o-mes (201601)"  ></span></div>
+                    <?php echo Tag::numericField("perini","class: form-control col-sm-10","style: margin-left: -3%; ","maxlength: 6","onchange: valperini()"); ?>
+                </div>
+            </div>
+            <div class="col-sm-2"><label>Periodo Final:</label></div>
+            <div class="col-sm-3">
+                <div class="input-group" >
+                    <div class="input-group-addon"  ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"  data-toggle="tooltip" title="Debe ingresar el per&iacute;odo para realizar la consulta, el per&iacute;odo se compone de a&ntilde;o-mes (201602)"  ></span></div>
+                    <?php echo Tag::numericField("perfin","class: form-control col-sm-10","style: margin-left: -3%; ","maxlength: 6","onchange: valperfin()"); ?>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div><?php echo Tag::Button("Buscar",'class: btn btn-success',"onclick: buscar();") ?></div>
+            </div>
+        </div>
+    </table>
+</div>
+<?php echo Tag::endForm(); ?>
+<div id='respuesta'> </div>  

@@ -1,0 +1,175 @@
+<?php echo View::getContent(); ?>
+
+<script type="text/javascript">
+
+elem = '';
+id  = '';
+Event.observe(window,'load',function(){
+    $('vista').setStyle({
+        'width': '1000px',
+        'marginLeft': '-40px'
+      });
+});
+
+function completar(id_,elem_){
+    UI.Window.addMethods({
+        CloseWinEmpresa: function(){
+        this.destroy();
+        }
+    });
+   manager = new UI.WindowManager({
+      container: 'captura'
+   });
+    var ventana = new UI.Window({
+            id: 'empresaWin',
+            theme: 'leopard',
+            //minimize: false,
+            //maximize: false,
+            ////resizable: false,
+            close: 'CloseWinEmpresa',
+            width: 771,
+            height: 230, 
+    });
+    ventana.center().setHeader("Certificado de aprobación").show();
+    ventana.activate();
+    manager.register(ventana);
+    
+    new Ajax.Request(Utils.getKumbiaURL("mercurio30/formulario"), {
+        parameters:{
+            id : id_
+        },
+        asyncronous: false,
+        onSuccess: function(transport){
+            formu = transport.responseText.evalJSON();
+            ventana.setContent(formu).show();
+            val = new Validator();
+            val.addField('contratista','select',null,{'alias': 'conntratista','isNull': false});
+            val.addField('sector','select',null,{'alias': 'sector','isNull': false});
+            val.addField('fecafi','date',null,{'alias': 'fechaAfiliacion','isNull': false});
+            val.addField('fecapo','date',null,{'alias': 'fechaAportes','isNull': false});
+            val.addField('tipapo','select',null,{'alias': 'Tipo Aportante','isNull': false});
+            val.addField('claapo','select',null,{'alias': 'Clase de Aportante','isNull': false});
+            val.addField('indice','select',null,{'alias': 'Indice','isNull': false});
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+    id = id_;
+    elem = elem_;
+return;
+
+}
+
+function verdoc(empresa){
+    UI.Window.addMethods({
+        CloseWinEmpresa: function(){
+            this.destroy();
+        }
+    });
+   manager = new UI.WindowManager({
+      container: 'captura'
+   });
+    var ventana = new UI.Window({
+            id: 'empresaWin',
+            theme: 'leopard',
+            //minimize: false,
+            //maximize: false,
+            ////resizable: false,
+            close: 'CloseWinEmpresa',
+            width: 400,
+            height: 470, 
+    });
+    ventana.center().setHeader("Documentación Empresa No."+ empresa).show();
+    ventana.activate();
+    manager.register(ventana);
+    new Ajax.Request(Utils.getKumbiaURL("mercurio30/verdocumentos"),{
+        parameters: {
+            empresa: empresa,
+        },
+        
+        onSuccess: function(transport){
+            lista = transport.responseText.evalJSON();
+            ventana.setContent(lista).show();
+        },
+
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }    
+    });
+}
+
+  function aprobarF(){
+    if(!val.valide()){
+        Messagespro.valide(val);    
+        return;
+    }
+    var com = confirm("Seguro de Aprobar esta Empresa ?");
+    if(com==false)return;
+   new Ajax.Request(Utils.getKumbiaURL("mercurio30/aprobar"), {
+      parameters: {
+        id: id,
+        contratista: $F('contratista'),
+        //colegio: $F('colegio'),
+        //resafi: $F('resafi'),
+        fecafi: $F('fecafi'),
+        fecapo: $F('fecapo'),
+        claapo: $F('claapo'),
+        indice: $F('indice'),
+        tipapo: $F('tipapo'),
+        sector: $F('sector'),
+        //observacion: $F('observacion')
+      },
+
+      onSuccess: function(transport){
+        response = transport.responseText.evalJSON();
+        if(response['flag']==true){
+          //ventana.CloseWinEmpresa();
+          $('empresaWin').remove();
+          elem = elem.up();
+          elem.remove();
+          Messagespro.display(Array(response['msg']),"success");
+        }else{
+          Messagespro.display(Array(response['msg']),"warning");
+        }
+      },
+      onFailure: function(transport){
+        alert(transport.responseText);
+      }
+    });
+  }
+  
+function rechazar(nit,elem){
+    var com = confirm("Seguro de Rechazar esta Empresa ?");
+    if(com==false)return;
+    var motivo = prompt("Motivo de Rechazo?","");
+    if(motivo=="" || motivo==null){
+        alert("Debe digitar un Motivo");
+        return;
+    }
+    elem = elem.up();
+    new Ajax.Request(Utils.getKumbiaURL("mercurio30/rechazar"), {
+      parameters: {
+        nit: nit,
+        motivo: motivo
+      },
+      onSuccess: function(transport){
+        var response = transport.responseText.evalJSON();
+        if(response['flag']==true){
+          elem.remove();
+          Messagespro.display(Array(response['msg']),"success");
+        }else{
+          Messagespro.display(Array(response['msg']),"warning");
+        }
+      },
+      onFailure: function(transport){
+        alert(transport.responseText);
+      }
+    });
+  }
+
+</script>
+
+<?php
+  echo $html;
+?>

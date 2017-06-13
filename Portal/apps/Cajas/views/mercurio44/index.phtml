@@ -1,0 +1,61 @@
+<?php echo View::getContent(); ?>
+<script type="text/javascript">
+Event.observe(window,'load',function(){
+    $('vista').setStyle({
+        'width': '1000px',
+        'marginLeft': '-40px'
+      });
+});
+
+  function traerDatos(){
+    new Ajax.Request(Utils.getKumbiaURL("mercurio44/traerDatos"), {
+      parameters: {
+        usuario: $F('usuario') 
+      },
+      onSuccess: function(transport){
+        response = transport.responseText.evalJSON();
+        $('div_datos').innerHTML = response;
+      },
+      onFailure: function(transport){
+        alert(transport.responseText);
+      }
+    });
+  }
+
+  function AsignarOpcion(codare,codope,elem){
+    if(elem.checked==true)tipo=1;
+    else tipo=2;
+    new Ajax.Request(Utils.getKumbiaURL("mercurio44/AsignarOpcion"), {
+      parameters: {
+        usuario: $F('usuario'),
+        codare: codare,
+        codope: codope,
+        tipo: tipo
+      },
+      onSuccess: function(transport){
+        response = transport.responseText.evalJSON();
+        if(response['flag']==true){
+          Messagespro.display(Array(response['msg']),"success");
+        }else{
+          Messagespro.display(Array(response['msg']),"warning");
+          elem.checked=false;
+        }
+      },
+      onFailure: function(transport){
+        alert(transport.responseText);
+      }
+    });
+  }
+
+</script>
+
+<div align='center'>
+    <table align='center'>
+        <tr>
+            <td align="right"><b>Usuario:</b></td>
+            <td colspan="2"><?php echo Tag::select("usuario",$Gener02->find(),"using: usuario,nombre","use_dummy: true","onchange: traerDatos();") ?></td>
+        </tr>
+    </table>
+</div>
+<div id='div_datos'>
+</div>

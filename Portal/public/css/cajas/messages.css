@@ -1,0 +1,78 @@
+/**
+ *  * Menssages
+ *   */
+#-messages {
+    position: fixed;
+    right: 10px;
+    width: 250px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    text-align: right;
+}
+
+#-messages table {
+    width: 100%;
+    margin-bottom: -10px;
+}
+
+#-messages table tr td {
+    vertical-align: middle;
+    padding: 0;
+}
+
+#-messages img{
+    float: left;
+    margin: 12px 4px 12px 12px;
+}
+
+#-messages ul {
+    list-style: none;
+    margin: 8px;
+    padding: 0;
+}
+
+#-messages ul li {
+    margin: 5px;
+    font-size: 0.98em;
+    text-align: left;
+}
+
+#-messages p {
+    position: relative;
+    margin: 0 15px;
+    font-size: 8pt;
+    font-style: italic;
+    color: #444;
+}
+
+#-messages.success {
+    border: 1px solid green;
+    background: #cfc;
+    color: #252;
+}
+
+#-messages.error {
+    border: 1px solid red;
+    background: #fcc;
+    color: #522;
+}
+
+#-messages.warning {
+    border: 1px solid yellow;
+    background: #ffc;
+    color: #552;
+}
+
+#-messages.info{
+    border: 1px solid blue;
+    background: #DEE;
+    color: #225;
+}
+
+#-messages.warning a {
+    color: #786;
+}
+
+
+

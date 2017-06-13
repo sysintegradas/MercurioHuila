@@ -1,0 +1,13 @@
+<?php View::getContent(); ?>
+<?php echo $script; ?>
+<br>
+<?php echo Tag::form(Router::getController()."/actdatobl","id: form","autocomplete: off","enctype: multipart/form-data"); ?>
+<div>
+<table>
+  <?php echo $html; ?>
+  <tr>
+    <td colspan=2 align="center"><?php echo Tag::button("Actualizar","class: submit","onclick: Guardar();"); ?></td>
+  </tr>
+  </table>
+</div>
+<?php echo Tag::endForm(); ?>

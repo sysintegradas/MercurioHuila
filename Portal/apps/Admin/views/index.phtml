@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+ <head>
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
+  <?php
+    echo Tag::getDocumentTitle();
+    Tag::stylesheetLink('style');
+    Tag::stylesheetLink('chosen/chosen');
+    Tag::stylesheetLink('mercurio/mercurio');
+    echo Tag::stylesheetLinkTags();
+    echo Tag::stylesheetLink('themes/window/leopard');
+    echo Tag::stylesheetLink("calendar", true);
+
+    Tag::addJavascript('core/base-source');
+    echo Tag::addJavascriptFramework('prototype');
+    echo Tag::getJavascriptLocation();
+    echo Tag::javascriptSources();
+    echo Tag::javascriptLibrary("framework/scriptaculous/window");
+    echo Tag::javascriptLibrary("framework/scriptaculous/effects");
+    echo Tag::javascriptLibrary("framework/scriptaculous/scriptaculous");
+    echo Tag::javascriptLibrary("framework/chosen");
+    echo Tag::javascriptLibrary("detalle");
+    echo Tag::javascriptLibrary("calendar");
+    echo Tag::javascriptLibrary("tiny_mce/tiny_mce");
+    echo Tag::javascriptLibrary("validator");
+    echo Tag::javascriptLibrary("event.simulate");
+  ?>
+  <title><?php echo Session::getData("title")?></title>
+ </head>
+ <body id="desktop">
+  <?php View::getContent(); ?>
+ </body>
+</html>

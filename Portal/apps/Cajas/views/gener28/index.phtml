@@ -1,0 +1,110 @@
+<?php echo View::getContent(); ?>
+
+<script type="text/javascript">
+    var val = new Validator();
+    Event.observe(window, 'load',function(){
+        val.addField("tipfun","select",null,{'alias': 'Funcionario','isNull': false});
+        $('tipfun').focus();
+    });
+
+    function traerFunciones(title,controller,type,otros){
+        motros = Object.toJSON(otros);
+        if(!val.valide()){
+            Messages.valide(val);
+            return;
+        }
+        new Ajax.Request(Utils.getKumbiaURL("gener28/traerFunciones"), {
+            asynchronous : false,
+            parameters: {
+                tipfun: $F('tipfun'),
+                controller: controller,
+                title: title,
+                type: type,
+                otros: motros
+            },
+            onSuccess: function(transport){
+                response = transport.responseText.evalJSON();
+                $('funciones').innerHTML = response;
+            },
+            onFailure: function(transport){
+                alert(transport.responseText);
+            }
+        });
+    }
+
+    function savePermiso(title,controller,tipfun,action,allow,type,otros){
+        new Ajax.Request(Utils.getKumbiaURL("gener28/savePermiso"), {
+            asynchronous : false,
+            parameters: {
+                controller: controller,
+                tipfun: tipfun,
+                action: action,
+                allow: allow
+            },
+            onSuccess: function(transport){
+                response = transport.responseText.evalJSON();
+                if(response['flag']==true)
+                    Messagespro.display(Array(response['msg']),"success");
+                else
+                    Messagespro.display(Array(response['msg']),"error");
+                traerFunciones(title,controller,type,otros);
+            },
+            onFailure: function(transport){
+                alert(transport.responseText);
+            }
+        });
+    }
+
+    function reporte(){
+        if(!val.valide()){
+            Messages.valide(val);
+            return;
+        }
+    }
+    
+ </script>
+
+ <style>
+    .menu{
+        width: 200px;
+        height: 350px;
+        overflow: auto;
+        margin-left: -400px;
+        border-style: solid;
+        border-width: 1px;
+    }
+
+    #funciones{
+        width: 200px;
+        height: 350px;
+        overflow: auto;
+        margin-left: 400px;
+        margin-top: -352px;
+        border-style: solid;
+        border-width: 1px;
+    }
+ </style>
+
+<div id='botones' align='right'>
+    <table>
+        <tr>
+            <td><?php echo Tag::image("reporte.png","title: Reporte","class: boton","onclick: reporte()") ?></td>
+            <td><?php echo Tag::linkTo("gener28/index",Tag::image("exit.png","title: Cancelar","class: boton")) ?></td>
+        </tr>
+    </table>
+</div>
+
+<div align='center'>
+    <table align='center'>
+        <tr>
+            <td align='right'><b>Funcionario:</b></td>
+            <td align='left'><?php echo Tag::select("tipfun",$Gener21->find(),"using: tipfun,detalle","use_dummy: true") ?></td>
+        </tr>
+    </table>
+</div>
+<div class='menu'>
+    <?php echo $menu; ?>
+</div>
+
+<div id='funciones'>
+</div>

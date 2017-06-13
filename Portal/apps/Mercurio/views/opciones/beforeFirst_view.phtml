@@ -1,0 +1,55 @@
+<?php echo View::getContent(); ?>
+<script type="text/javascript">
+    var val = new Validator();
+    Event.observe(document, 'dom:loaded', function(){
+      val.addField("tipo","text",null,{'alias': 'Tipo','isNull': false,'doToUpperCase': false});
+      val.addField("documento","text",null,{'alias': 'Documento','isNull': false,'doToUpperCase': false});
+    });
+    Guardar = function(){
+        if(!val.valide()){
+            Messages.valide(val);
+            return;
+        }
+        new Ajax.Request(Utils.getKumbiaURL("opciones/beforeFirst"), {
+            asynchronous : false,
+            parameters: {
+                tipo: $F('tipo'),
+                documento: $F('documento')
+            },
+            onSuccess: function(transport){
+                response = transport.responseText.evalJSON();
+                if(response['flag']==true){
+                    Messages.display(Array(response['msg']),"info");
+                    window.location = Utils.getKumbiaURL("opciones/primera_view");
+                }else{
+                    Messages.display(Array(response['msg']),"warning");
+                }
+            },
+            onFailure: function(transport){
+                alert(transport.responseText);
+            }
+        });
+    }
+ </script>
+
+<?php echo Tag::form("","autocomplete: off"); ?>
+<div align='center' style="margin-top: 20px;">
+    <table align='center'>
+        <tr>
+            <td align="right"><label>Tipo:</label></td>
+            <td align="left"><?php echo Tag::select("tipo",$Mercurio06->find(),"using: tipo,detalle","use_dummy: true") ?></td>
+        </tr>
+        <tr>
+            <td align="right"><label>Documento:</label></td>
+            <td align="left"><?php echo Tag::numericField("documento") ?></td>
+        </tr>
+    </table>
+</div>
+<div align='center' style="margin-top: 20px;">
+  <table width='100%'>
+    <tr>
+      <td align="center"><?php echo Tag::button("Verificar","class: submit","onclick: Guardar();","style: width: 35%;") ?></td>
+    </tr>
+  </table>
+</div>
+<?php echo Tag::endForm(); ?>

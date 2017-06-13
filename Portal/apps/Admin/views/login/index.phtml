@@ -1,0 +1,55 @@
+<?php echo View::getContent() ?>
+<?php echo Tag::addJavascript('mercurio/mercurio');?>
+
+<script type="text/javascript">
+    var val = new Validator();
+    Event.observe(window, 'load',function (){
+        $('user').focus();
+        val.addField("user","text",null,{'alias': 'Usuario','isNull': false});
+        val.addField("password","text",null,{'alias': 'Password','isNull': false});
+    })
+    function Pasar() {
+        if(!val.valide()){
+            Messages.valide(val);
+        }else{
+            $("form").submit();
+        }
+    }
+</script>
+
+
+<div id="login">
+    <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+            <td class="izq"></td>
+            <td class="centro"></td>
+            <td class="der"></td>
+        </tr>
+    </table>
+</div>
+
+<?php echo Tag::form("login/autenticar","id: form","autocomplete: off") ?>
+    <table id="campos" style="position: absolute;" border="0">
+        <tr >
+            <td rowspan="8" ><?php echo Tag::image("portal/logomercurio2.png","style: margin-top: -20px; margin-left: 20px;","width: 400px","height: 200px"); ?></td>
+        </tr>
+        <tr>
+            <td align="right"><b>Sign In</b></td>
+        </tr>
+        <tr>
+            <td align="right"><b>&nbsp;</b></td>
+        </tr>
+        <tr>
+            <td align="right"><b>UserName:</b></td>
+            <td align="left"><?php echo Tag::textField("user") ?></td>
+        </tr>
+        <tr>
+            <td align="right"><b>Password:</b></td>
+            <td align="left"><?php echo Tag::passwordField("password","value: ") ?></td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td align="center"><?php echo Tag::Button("Entrar","onclick: Pasar()") ?></td>
+        </tr>
+    </table>
+<?php echo Tag::endForm() ?>

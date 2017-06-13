@@ -1,0 +1,1025 @@
+<?php 
+Tag::stylesheetLink('portal/login');
+?>
+<script type="text/javascript">
+$(document).ready(function(){   
+    $('[data-toggle="tooltip"]').tooltip();
+        $("#form").validate({
+            rules: {
+                email: { required:true},
+                clavenue: { required:true},
+                clavecon: { required:true},
+                pregunta1: { required:true},
+                respuest1: { required:true},
+                pregunta2: { required:true},
+                respuest2: { required:true},
+                registra: { required:true},
+                autoriza: { required:true},
+            },
+        }); 
+});
+ registrar = function(){
+        if($("#email").val()=="" || $("#clavenue").val()=="" || $("#clavecon").val()=="" || $("#preunta1").val()=="@" || $("#respuest1").val()=="" || $("#pregunta2").val()=="@" || $("#respuest2").val()=="" || $('input:radio[name=registra]:checked').val()==undefined || $('input:radio[name=autoriza]:checked').val()==undefined){
+            Messages.display("Faltan Campos por digitar","warning");
+            $("#email").focus();
+        }else{
+            if(!$("#form").valid()){
+                Messages.display("Faltan Campos por Digitar","error");
+                 return;
+            }
+            if($('#pregunta1').val()=="" && $('#pregunta2').val()==""){
+              Messages.display(Array("Las claves no Pueden ser vacias"),"warning");
+              return;
+            }
+            if($('#pregunta1').val()==$('#pregunta2').val()){
+              Messages.display(Array("Las Preguntas no pueden ser las mismas"),"warning");
+              return;
+            }
+            if($('#respuesta').val()==$('#clavenue').val() || $('#respuesta').val()==$('#clavenue').val()){
+              Messages.display(Array("Las Preguntas no pueden ser la misma que la clave"),"warning");
+              return;
+            }
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("opciones/cambiarClavePri"),
+                data: {
+                    autoriza: "S",
+                    email: $('#email').val(),
+                    pregunta1: $('#pregunta1').val(),
+                    respuest1: $('#respuest1').val(),
+                    pregunta2: $('#pregunta2').val(),
+                    respuest2: $('#respuest2').val(),
+                    clavenue: $('#clavenue').val(),
+                    clavecon: $('#clavecon').val(),
+                    registra: $('input:radio[name=registra]:checked').val(),
+                    agencia: $('#agencia').val(),
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response['flag']==true){
+                    Messages.display(Array(response['msg']),"success");
+                    window.location = Utils.getKumbiaURL("principal/index");
+                }else{
+                    Messages.display(Array(response['msg']),"warning");
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+    }
+
+    function Pasar() {
+        if($("#user").val()=="" || $("#password").val()=="" || $('input:radio[name=tipo]:checked').val()==undefined){
+            Messages.display("Faltan Campos por digitar","warning");
+            $("#user").focus();
+        }else{
+            $("#form").validate({
+                rules: {
+                    user: { required:true},
+                    password: { required:true},
+                    tipo: { required:true},
+                },
+            });
+            if($('#coddoc').val() == '@'){
+                Messages.display("El tipo de documento no puede ser vacio","error");
+                 return;
+            }
+            if(!$("#form").valid()){
+                Messages.display("Faltan Campos por Digitar","error");
+                 return;
+            }else{
+                var request  = $.ajax({
+                    type: "POST",
+                    url:Utils.getKumbiaURL("login/autenticar"),
+                    data: $("#form").serialize(),
+                });
+                request.done(function( transport ) {
+                    var response = jQuery.parseJSON(transport);
+                    console.log(response);
+                    if(response['msg']=="Ip no registrada"){
+                        traerPreg();
+                    }else{
+                        if(response['flag']==true){
+                            Messages.display(response['msg'],"success");
+                            window.location.href= Utils.getKumbiaURL("principal");
+                        }else{
+                            Messages.display(response['msg'],"warning");
+                        }
+                    }
+                });
+                request.fail(function( jqXHR, textStatus ) {
+                    Messages.display(response['msg'],"error");
+                });
+            }
+        }
+    }
+
+    Guardar = function(){
+        if(!$("#form").valid()){
+            Messages.display("Faltan Campos por Digitar","error");
+             return;
+        }
+        tipoVal = $('input:radio[name=tipoVal]:checked').val();
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("opciones/respuestas"),
+            data: {
+                tipoVal: tipoVal,
+                documentoVal: $('#documentoVal').val(),
+                respuesta1: $('#respuesta1').val(),
+                respuesta2: $('#respuesta2').val(),
+            }
+        });
+        request.done(function( transport ) {
+            //var response = transport;
+            var response = jQuery.parseJSON(transport);
+            if(response['flag']==true){
+                tipo = $('input:radio[name=tipoVal]:checked').val();
+                pregunta1 = response['pregunta1_cod'];
+                pregunta2 = response['pregunta2_cod'];
+                $('#pregunta1').val(response['pregunta1_cod']);
+                $('#pregunta2').val(response['pregunta2_cod']);
+                $('#preg1').html(response['pregunta1_det']);
+                $('#preg2').html(response['pregunta2_det']);
+                $("#enviar").show();
+                $("#verificarres").hide();
+            }else{
+                Messages.display(response['msg'],"error");
+                $("#enviar").hide();
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+
+    function contestar(){
+        if(!$("#form").valid()){
+            Messages.display("Faltan Campos por Digitar","error");
+             return;
+        }
+        if($('#respuesta1').val()=="" || $('#respuesta2').val()==""){
+          Messages.display(Array("Debe de Contestar las Preguntas"),"warning");
+          return;
+        }
+        tipoVal = $('input:radio[name=tipoVal]:checked').val();
+        var contes = false;
+        var msg = '';
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("opciones/contestar"),
+            //asynchronous : false,
+            data: {
+                tipoVal: tipoVal,
+                documento: $('#documentoVal').val(),
+                pregunta1: pregunta1,
+                respuesta1: $('#respuesta1').val(),
+                pregunta2: pregunta2,
+                respuesta2: $('#respuesta2').val(),
+            },
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+                if(response['flag']==true){
+                    Messages.display(Array(response['msg']),"info");
+                    contes = true;
+                    msg = response['msg'];
+            //return window.location=(Utils.getKumbiaURL("login/index/"+msg));
+            return window.location=(Utils.getKumbiaURL("login/index"));
+                }else{
+                    //$('#verificarres').show();
+                    Messages.display(Array(response['msg']),"warning");
+                }
+            //var response = transport;
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+    function cancelar(){
+        $('#modalPreguntas').modal('toggle')
+    }
+
+    Verificar = function(){
+        if($("#coddocVal").val()==""){
+            Messages.display("El tipo de documento no puede ser vacio","warning");
+            return;
+        }if($("#documentoVal").val()==""){
+            Messages.display("El documento no puede ser vacio","warning");
+            $("#documentoVal").focus();
+        }else{
+            if(!$("#form").valid()){
+                Messages.display("Faltan Campos por Digitar","error");
+                 return;
+            }
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("opciones/preguntas"),
+                data: {
+                    tipoVal: $('input:radio[name=tipoVal]:checked').val(),
+                    documentoVal: $('#documentoVal').val(),
+                    coddocVal: $('#coddocVal').val(),
+                }
+            });
+            request.done(function( transport ) {
+                //var response = transport;
+                var response = jQuery.parseJSON(transport);
+                console.log(response);
+                if(response['flag']==true){
+                    $('#modalOlvidoContra').modal('toggle')
+                    $('#modalPreguntas').modal('show')
+                        $('#pregunta1').html(response['pregunta1_cod']);
+                        $('#pregunta2').html(response['pregunta2_cod']);
+                        $('#preg1').html(response['pregunta1_det']);
+                        $('#preg2').html(response['pregunta2_det']);
+                    }else{
+                        Messages.display(Array(response['msg']),"warning");
+                    }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+    }
+
+    function registrar(){
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("opciones/preguntas"),
+            data: {
+                tipoVal: $('input:radio[name=tipoVal]:checked').val(),
+                documentoVal: $('#documentoVal').val(),
+            }
+        });
+        request.done(function( transport ) {
+            //var response = transport;
+            var response = jQuery.parseJSON(transport);
+            if(response['flag']==true){
+                window.location.href = Utils.getKumbiaURL("opciones/preguntas");
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+
+    function olvido(){
+        $('#olvido-modal').modal();
+    }    
+
+    beforeFirst  = function(){
+        if($("#coddocIng").val()=="@"){
+            Messages.display("El tipo de documento no puede ser vacio","warning");
+            return;
+        }if($("#documentoIng").val()==""){
+            Messages.display("El documento no puede ser vacio","warning");
+            $("#documentoIng").focus();
+        }else{
+            if(!$("#form").valid()){
+                Messages.display("Faltan Campos por Digitar","error");
+                 return;
+            }
+            tipoIng = $('input:radio[name=tipoIng]:checked').val();
+            documentoIng = $("#documentoIng").val();
+            coddocIng = $("#coddocIng").val();
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("opciones/beforeFirst"),
+                data: {
+                    tipoIng: tipoIng,
+                    documentoIng: documentoIng,
+                    coddocIng: coddocIng,
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response['flag']==true){
+                    $('#modalIngresar').modal('toggle')
+                    $('#modalIngreso').modal('show')
+                }else{
+                    Messages.display(Array(response['msg']),"warning");
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+    }
+mostrarhabeas = function(){
+    $('#modalHabeas').modal('show')
+}
+
+ocultarhabeas = function(aut){
+    console.log(aut);
+    if(aut == "S"){
+        $("#autoriza").prop('checked',true)
+    }else{
+        $("#autoriza").prop('checked',false)
+    }
+    $('#modalHabeas').modal('toggle')
+}
+
+validaemail = function(){
+    expr = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    var email = $('#email').val();
+    console.log(email);
+    if(email==""){
+        Messages.display("El email no puede ser vacio","error");
+        $('#email').focus();
+    }
+    if(!expr.test(email) || $("#email").val()==""){
+        Messages.display("Email invalido","error");
+        $('#email').focus();
+        $('#email').val("");
+    }
+}
+    function traerPreg(){
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("opciones/preguntas"),
+            data: {
+               documentoVal: $('#user').val(),
+               tipoVal: $('input:radio[name=tipo]:checked').val(),
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            $('#modalRegistrarIp').modal('show');
+            $("#resp1").val("");
+            $("#resp2").val("");
+            $("#registraIp").val()==false;
+            $('#pregunt1').html(response['pregunta1_det']);
+            $('#pregunt2').html(response['pregunta2_det']);
+            pregunt1 = response['pregunta1_cod'];
+            pregunt2 = response['pregunta2_cod'];
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+        
+    }
+    registrarIp = function(response){
+        if($("#resp1").val()=="" || $("#resp2").val()=="" || $("#registraIp").val()==false){
+            Messages.display("Faltan Campos por digitar","warning");
+        }else{
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("opciones/verificarIp"),
+                data: {
+                   registra: $('#registraIp').val(),
+                   pregunta1: pregunt1,
+                   respuesta1: $('#resp1').val(),
+                   pregunta2: pregunt2,
+                   respuesta2: $('#resp2').val(),
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response['flag']==true){
+                    window.location = Utils.getKumbiaURL("principal/index");
+                }else{
+                    Messages.display(Array(response['msg']),"warning");
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+    }
+
+    function reportAbuso(){
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("login/reportAbuso"),
+            data: {
+               nombrerep: $('#nombrerep').val(),
+               documentorep: $('#documentorep').val(),
+               empresarep: $('#empresarep').val(),
+               asuntorep: $('#asuntorep').val(),
+               correorep: $('#correorep').val(),
+               mensajerep: $('#mensajerep').val(),
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            if(response['flag'] == "true"){
+                Messages.display(response['msg'],"success");
+            }else{
+                Messages.display(response['msg'],"error");
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+        
+    }
+</script>
+<?php Session::setDATA('title','Login')?>
+<div class='general'> <!-- inicia general -->
+    <header class='header'> <!-- inicia header -->
+        <?php echo Tag::image("img_portal_nuevo/logo.png"); ?>
+        <div class="barra"> <!-- inicia barra -->
+            <div class="barra-left"> <!-- inicia barra -->
+                SERVICIO EN LINEA
+            </div> <!-- fin barra -->
+            <div class="barra-right"> <!-- inicia barra -->
+                <?php 
+                    setlocale(LC_ALL,"es_ES");
+                    echo strftime("%d de %B del %Y");
+                    //echo date('j \d\e F \d\e Y'); 
+                ?>
+                <?php //echo date('j \d\e F \d\e Y g\:i a'); ?>
+            </div> <!-- fin barra -->
+        </div> <!-- fin barra -->
+    </header> <!-- fin header -->
+    <div class='container'> <!-- inicia cuerpo -->
+        <div class='login'> <!-- inicia login -->
+            <?php echo Tag::form("login/autenticar","id: form","autocomplete: off") ?>
+            <div class='login_titulo'>
+                Usuario registrado    
+            </div> 
+            <div class='login_contenido'>
+                <!--
+                <div class="textos_login">
+                    Tipo de documento
+                </div>
+                <div>
+                    <?php //echo Tag::selectStatic("docuser",$coddoc,"use_dummy: true","class: form-control","style: width: 85%; margin-left: 8%;"); ?>
+                </div>
+                -->
+                <div class="textos_login">
+                    Tipo de documento
+                </div>
+                <div class="textos_login">
+                    <?php echo Tag::selectStatic("coddoc",$coddoc,"use_dummy: true","class: form-control","style: width: 90%;"); ?>
+                </div>
+                <div class="textos_login">
+                    Documento de identificación
+                </div>
+                <div>
+                    <?php echo Tag::numericField("user","class: usuario") ?>
+                </div>
+                <div class="textos_login" >
+                    Contraseña 
+                </div>
+                <div>
+                   <?php echo Tag::passwordField("password","class: clave","maxlength: 10") ?>
+                </div>
+                <div class="radios">
+                    <input type="radio" name="tipo" class='tipo' value="E"> Empresa
+                    <input type="radio" name="tipo" class='tipo' value="T"> Afiliado  
+                    <input type="radio" name="tipo" class='tipo' value="P"> Particular
+                </div>
+                <div>
+                    <?php echo Tag::Button("Ingresar","class: btn btn-success","onclick: Pasar()","style: margin-top: 4%; width: 70%" ) ?>
+                </div>
+                <?php echo Tag::endForm(); ?>
+                <div>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalOlvidoContra"  style='margin-top: 2%; width: 70%'>Olvido su contraseña</button>
+                </div>
+            </div> 
+        </div> <!-- fin login -->
+        <div class='publicidad'> <!-- inicia video y banner -->
+            <div id="carousel-generic" class="carousel slide" data-ride="carousel">
+                <!-- Indicators -->
+                <ol class="carousel-indicators">
+                    <li data-target="#carousel-generic" data-slide-to="0" class="active"></li>
+                    <li data-target="#carousel-generic" data-slide-to="1"></li>
+                </ol>
+                <!-- Wrapper for slides -->
+                <div class="carousel-inner" role="listbox">
+                    <?php echo $banner ?>
+                </div>
+                <!-- Controls -->
+                <a class="left carousel-control" href="#carousel-generic" role="button" data-slide="prev">
+                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="right carousel-control" href="#carousel-generic" role="button" data-slide="next">
+                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </div> <!-- fin video y banner -->
+        <div class="col-sm-12">
+            <!--
+            <div class='primera '> 
+                <div class='primera_text'>
+                    <strong>  Desea reportar algun problema?</strong> 
+                </div>
+                <div>
+                    <button type="button" class="btn btn-warning " data-toggle="modal" data-target="#modalAbuso">Reporte de Abuso</button>
+                </div>
+            </div> 
+            -->
+            <div class='primera '> 
+                <div class='primera_text'>
+                    <strong>  Es su primera vez en nuestro sistema de Servicio en línea ?</strong> 
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#modalIngresar">Registrarse aquí</button>
+                </div>
+            </div> 
+            <div class='videos'>
+                <div class='video1'>
+                    <a href="https://youtu.be/-BbgLcsss3Y" target="_blank"> <?php echo Tag::image("img_portal_nuevo/video1.jpg") ?> </a>
+                </div>
+                <div class='video2'>
+                    <a href="https://youtu.be/pCKgLpukJ_0" target="_blank"> <?php echo Tag::image("img_portal_nuevo/video2.jpg") ?> </a>
+                </div>
+                <div class='video3'>
+                    <a href="https://youtu.be/icN3PwBflBY" target="_blank"> <?php echo Tag::image("img_portal_nuevo/video3.jpg") ?> </a>
+                </div>
+            </div>
+        <div>
+        <div class='col-sm-12'>
+            <div class='primera' style='margin-top: -2%;'> 
+                <div class='primera_text' style='margin-left: 12%;'>
+                    <strong>  Desea reportar algun problema?</strong> 
+                </div>
+                <div>
+                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalAbuso">Reporte de Abuso</button>
+                </div>
+            </div> 
+        <div>
+    </div> <!-- fin cuerpo -->
+
+    <footer> <!-- inicio footer -->
+        <div class="politicas"> 
+            <strong>Políticas de Privacidad</strong>
+        </div> 
+        <div class="terminos_condiciones"> 
+            <strong>Términos y Condiciones</strong>
+        </div> 
+        <div class="linea"> 
+            Atención al usuario a través de nuestra línea gratuita 01 8000 918869
+        </div> 
+        <div class="vigilado"> 
+            <?php echo Tag::image("icontec.png","style: width: 20%; height: 30%;")?>
+            <?php echo Tag::image("portal/logos/vigilado2014.png","style: width: 46%; height: 100%;")?>
+        </div> 
+    </footer> <!-- fin footer -->
+</div> <!-- fin general -->
+
+
+
+
+    <div class="modal fade" id="modalIngresar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title barra barra-center" id="myModalLabel">Tipo de Ingreso</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="width: 80%; margin-left: auto; margin-right: auto;";>
+                        <form class="form-horizontal" >
+                            <div class="form-group">
+                                <div class="radios2">
+                                    <h5 class="modal-title" id="myModalLabel">Tipo de Ingreso</h5>
+                                    <input type="radio" name="tipoIng" class='tipoIng' value="E"> Empresa
+                                    <input type="radio" name="tipoIng" class='tipoIng' value="T"> Trabajador 
+                                    <input type="radio" name="tipoIng" class='tipoIng' value="P"> Particular
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class='col-md-12'>
+                                    <div class='col-md-2'>
+                                        <h5 class="modal-title" id="myModalLabel" style='text-align: center;'>Documento</h5>
+                                    </div>
+                                    <div class='col-md-10'>
+                                        <h5 class="modal-title" id="myModalLabel" style='text-align: center;'>N&uacute;mero de Documento</h5>
+                                    </div>
+                                </div>
+                                <div class='col-md-12'>
+                                    <div class='col-md-4'>
+                                        <div class="input-group">
+                                            <!--
+                                            <div class="input-group-addon">
+                                                <span class="glyphicon glyphicon-user" aria-hidden="true"  data-toggle="tooltip" title="Por favor escoja el documento con el cual se encuentra registrado"></span>
+                                            </div>
+                                            -->
+                                            <div>
+                                                <?php echo Tag::selectStatic("coddocIng",$coddoc,"use_dummy: true","class: form-control"); ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class='col-md-8'>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true" data-toggle="tooltip" title="Por favor ingrese el documento de identificacion con el cual desea ser registrado" ></span></div>
+                                            <input class="form-control col-sm-10" id="documentoIng" name="documentoIng" placeholder="Documento" onkeydown="NumericField.maskNum(event)">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-4 col-sm-10">
+                                    <button type="button" class="btn btn-success" onclick="beforeFirst()">Verificar Documento</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="modalOlvidoContra" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">    
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title barra barra-center" id="myModalLabel">Olvido su Contrase&ntilde;a</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="width: 80%; margin-left: auto; margin-right: auto;";>
+                        <form class="form-horizontal" >
+                            <div class="form-group">
+                                <div class="radios2">
+                                    <h5 class="modal-title" id="myModalLabel">Tipo de Ingreso</h5>
+                                    <input type="radio" name="tipoVal" id="tipoVal1" class='tipoVal' value="E"> Empresa
+                                    <input type="radio" name="tipoVal" id="tipoVal2" class='tipoVal' value="T"> Trabajador 
+                                    <input type="radio" name="tipoVal" id="tipoVal3" class='tipoVal' value="P"> Particular
+                                </div>
+                                <div class='col-md-12'>
+                                    <div class='col-md-2'>
+                                        <h5 class="modal-title" id="myModalLabel" style='text-align: center;'>Documento</h5>
+                                    </div>
+                                    <div class='col-md-10'>
+                                        <h5 class="modal-title" id="myModalLabel" style='text-align: center;'>N&uacute;mero de Documento</h5>
+                                    </div>
+                                </div>
+                                <div class='col-md-12'>
+                                    <div class='col-md-4'>
+                                        <div class="input-group">
+                                            <!--
+                                            <div class="input-group-addon">
+                                                <span class="glyphicon glyphicon-user" aria-hidden="true"  data-toggle="tooltip" title="Por favor escoja el documento con el cual se encuentra registrado"></span>
+                                            </div>
+                                            -->
+                                            <div>
+                                                <?php echo Tag::selectStatic("coddocVal",$coddoc,"use_dummy: true","class: form-control"); ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class='col-md-8'>
+                                        <div class="input-group">
+                                            <div class="input-group-addon">
+                                                <span class="glyphicon glyphicon-user" aria-hidden="true"  data-toggle="tooltip" title="Por favor ingrese el documento de identificacion con el cual se encuentra registrado"></span>
+                                            </div>
+                                            <div>
+                                                <input type="text" class="form-control col-sm-10" id="documentoVal" name="documentoVal" placeholder="Documento">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-6" style="text-align: center;">
+                                        <button type="button" class="btn btn-success" style="width: 70%; margin-top: 4%" onclick="Verificar()">Verificar Documento</button>
+                                    </div>
+                                    <div class="col-sm-6" style="text-align: center;">
+                                        <button type="button" class="btn btn-danger" style="text-align: center;width: 70%; margin-top: 4%" data-dismiss="modal">Cerrar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div >
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalPreguntas" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">    
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title barra barra-center" id="myModalLabel">Olvido Contrase&ntilde;a</h4>
+                </div>
+                <div class="modal-body">
+                        <form class="form-horizontal" >
+
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                <p>Estimado afiliado es importante recordarle que la seguridad de esta plataforma y uso es responsabilidad única y exclusiva de la empresa o persona a quien usted autorice. Por lo tanto tenga en cuenta que necesitara conocer las respuestas de seguridad para poder acceder al portal.</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label class="col-sm-12 control-label" id="preg1" ></label>
+                                </div>
+                                <div class="col-sm-6">
+                                    <?php echo Tag::textField("respuesta1","class: form-control") ?>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label class="col-sm-12 control-label" id="preg2" ></label>
+                                </div>
+                                <div class="col-sm-6">
+                                    <?php echo Tag::textField("respuesta2","class: form-control") ?>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12" align="center">
+                                      <?php echo Tag::button("Verificar","id: verificarres","class: btn btn-success","onclick: Guardar();") ?>
+                                      <?php echo Tag::button("Cancelar","class: btn btn-danger","onclick: cancelar();") ?>
+                                      <?php echo Tag::button("Contestar y enviar correo","id: enviar","class: btn btn-primary","style: display:none;","onclick: contestar();") ?>
+                                </div>
+                            </div>
+                        </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="modalIngreso" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style=" width: 60%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title barra barra-center" id="myModalLabel">Registro</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="width: 92%; margin-left: auto; margin-right: auto;";>
+                        <form class="form-horizontal" autocomplete="off">
+                            <div class="form-group" style=" width: 100%">
+                                <div class="col-sm-5">
+                                    <label class="col-sm-12 control-label">Email</label>
+                                </div>
+                                <div class="col-sm-5">
+                                    <?php echo Tag::textField("email","class: form-control","onkeypress: return valideOnlyEmail(event);","onblur: validaemail();") ?>
+                                </div>
+                                <div class="col-sm-5" style="margin-top: 5px;">
+                                    <label class="col-sm-12 control-label">Agencia</label>
+                                </div>
+                                <div class="col-sm-5" style="margin-top: 5px;">
+                                    <?php echo Tag::selectStatic("agencia",array('1'=>'NEIVA','2'=>'GARZON','3'=>'PITALITO','4'=>'LA PLATA'),"use_dummy: true","class: form-control"); ?>
+                                </div>
+                                <div class="col-sm-5">
+                                    <label class="col-sm-12 control-label">Contraseña</label>
+                                </div>
+                                <div class="col-sm-5" style="margin-top: 5px;">
+                                    <?php echo Tag::passwordField("clavenue","class: form-control","maxlength: 10") ?>
+                                </div>
+                                <div class="col-sm-5" style="margin-top: 5px;">
+                                    <label class="col-sm-12 control-label">Confirma su contraseña</label>
+                                </div>
+                                <div class="col-sm-5" style="margin-top: 5px;">
+                                    <?php echo Tag::passwordField("clavecon","class: form-control","maxlength: 10") ?>
+                                </div>
+                                <div class="col-sm-5" style="margin-top: 5px;">
+                                    <label class="col-sm-12 control-label">Pregunta de Seguridad</label>
+                                </div>
+                                <div class="col-sm-5" style="margin-top: 5px;">
+                                    <?php echo Tag::select("pregunta1",$Mercurio18->find(),"using: codigo,detalle","use_dummy: true","dummyText: Pregunta 1","class: form-control"); ?>
+                                </div>
+                                <div class="col-sm-5" style="margin-top: 5px;">
+                                    <label class="col-sm-12 control-label">Respuesta</label>
+                                </div>
+                                <div class="col-sm-5" style="margin-top: 5px;">
+                                    <?php echo Tag::textField("respuest1","placeholder: Respuesta 1","class: form-control") ?>
+                                </div>
+                                <div class="col-sm-5">
+                                    <label class="col-sm-12 control-label">Pregunta de Seguridad</label>
+                                </div>
+                                <div class="col-sm-5" style="margin-top: 5px;">
+                                    <?php echo Tag::select("pregunta2",$Mercurio18->find(),"using: codigo,detalle","use_dummy: true","dummyText: Pregunta 1","class: form-control"); ?>
+                                </div>
+                                <div class="col-sm-5" style="margin-top: 5px;">
+                                    <label class="col-sm-12 control-label">Respuesta</label>
+                                </div>
+                                <div class="col-sm-5" style="margin-top: 5px;">
+                                    <?php echo Tag::textField("respuest2","placeholder: Respuesta 2","class: form-control") ?>
+                                </div>
+                                <div class="col-sm-12" style="margin-top: 5px;">
+                                    <label class="col-sm-12 control-label">Quiere registrar este como su equipo seguro para futuros accesos al sistemas de Servicio en Linea ? </label>
+                                </div>
+                                <div class="col-sm-12" style=" text-align: center; margin-top: 5px;">
+                                    <input type="radio" name="registra" class='registra' value="S"> Si 
+                                    <input type="radio" name="registra" class='registra' value="N"> No
+                                </div>
+                                <div class="col-sm-12" style=" text-align: center; margin-top: 5px;">
+                                    <input type="radio" name="autoriza" class='autoriza' value="S" id="autoriza">
+                                    <a href="#" onclick="mostrarhabeas();"> T&eacute;rminos y condiciones</a>
+                                </div>
+                                <div class="col-sm-offset-1 col-sm-10" style=" text-align: center; margin-top: 5px;">
+                                    <button type="button" class="btn btn-success btn-lg" style="width: 40%" onclick="registrar()">Registrarse</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalHabeas" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">    
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title barra barra-center" id="myModalLabel">Términos y Condiciones</h4>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <div id="habeas">
+                            <p style="text-align: justify;">
+                            <b>1 AUTORIZACI&Oacute;N USO DE INFORMACION PERSONAL</b>
+                            <p>
+                                Autorizo a la Caja de Compensación Familiar del Huila en adelante COMFAMILIAR-HUILA, a realizar el tratamiento de mis datos personales y de mis beneficiarios, actividad que incluye la recolección, almacenamiento, actualización, uso, circulación, trasmisión, transferencia y supresión, para los siguientes fines:
+                            </p>
+                            <ul>
+                                <li>
+                                    A. En desarrollo del objeto social de COMFAMILIAR-HUILA, en su calidad de Caja de Compensación Familiar, en desarrollo de actividades que pueden ser prestadas directamente o con el apoyo de terceros, mediante la celebración de contratos o convenios, con quienes se compartirá mi información personal que se requiera, y mis datos personales, para los fines relacionados con el objeto contratado.
+                                </li>
+                                <li>
+                                    B. Para actividades de mercadeo y/o promoción de servicios propios del objeto social de COMFAMILIAR-HUILA o de terceros con quienes COMFAMILIAR-HUILA haya celebrado alianzas comerciales, convenios o contratos interinstitucionales o de colaboración, las cuales pueden ser adelantadas directamente por COMFAMILIAR-HUILA o con el apoyo de terceros encargados con quienes se compartirá mi información personal.
+                                </li>
+                                <li>
+                                    C. Para que con fines propios del objeto social de COMFAMILIAR-HUILA incluidos estadísticos, comerciales y de control de riesgos, esta puede consultar y/o reportar a base de datos de información.
+                                    <ul>
+                                        <li>
+                                            Personal como la que administra la Registraduría Nacional del Estado Civil relativa al registro civil.
+                                        </li>
+                                        <li>
+                                            Financiera y crediticia, tales como la CIFIN y DATACREDITO; esta facultad conlleva el reporte del nacimiento, desarrollo, modificación, extinción y cumplimiento de obligaciones contraídas o que llegue a contraer, la existencia de deudas vencidas sin cancelar o la utilización indebida de los servicios contratados.
+                                        </li>
+                                        <li>
+                                            En general a aquellos archivos de información pública y privada. Como el Registro Único de Afiliados-RUAF.
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    D. Para compartir mis datos personales, con autoridades nacionales o extranjeras cuando la solicitud se base en razones legales, procesales, o para colaborar con gobiernos extranjeros que requieran la información, fundamentados en cusas legitimas tales como lo son temas legales o de carácter tributario.
+                                </li>
+                                <li>
+                                    E. Autorizo a COMFAMILIAR-HUILA para el tratamiento de mis datos personales para las finalidades descritas, e igualmente para que mis datos personales estén disponibles en internet u otros medios de divulgación o comunicación masiva por parte de COMFAMILIAR-HUILA y los terceros autorizados, solamente, cuando el acceso sea técnicamente controlable.
+                                </li>
+                            </ul>
+                            <b>2.   DECLARACIONES DEL TITULAR, Declaro: </b>
+                            <ul>
+                                <li>
+                                    A. Toda la información suministrada por mí a COMFAMILIAR-HUILA es verdadera.
+                                </li>
+                                <li>
+                                    B. Conozco los derechos y las condiciones para el tratamiento de datos, incluyendo de manera enunciativa:
+                                    <ul>
+                                        <li>
+                                            Conocer íntegramente y de forma gratuita mis datos personales, así como actualizarlos y rectificarlos frente a COMFAMILIAR-HUILA o los encargados del tratamiento.
+                                        </li>
+                                        <li>
+                                            Conocer el uso que se le da a mis datos personales, previa solicitud a COMFAMILIAR-HUILA.
+                                        </li>
+                                        <li>
+                                            Solicitar prueba de la autorización otorgada a COMFAMILIAR-HUILA, salvo cuando expresamente se exceptúe como requisito para el tratamiento, de conformidad con la ley.
+                                        </li>
+                                        <li>
+                                            Revocar la autorización y/o solicitar la supresión del dato cuando en el tratamiento no se respeten los principios, derechos y garantías constitucionales y legales. Al respecto, entiendo que la revocatoria y/o supresión procederá cuando la Superintendencia de Industria y Comercio (SIC) haya determinado que, en el tratamiento, COMFAMILIAR-HUILA o el encargado ha incurrido en conductas contrarias a esta ley y a la Constitución Política.
+                                        </li>
+                                        <li>
+                                            Para a efectos a ejercer mis derechos a conocer, actualizar, rectificar y suprimir información, revocar la autorización, entre otros, podre acudir a COMFAMILIAR-HUILA como responsable del tratamiento de manera gratuita a la oficina de atención al cliente de COMFAMILIAR-HUILA, ubicada en la _________________________, o al correo electrónico______________________________, teléfono________________.
+                                        </li>
+                                        <li>
+                                            Presentar ante la Superintendencia de Industria y Comercio quejas por infracciones a lo dispuesto en la Ley 1581 de 2012.
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    C. He sido informado acerca de la NO obligatoriedad de las respuestas a las preguntas que me sean hechas cuando estas versen sobre datos sensibles, tales como origen racial. Étnico, orientación política, convicciones religiosas, filosóficas, pertenecía a sindicatos, organizaciones sociales, de derechos humanos, datos relativos a la salud, a la vida sexual y los datos biométricos o sobre los datos de los niños, niñas y adolescentes.
+                                </li>
+                                <li>
+                                    D. Tengo conocimiento de las políticas de tratamiento de datos de COMFAMILIAR-HUILA que me serán aplicables y la forma de acceder a las mismas, las cuales se encuentran vigentes hasta la expedición de otras o cambio sustancial de las mismas.
+                                </li>
+                                <li>
+                                    E. Conozco que en virtud de lo dispuesto en el Artículo 8 de la Ley 1581 de 2012, en mi condición de titular de datos personales, tengo los siguientes derechos:
+                                    <ul>
+                                        <li>
+                                            Conocer, actualizar y rectificar sus datos personales frente a los responsables del tratamiento o encargados del tratamiento.
+                                        </li>
+                                        <li>
+                                            Solicitar prueba de la autorización para la utilización de datos personales por parte de COMFAMILIAR-HUILA.
+                                        </li>
+                                        <li>
+                                            Ser informado del uso que se dé a mis datos personales.
+                                        </li>
+                                        <li>
+                                            Solicitar una relación de mis datos personales que se encuentren en las bases de datos de COMFAMILIAR-HUILA.
+                                        </li>
+                                        <li>
+                                            Revocar en cualquier momento la autorización dada a COMFAMILIAR-HUILA para tratar mis datos personales.
+                                        </li>
+                                        <li>
+                                            Que COMFAMILIAR-HUILA pueda suministrar mis datos personales únicamente a aquellas personas que la Ley o yo autoricemos expresamente.
+                                        </li>
+                                        <li>
+                                            Presentar ante la Superintendencia de Industria y Comercio quejas y reclamos, si considero que COMFAMILIAR-HUILA en cualquier forma, ha desconocido el derecho a la protección y adecuado tratamiento de mis datos personales, en los términos y condiciones previstos en la Ley.
+                                        </li>
+                                </li>
+                            </ul>
+                            </p>
+                        </div>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <input type="button" class="btn btn-success" value="Si, Acepto" id="aceptoHabeas" onclick="ocultarhabeas('S');">
+                            <input type="button" class="btn btn-danger" value="No, Acepto" id="noaceptoHabeas" onclick="ocultarhabeas('N');">
+                        </div>
+                    </div>    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalRegistrarIp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">    
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title barra barra-center" id="myModalLabel">Registrar Ip</h4>
+                </div>
+                <div class="modal-body">
+                        <form class="form-horizontal" >
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label class="col-sm-12 control-label" id="pregunt1"></label>
+                                </div>
+                                <div class="col-sm-6">
+                                    <?php echo Tag::textField("resp1","placeholder: Respuesta 1","style: margin-top: 2%","class: form-control") ?>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label class="col-sm-12 control-label" id="pregunt2"></label>
+                                </div>
+                                <div class="col-sm-6">
+                                    <?php echo Tag::textField("resp2","placeholder: Respuesta 2","style: margin-top: 4%","class: form-control") ?>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label class="col-sm-12 control-label">Registra</label>
+                                </div>
+                                <div class="col-sm-6">
+                                    <?php echo Tag::selectStatic("registraIp",array("N"=>"NO","S"=>"SI"),"value: N","style: width: 80px; margin-top: 4%","class: form-control") ?>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12" align="center">
+                                    <?php echo Tag::button("Registrar Ip","class: submit","onclick: registrarIp();","style: margin-top: 4%","class: btn btn-success") ?>
+                                </div>
+                            </div>
+                        </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalAbuso" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title barra barra-center" id="myModalLabel">Reporte de Abuso</h4>
+                </div>
+                <br>
+				<div class="col-sm-12">
+                    <div class="status alert alert-success" style="display: none"></div>
+                    <form id="main-contact-form" class="contact-form" name="contact-form" method="post" action="sendemail.php">
+                        <div class="form-group">
+                            <input name="nombrerep" id="nombrerep" type="text" placeholder="Nombre" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group">
+                            <input name="documentorep" id="documentorep" type="text" placeholder="Numero de Documento" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group">
+                            <input name="empresarep" id="empresarep" type="text" placeholder="Empresa" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group">
+                            <input name="asuntorep" id="asuntorep" type="text" placeholder="Asunto" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group">
+                            <input name="correorep" id="correorep" type="email" placeholder="Ingrese su correo" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group">
+                            <textarea name="mensajerep" id="mensajerep" class="form-control" rows="4" placeholder="Ingrese su mensaje"></textarea>
+                        </div>                        
+                    </form>	       
+				</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btnContactUs" onclick="reportAbuso();">Enviar Reporte</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>

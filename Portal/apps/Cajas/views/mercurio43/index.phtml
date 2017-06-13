@@ -1,0 +1,148 @@
+<?php echo View::getContent(); ?>
+<script type="text/javascript">
+Event.observe(window,'load',function(){
+    $('vista').setStyle({
+        'width': '1000px',
+        'marginLeft': '-40px'
+      });
+});
+
+  function aprobar(x,elem){
+    var com = confirm("Seguro de aprobar esta actualización?");
+    if(com==false)return;
+    //var motivo = prompt("Observaciones de la Actualizacion","");
+    elem = elem.up();
+    new Ajax.Request(Utils.getKumbiaURL("mercurio43/aprobar"), {
+      parameters: {
+        mid: x,
+        //motivo:  motivo
+      },
+      onSuccess: function(transport){
+        response = transport.responseText.evalJSON();
+        if(response['flag']==true){
+          elem.remove();
+          Messagespro.display(Array(response['msg']),"success");
+        }else{
+          Messagespro.display(Array(response['msg']),"warning");
+        }
+      },
+      onFailure: function(transport){
+        alert(transport.responseText);
+      }
+    });
+  }
+
+  function rechazar(mid,elem){
+    var com = confirm("Seguro de rechazar esta actualización?");
+    if(com==false)return;
+    var motivo = prompt("Motivo de Rechazo?","");
+    if(motivo=="" || motivo==null){
+        alert("Debe digitar un Motivo");
+        return;
+    }
+    elem = elem.up();
+    new Ajax.Request(Utils.getKumbiaURL("mercurio43/rechazar"), {
+      parameters: {
+        mid: mid,
+        motivo: motivo
+      },
+      onSuccess: function(transport){
+        var response = transport.responseText.evalJSON();
+        if(response['flag']==true){
+          elem.remove();
+          Messagespro.display(Array(response['msg']),"success");
+        }else{
+          Messagespro.display(Array(response['msg']),"warning");
+        }
+      },
+      onFailure: function(transport){
+        alert(transport.responseText);
+      }
+    });
+  }
+
+function verdoc(empresa){
+    UI.Window.addMethods({
+        CloseWinEmpresa: function(){
+            this.destroy();
+        }
+    });
+   manager = new UI.WindowManager({
+      container: 'captura'
+   });
+    var ventana = new UI.Window({
+            id: 'empresaWin',
+            theme: 'leopard',
+            //minimize: false,
+            //maximize: false,
+            ////resizable: false,
+            close: 'CloseWinEmpresa',
+            width: 400,
+            height: 470, 
+    });
+    ventana.center().setHeader("Documentación Empresa No."+ empresa).show();
+    ventana.activate();
+    manager.register(ventana);
+    new Ajax.Request(Utils.getKumbiaURL("mercurio43/verdocumentos"),{
+        parameters: {
+            empresa: empresa,
+        },
+        
+        onSuccess: function(transport){
+            lista = transport.responseText.evalJSON();
+            ventana.setContent(lista).show();
+        },
+
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }    
+    });
+}
+
+function info(id_,elem_){
+    UI.Window.addMethods({
+        CloseWinTrabajador: function(){
+        this.destroy();
+        }
+    });
+   manager = new UI.WindowManager({
+      container: 'captura'
+   });
+    var ventana = new UI.Window({
+            id: 'trabajadorWin',
+            theme: 'leopard',
+            close: 'CloseWinTrabajador',
+            width: 800,
+            height: 300, 
+    });
+    ventana.center().setHeader("Certificado de aprobación").show();
+    ventana.activate();
+    manager.register(ventana);
+    
+    new Ajax.Request(Utils.getKumbiaURL("mercurio43/info"), {
+        parameters: {
+            id: id_
+        },
+        asyncronous: false,
+        onSuccess: function(transport){
+            formu = transport.responseText.evalJSON();
+            ventana.setContent(formu).show();
+
+            val = new Validator();
+            val.addField('fecafi','date',null,{'alias': 'fecha de Afiliacion','isNull': false});
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+    id = id_;
+    elem = elem_;
+return;
+
+}
+
+</script>
+
+<?php
+	echo $html;
+?>

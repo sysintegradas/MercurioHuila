@@ -1,0 +1,103 @@
+<?php View::getContent(); ?>
+<script>
+$(document).ready(function(){   
+    $('[data-toggle="tooltip"]').tooltip();
+});
+
+buscar = function(){
+    if($('#perini').val() == ""){
+        $('#perini').focus();
+        Messages.display("Por favor digite el periodo de inicio por el cual se quiere buscar","warning");
+        return;
+    }if($('#perfin').val()== ""){
+        $('#perfin').focus();
+        Messages.display("Por favor digite el periodo por el cual se quiere buscar","warning");
+        return;
+    }if($('#perini').val() > $('#perfin').val()){
+        $('#perfin').focus();
+        Messages.display("Verifique que el periodo final sea mayor al periodo inicial","warning");
+        return;
+    }if($('#perini').val().substring(4,6) == 00 ||$('#perfin').val().substring(4,6) == 00 ){
+        if($('#perini').val().substring(4,6) == 00){
+            $('#perini').focus();
+            Messages.display("Verifique que el periodo inicial el mes sea diferente a 00","warning");
+            return;
+        }else{
+            $('#perfin').focus();
+            Messages.display("Verifique que el periodo final el mes sea diferente a 00","warning");
+            return;
+        }
+    }else{
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/aportes"),
+            data: {
+                perini: $('#perini').val(),
+                perfin: $('#perfin').val(),
+            }
+        });
+        request.done(function( transport ) {
+            //var response = transport;
+            var response = jQuery.parseJSON(transport);
+            $("#respuesta").html(response); 
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+}
+
+valperini = function(){
+    if($('#perini').val().length != 6){
+
+        Messages.display("El periodo inicial no es valido, digite un periodo valido","warning");
+        $('#perini').val("");
+        $('#perini').focus();
+    }if($('#perini').val().substring(4,6) == 00){
+        $('#perini').focus();
+        Messages.display("Verifique que el periodo inicial el mes sea diferente a 00","warning");
+        return;
+    }
+}
+
+valperfin = function(){
+    if($('#perfin').val().length != 6 ){
+        Messages.display("El periodo final  no es valido, digite un periodo valido","error");
+        $('#perfin').val("");
+        $('#perfin').focus();
+    }if($('#perfin').val().substring(4,6) == 00){
+            $('#perfin').focus();
+            Messages.display("Verifique que el periodo final el mes sea diferente a 00","warning");
+            return;
+    }
+}
+
+</script>
+<?php echo Tag::form(Router::getController()."/aportes","id: form","autocomplete: off","enctype: multipart/form-data"); ?>
+    <div class="col-sm-12 ">
+       <div class="col-sm-2">
+           <label>Periodo Inicial :</label>
+       </div>
+       <div class="col-sm-3" style="margin-left: -4%">
+           <div class="input-group">
+               <div class="input-group-addon"  ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"  data-toggle="tooltip" title="El periodo inicial se utiliza con la unión de año-mes"  ></span></div>
+               <?php echo Tag::numericField("perini","class: form-control","maxlength: 6","onchange: valperini()"); ?>
+           </div>
+       </div>
+       <div class="col-sm-2">
+           <label>Periodo Final :</label>
+       </div>
+       <div class="col-sm-3" style="margin-left: -4%">
+           <div class="input-group">
+               <div class="input-group-addon"  ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"  data-toggle="tooltip" title="El periodo final se utiliza con la unión de año-mes"  ></span></div>
+               <?php echo Tag::numericField("perfin","class: form-control","maxlength: 6","onchange: valperfin()"); ?>
+           </div>
+       </div>
+        <div class="col-sm-2">
+            <div><?php echo Tag::Button("Consultar Aportes","class: btn btn-success","onclick: buscar();") ?></div>
+        </div>
+   </div>
+   <div>
+       <div id='respuesta'> </div>  
+   </div>
+<?php echo Tag::endForm(); ?>

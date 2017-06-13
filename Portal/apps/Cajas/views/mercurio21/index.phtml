@@ -1,0 +1,60 @@
+<?php echo View::getContent(); ?>
+
+<script type="text/javascript">
+    var val = new Validator();
+    Event.observe(window, 'load',function(){
+        $('documento').focus();
+        val.addField("fecini","date",null,{'alias': 'Fecha Inicial','isNull': false});
+        val.addField("fecfin","date",null,{'alias': 'Fecha Final','isNull': false});
+    });
+    function Guardar(){
+       
+        /*
+        if(!val.valide()){
+            Messagespro.valide(val);
+        }else{
+        */
+            $('form').submit();
+        //}
+    }
+ </script>
+
+<div id='botones' align='right'>
+    <table>
+        <tr>
+            <td><?php //echo Tag::linkTo(Router::getController()."/nuevo",Tag::image("nuevo.png","title: Nuevo","class: boton")) ?></td>
+            <td><?php echo Tag::image("buscar.png","title: Buscar","onclick: Guardar(true);","class: boton") ?></td>
+        </tr>
+    </table>
+</div>
+
+<?php echo Tag::form(Router::getController()."/buscar","id: form","autocomplete: off"); ?>
+    <div align='center'>
+        <table align='center'>
+            <tr>
+                <td align='right'><b>Numero de Radicado:</b></td>
+                <td align='left'><?php echo Tag::numericField("id","size: 15","maxlength: 13") ?></td>
+            </tr>
+            <tr>
+                <td align='right'><b>Documento:</b></td>
+                <td align='left'><?php echo Tag::numericField("documento","size: 15","maxlength: 13") ?></td>
+            </tr>
+            <tr>
+                <td align='right'><b>Tipo:</b></td>
+                <td align='left'><?php echo Tag::selectStatic("tipo",array('T'=>'Afiliado','E'=>'Empresa','P'=>'Particular'),"use_dummy: true") ?></td>
+            </tr>
+            <tr>
+                <td align='right'><b>Agencia:</b></td>
+                <td align='left'><?php echo Tag::selectStatic("agencia",array('1'=>'NEIVA','2'=>'GARZON','3'=>'PITALITO','4'=>'LA PLATA'),"use_dummy: true") ?></td>
+            </tr>
+            <tr>
+                <td align="right"><b>Fecha  Inicial:</b></td>
+                <td colspan="2"><?php echo TagUser::calendar("fecini","size: 10","maxlength: 10") ?></td>
+            </tr>
+            <tr>
+                <td align='right'><b>Fecha Final:</b></td>
+                <td align='left'><?php echo TagUser::calendar("fecfin","size: 10","maxlength: 10") ?></td>
+            </tr>
+        </table>
+    </div>
+ <?php echo Tag::endForm() ?>

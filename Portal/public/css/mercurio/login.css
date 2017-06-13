@@ -1,0 +1,47 @@
+/*login*/
+
+/*Estilo del Login*/
+#login:not(input) {
+    position: absolute;
+    top: 30%;
+    left: 25%;
+}
+#campos {
+    position: absolute;
+    top: 40%;
+    left: 25%;
+}
+#login .centro {
+    width:704px;
+    height:300px;
+    background:url(../../img/login_center.png) repeat-x;
+    opacity: .7;
+}
+#login .izq{
+    width:23px;
+    height:300px;
+    background:url(../../img/pruebaizq.png) no-repeat;
+    opacity: .7;
+}
+#login .der{
+    width:45px;
+    height:300px;
+    background:url(../../img/pruebader.png) no-repeat;
+    opacity: .7;
+}
+
+
+.submit{
+    width: 50%;
+    height: 35px;
+    background: -webkit-linear-gradient(#F6E416,#F5C647);
+    background: -moz-linear-gradient(#F6E416,#F5C647);
+    background: -o-linear-gradient(#F6E416,#F5C647);
+    background: -ms-linear-gradient(#F6E416,#F5C647);
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.submit:focus{
+    padding: 3px 1px 1px 4px;
+}

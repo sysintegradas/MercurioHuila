@@ -1,0 +1,7 @@
+<?php View::getContent(); ?>
+<?php echo Tag::form(Router::getController()."/carnet"); ?>
+
+<?php echo "<p>Mediante esta herramienta se puede Generar un Carnet Provicional</p></br>"; ?>
+<?php echo Tag::submitButton("Generar Carnet",'class: submit','style: margin-top:5%; margin-left:25%; ') ?>
+
+<?php echo Tag::endForm(); ?>

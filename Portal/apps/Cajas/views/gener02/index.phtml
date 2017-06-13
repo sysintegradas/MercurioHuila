@@ -1,0 +1,47 @@
+<?php echo View::getContent(); ?>
+
+<script type="text/javascript">
+    Event.observe(window, 'load',function(){
+        $('usuario').focus();
+    });
+ </script>
+
+<div id='botones' align='right'>
+    <table>
+        <tr>
+            <td><?php echo Tag::linkTo(Router::getController()."/nuevo",Tag::image("nuevo.png","title: Nuevo","class: boton")) ?></td>
+            <td><?php echo Tag::image("buscar.png","title: Buscar","onclick: $('form').submit();","class: boton") ?></td>
+        </tr>
+    </table>
+</div>
+
+<?php echo Tag::form(Router::getController()."/buscar","id: form","autocomplete: off"); ?>
+    <div align='center'>
+        <table align='center'>
+            <tr>
+                <td align="right"><b>Usuario:</b></td>
+                <td colspan="2"><?php echo Tag::numericField("usuario","size: 3","maxlength: 5") ?></td>
+            </tr>
+            <tr>
+                <td align='right'><b>Cedula:</b></td>
+                <td align='left'><?php echo Tag::textUpperField("cedtra","size: 15","maxlength: 13") ?></td>
+            </tr>
+            <tr>
+                <td align='right'><b>Nombre:</b></td>
+                <td align='left'><?php echo Tag::textUpperField("nombre","size: 30","maxlength: 35") ?></td>
+            </tr>
+            <tr>
+                <td align='right'><b>Login:</b></td>
+                <td align='left'><?php echo Tag::textUpperField("login","size: 30","maxlength: 15") ?></td>
+            </tr>
+            <tr>
+                <td align='right'><b>Funcionario:</b></td>
+                <td align='left'><?php echo Tag::select("tipfun",$Gener21->find(),"using: tipfun,detalle","use_dummy: true") ?></td>
+            </tr>
+            <tr>
+                <td align='right'><b>Estado:</b></td>
+                <td align='left'><?php echo Tag::selectStatic("estado",$Gener02->getEstadoArray(),"use_dummy: true") ?></td>
+            </tr>
+        </table>
+    </div>
+ <?php echo Tag::endForm() ?>

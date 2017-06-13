@@ -1,0 +1,61 @@
+<?php echo View::getContent(); ?>
+<script type="text/javascript">
+    var val = new Validator();
+    Event.observe(window, 'load',function(){
+        val.addField("claveant","text",null,{'alias': 'Clave Anterior','isNull': false,'doToUpperCase': false});
+        val.addField("clavenue","text",null,{'alias': 'Clave Nueva','isNull': false,'doToUpperCase': false});
+        val.addField("clavecon","text",null,{'alias': 'Confirmar Clave','isNull': false,'doToUpperCase': false});
+    });
+
+    function Guardar(){
+        if(!val.valide()){
+            Messages.valide(val);
+            return;
+        }
+        new Ajax.Request(Utils.getKumbiaURL($Kumbia.controller+"/cambiarClave"), {
+            asynchronous : false,
+            parameters: {
+                claveant: $F('claveant'),
+                clavenue: $F('clavenue'),
+                clavecon: $F('clavecon')
+            },
+            onSuccess: function(transport){
+                response = transport.responseText.evalJSON();
+                if(response['flag']==true){
+                    Messages.display(Array(response['msg']),"success");
+                }else{
+                    Messages.display(Array(response['msg']),"warning");
+                }
+            },
+            onFailure: function(transport){
+                alert(transport.responseText);
+            }
+        });
+    }
+ </script>
+<div id='botones' align='right'>
+    <table>
+        <tr>
+            <td><?php echo Tag::image("guardar.png","title: Guardar","onclick: Guardar();","class: boton") ?></td>
+            <td><?php echo Tag::linkTo(Router::getController()."/index",Tag::image("exit.png","title: Cancelar","class: boton")) ?></td>
+        </tr>
+    </table>
+</div>
+
+<div align='center'>
+    <table align='center'>
+        <tr>
+            <td align="right"><b>Clave Anterior:</b></td>
+            <td align="left"><?php echo Tag::passwordField("claveant") ?></td>
+        </tr>
+        <tr>
+            <td align="right"><b>Clave Nueva:</b></td>
+            <td align="left"><?php echo Tag::passwordField("clavenue") ?></td>
+        </tr>
+        <tr>
+            <td align="right"><b>Confirmar Clave:</b></td>
+            <td align="left"><?php echo Tag::passwordField("clavecon") ?></td>
+        </tr>
+    </table>
+</div>
+

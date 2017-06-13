@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+ <style>
+    .preloader {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 99999;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-flex-flow: row nowrap;
+        -ms-flex-flow: row nowrap;
+        flex-flow: row nowrap;
+        justify-content: center;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+        background: none repeat scroll 0 0;
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .loader {
+      border: 16px solid #f3f3f3; /* Light grey */
+      border-top: 16px solid #3498db;
+      border-bottom: 16px solid #3498db;
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+ </style>
+ <head>
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
+  <?php
+    echo Tag::getDocumentTitle();
+    Tag::stylesheetLink('style');
+    Tag::stylesheetLink('chosen/chosen');
+    Tag::stylesheetLink('cajas/cajas');
+    echo Tag::stylesheetLinkTags();
+    echo Tag::stylesheetLink('themes/window/leopard');
+    echo Tag::stylesheetLink("calendar", true);
+
+    Tag::addJavascript('core/base-source');
+    echo Tag::addJavascriptFramework('prototype');
+    echo Tag::getJavascriptLocation();
+    echo Tag::javascriptSources();
+    echo Tag::javascriptLibrary("framework/scriptaculous/window");
+    echo Tag::javascriptLibrary("framework/scriptaculous/effects");
+    echo Tag::javascriptLibrary("framework/scriptaculous/scriptaculous");
+    echo Tag::javascriptLibrary("framework/chosen");
+    echo Tag::javascriptLibrary("detalle");
+    echo Tag::javascriptLibrary("calendar");
+    echo Tag::javascriptLibrary("tiny_mce/tiny_mce");
+    echo Tag::javascriptLibrary("validator");
+    echo Tag::javascriptLibrary("event.simulate");
+  ?>
+  <title><?php echo Session::getData("title")?></title>
+ </head>
+ <body id="desktop">
+  <div class="preloader" id="inProgress">
+    <div class="loader"></div>
+  </div>
+  <?php View::getContent(); ?>
+ </body>
+</html>

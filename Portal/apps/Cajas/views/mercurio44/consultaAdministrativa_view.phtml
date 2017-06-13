@@ -1,0 +1,104 @@
+<?php echo View::getContent(); ?>
+<script type="text/javascript">
+Event.observe(window,'load',function(){
+    $('vista').setStyle({
+        'width': '1000px',
+        'marginLeft': '-40px'
+      });
+});
+
+  function aplicarFiltroConsulta(){
+    new Ajax.Request(Utils.getKumbiaURL("mercurio44/aplicarFiltroConsulta"), {
+      parameters: {
+        usuario: $F('usuario'),
+        estado: $F('estado'),
+      },
+      onSuccess: function(transport){
+        response = transport.responseText.evalJSON();
+        $('div_datos').innerHTML = response;
+      },
+      onFailure: function(transport){
+        alert(transport.responseText);
+      }
+    });
+  }
+
+    function cambiarUsuarioView(tipo,id,agencia){
+        UI.Window.addMethods({
+            CloseWinEmpresa: function(){
+            this.destroy();
+            }
+        });
+        manager = new UI.WindowManager({
+            container: 'captura'
+        });
+        var ventana = new UI.Window({
+            id: 'datosWin',
+            theme: 'leopard',
+            //minimize: false,
+            //maximize: false,
+            ////resizable: false,
+            close: 'CloseWinEmpresa',
+            width: 730,
+            height: 510, 
+        });
+        ventana.center().setHeader("Certificado de aprobación").show();
+        ventana.activate();
+        manager.register(ventana);
+        new Ajax.Request(Utils.getKumbiaURL("mercurio44/usuariosDisponibles"), {
+            parameters:{
+                tipo: tipo,
+                id: id,
+                agencia: agencia,
+            },
+            asyncronous: false,
+            onSuccess: function(transport){
+                response = transport.responseText.evalJSON();
+                ventana.setContent(response).show();
+            },
+            onFailure: function(transport){
+                alert(transport.responseText);
+            }
+        });
+  }
+
+  function cambiarUsuario(tipo,id){
+    new Ajax.Request(Utils.getKumbiaURL("mercurio44/cambiarUsuario"), {
+      parameters: {
+        tipo: tipo,
+        id: id,
+        usuario: $F('usuario_cambio'),
+      },
+      onSuccess: function(transport){
+        response = transport.responseText.evalJSON();
+        if(response['flag']==true){
+          Messagespro.display(Array(response['msg']),"success");
+          $('datosWin').remove();
+          aplicarFiltroConsulta();
+        }else{
+          Messagespro.display(Array(response['msg']),"warning");
+        }
+      },
+      onFailure: function(transport){
+        alert(transport.responseText);
+      }
+    });
+  }
+
+</script>
+
+<div align='center'>
+    <table align='center'>
+        <tr>
+            <td align="right"><b>Usuario:</b></td>
+            <td colspan="2"><?php echo Tag::select("usuario",$Gener02->find(),"using: usuario,nombre","use_dummy: true") ?></td>
+        </tr>
+        <tr>
+            <td align="right"><b>Estado:</b></td>
+            <td colspan="2"><?php echo Tag::selectStatic("estado",$Mercurio30->getEstadoArray(),"use_dummy: true") ?></td>
+            <td colspan="2"><?php echo Tag::button("Filtrar","onclick: aplicarFiltroConsulta();") ?></td>
+        </tr>
+    </table>
+</div>
+<div id='div_datos'>
+</div>

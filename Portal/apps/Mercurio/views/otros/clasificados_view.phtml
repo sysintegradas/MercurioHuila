@@ -1,0 +1,52 @@
+<?php echo View::getContent(); ?>
+<script>
+  var val = new Validator();
+  val.addField("codcat","select",null,{'alias': 'Categoria','isNull': false,'doToUpperCase': false});
+  val.addField("fecini","date",null,{'alias': 'Fecha Inicial','isNull': false,'doToUpperCase': false});
+  val.addField("titulo","text",null,{'alias': 'Titulo','isNull': false,'doToUpperCase': false});
+  val.addField("descripcion","text",null,{'alias': 'Descripcion','isNull': false,'doToUpperCase': false});
+
+  Adicionar = function(){
+      if(!val.valide()){
+          Messages.valide(val);
+          return;
+      }
+      ajaxRemoteForm($("form"), "content",{
+        success: function(transport){
+            var response = transport.responseText.evalJSON();
+            if(response['flag']==true){
+              Messages.display(Array(response['msg']),"success");
+              $('titulo').value="";
+              $('descripcion').value="";
+            }else{
+              Messages.display(Array(response['msg']),"warning");
+            }
+        }
+      });
+  }
+</script>
+ <?php echo Tag::form(Router::getController()."/clasificados","id: form","autocomplete: off","enctype: multipart/form-data"); ?>
+<div>
+  <table>
+    <tr>
+      <td><label>Categoria:</label></td>
+      <td><?php echo Tag::select("codcat",$Mercurio23->find(),"using: codcat,detalle");?></td>
+    </tr>
+    <tr>
+      <td><label>Fecha:</label></td>
+      <td><?php echo TagUser::Calendar("fecini");?></td>
+    </tr>
+    <tr>
+      <td><label>Titulo:</label></td>
+      <td><?php echo Tag::textField("titulo");?></td>
+    </tr>
+    <tr>
+      <td><label>Descripcion:</label></td>
+      <td><?php echo Tag::textArea("descripcion","cols: 40","rows: 15");?></td>
+    </tr>
+    <tr>
+      <td colspan="2" align='center'><?php echo Tag::button("Adicionar","class: submit","onclick: Adicionar();");?></td>
+    </tr>
+  </table>
+</div>
+<?php echo Tag::endForm(); ?>

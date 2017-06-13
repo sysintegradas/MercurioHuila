@@ -1,0 +1,98 @@
+<?php echo View::getContent(); ?>
+
+<script type="text/javascript">
+    var val = new Validator();
+    Event.observe(window, 'load',function(){
+        val.addField("codare","select",null,{'alias': 'Area','isNull': false});
+        val.addField("codope","text",null,{'alias': 'Operacion','isNull': false});
+        val.addField("detalle","text",null,{'alias': 'Detalle','isNull': false});
+        val.addField("tipo","select",null,{'alias': 'tipo','isNull': false});
+        val.addField("mandoc","select",null,{'alias': 'Man.Documento','isNull': false});
+        val.addField("webser","text",null,{'alias': 'Webserver','isNull': false});
+        val.addField("nota","text",null,{'alias': 'Nota','isNull': true});
+        $('codare').focus();
+        flag_valida = true;
+        $('codare').observe('change',Guardar);
+        $('codope').observe('change',Guardar);
+    });
+
+    function Guardar(save){
+        if(flag_valida==false)return;
+        flag_valida = false;
+        new Ajax.Request(Utils.getKumbiaURL($Kumbia.controller+"/validaPk"), {
+            asynchronous : false,
+            parameters: {
+                codare: $F('codare'),
+                codope: $F('codope')
+            },
+            onSuccess: function(transport){
+                response = transport.responseText.evalJSON();
+                if(response==false){
+                    var editar = confirm("Registro ya existe, Desea editarlo?");
+                    if(editar == true){
+                        window.location='editar/'+$F('codare')+'/'+$F('codope');
+                    }else{
+                        $('codare').value = "@";
+                        $('codare').focus();
+                    }
+                }
+                flag_valida = true;
+                if(save==true){
+                    if(!val.valide()){
+                        Messages.valide(val);
+                    }else{
+                        $('form').submit();
+                    }
+                }
+            },
+            onFailure: function(transport){
+                alert(transport.responseText);
+            }
+        });
+    }
+    
+ </script>
+
+<div id='botones' align='right'>
+    <table>
+        <tr>
+            <td><?php echo Tag::image("guardar.png","title: Guardar","onclick: Guardar(true);","class: boton") ?></td>
+            <td><?php echo Tag::linkTo(Router::getController()."/index",Tag::image("exit.png","title: Cancelar","class: boton")) ?></td>
+        </tr>
+    </table>
+</div>
+
+<?php echo Tag::form(Router::getController()."/guardar","id: form","autocomplete: off"); ?>
+    <div align='center'>
+        <table align='center'>
+            <tr>
+                <td align="right"><b>Cod.Area:</b></td>
+                <td align='left'><?php echo Tag::select("codare",$Mercurio08->find(),"using: codare,detalle","use_dummy: true") ?></td>
+            </tr>
+            <tr>
+                <td align='right'><b>Cod.Operacion:</b></td>
+                <td align='left'><?php echo Tag::textUpperField("codope","size: 15","maxlength: 13") ?></td>
+            </tr>
+            <tr>
+                <td align='right'><b>Detalle:</b></td>
+                <td align='left'><?php echo Tag::textUpperField("detalle","size: 30","maxlength: 35") ?></td>
+            </tr>
+            <tr>
+                <td align='right'><b>Tipo:</b></td>
+                <td align='left'><?php echo Tag::select("tipo",$Mercurio06->find(),"using: tipo,detalle","use_dummy: true") ?></td>
+            </tr>
+            <tr>
+                <td align="right"><b>Maneja Documento:</b></td>
+                <td align="left"><?php echo Tag::selectStatic("mandoc",$Mercurio11->getMandocArray(),"use_dummy: true") ?></td>
+            </tr>
+            <tr>
+                <td align='right'><b>Webserver:</b></td>
+                <td align='left'><?php echo Tag::textUpperField("webser","size: 35","maxlength: 35") ?></td>
+            </tr>
+            <tr>
+                <td align="right"><b>Nota:</b></td>
+                <td align='left'><?php echo Tag::textArea("nota","cols: 40","rows: 10") ?></td>
+            </tr>
+        </table>
+    </div>
+ <?php echo Tag::endForm() ?>

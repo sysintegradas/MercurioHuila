@@ -1,0 +1,17 @@
+<?php echo View::getContent(); ?>
+<script>
+Guardar = function(){
+    $('#form').submit();
+}
+</script>
+<br>
+<?php echo Tag::form(Router::getController()."/cargueCertificados","id: form","autocomplete: off","enctype: multipart/form-data"); ?>
+    <table class='table table-bordered'>
+        <tr><td> Se&ntilde;or afiliado si su certificado se encuentra vencido favor anexar certificado actualizado, de lo contrario hacer caso omiso.</td></tr>
+    </table>
+<div>
+    <?php echo Tag::hiddenField("codare","value: $codare"); ?>
+    <?php echo Tag::hiddenField("codope","value: $codope"); ?>
+    <?php echo $html; ?>
+</div>
+<?php echo Tag::endForm(); ?>

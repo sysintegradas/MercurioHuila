@@ -1,0 +1,95 @@
+<?php View::getContent(); ?>
+<?php Session::setDATA('title','Sistemas y Soluciones Integradas S.A.S')?>
+<script type="text/javascript">
+    var val = new Validator();      
+    <?php echo Tag::addJavascript('portal/slidePort')?>
+    Event.observe(window, 'load',function (){ 
+    });
+    
+</script>
+<nav id="barra_mercurio_port">
+    <header id="cabeceraDesk">
+        <div class="mercuriolog">
+            <a href="http://www.mercurio.net.co"><span><?php echo Tag::image('portal/logomercurio5.png')?></span></a>
+        </div>
+    </header>
+    <nav class="busquedaDesk">
+      
+    </nav>
+</nav>
+<div id="contenedor_portada">
+	<div id="seccion1">
+		<div id="banner-port">
+	        <div id="controls-ban-port">
+	        	<?php echo $banner;?>
+	        </div>
+	        <div id="banner_portada">
+
+	        </div>
+	   	</div>
+	</div>
+	<div id="seccion2">
+		<article class="barCajas">
+	    	<div>
+	    		<?php echo $html; ?>
+	    	</div>
+		</article>
+	</div>
+	<div id="seccion3">
+		<footer class="footPortada">
+			<!--<div class="col">
+				<form class="contact_form" action="" method="" autocomplete="off">
+				<ul>
+					<table height="100%">
+						<tr>
+							<td valign="middle">
+								<li><label for="name">Nombre:</label>
+							</td>
+							<td valign="middle">
+								<input type="text" name="name" id="name" placeholder="Nombre" required ></li>
+							</td>
+							<td valign="middle">
+								<li><label for="subject">Asunto:</label>
+							</td>
+							<td valign="middle">
+								<input type="text" name="subject" id="subject" placeholder="Asunto" required></li>
+							</td>
+							<td>
+								&nbsp;
+							</td>
+						</tr>
+						<tr align="left">
+							<td valign="middle">
+								<li><label for="email">Email:</label>
+							</td>
+							<td valign="middle">
+								<input type="email" name="email" id="email" placeholder="tucorreo@syseu.com" required></li>
+							</td>
+							<td valign="middle">
+								<li><label for="message">Mensaje:</label>
+							</td>
+							<td valign="middle">
+								<textarea name="message" id="message" cols="10" rows="2" placeholder="Mensaje" required></textarea></li>
+							</td>
+							<td valign="middle">
+								<li><button class="submit" type="button" onClick='formContactenos();'>Enviar</button></li>
+							</td>
+						</tr>
+					</table>	
+				</ul>
+				</form>
+			</div>-->
+			<div class="social-port">
+				<a href="http://www.syseu.com" target="_blank"><?php echo Tag::image('portal/logosys_n.png', 'width: 154px', 'height: 32px')?></a>
+				<a href="https://www.facebook.com/groups/100344474009/?fref=ts" target="_blank"><?php echo Tag::image('portal/Facebook.png','width: 30px','height: 30px')?></a><a href="https://twitter.com/sysintegradas" target="_blank"><?php echo Tag::image('portal/Twitter-Bird.png','width: 30px','height: 30px')?></a><a href="https://www.youtube.com/channel/UCb62dfc6lZj2Cb7-CmvvcRA" target="_blank"><?php echo Tag::image('portal/Youtube.png','width: 30px','height: 30px')?></a>
+				<a href="https://plus.google.com/114287246131025157831/posts" target="_blank"><?php echo Tag::image('portal/Google-Plus.png', 'width: 30px', 'height: 30px')?></a>
+			</div>
+		</footer>
+	</div>
+<aside id="pub-port2">
+	<div id="dos2">
+		<div class="ban-uno"><?php echo Tag::image('portal/banner1.png', 'width: 100%', 'height: 100%')?></div>
+		<div class="ban-dos"><?php echo Tag::image('portal/banner2.png', 'width: 100%', 'height: 100%')?></div>
+	</div>
+</aside>
+</div>

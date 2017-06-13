@@ -1,0 +1,225 @@
+body{
+	margin: 0px;
+	padding: 0px;
+	width: 100%;
+	height: 100%;
+}
+
+.general{
+    width: 100%;
+    height: 100%;
+}
+
+.header{
+    margin-left: 5%;
+    width: 90%;
+    height: 30%;
+    text-align: center;
+}
+
+.barra{
+    width: 100%;
+    height: 20%;
+    text-align: left;
+    padding: 10px ;
+    background-color: #1e3788;
+    color: white;
+    position: relative;
+    float: left;
+}
+
+.barra-left{
+    width: 50%;
+    text-align: left;
+    position: relative;
+    float: left;
+}
+.barra-center{
+    width: 100%;
+    text-align: center;
+    position: relative;
+    float: center;
+}
+
+.barra-right{
+    width: 50%;
+    text-align: right;
+    position: relative;
+    float: left;
+}
+
+.container{
+    margin-top: 2%;
+    margin-left: 5%;
+    width: 100%;
+    height: 60%;
+    position: relative;
+    float: left;
+}
+.login{
+    width: 24%;
+    height: 20%;
+    position: relative;
+    float: left;
+}
+.login_titulo{
+    width: 100%;
+    height: 20%;
+    text-align: center;
+    color: blue;
+
+}
+.login_contenido{
+    width: 100%;
+    height: 350px;
+    //height: 380px;
+    text-align: center;
+    background-color: #edeeef;
+    color: black;
+    border-radius: 5px;
+    padding-top: 10px;
+}
+.radios{
+    margin-top: 5%;
+    width: 100%;
+    height: auto;
+}
+.radios2{
+    width: 100%;
+    height: auto;
+    text-align: center;
+}
+.textos_login{
+    margin-left: 7%;
+    text-align: left;
+    padding-top: 3%;
+}
+.usuario{
+    background: #ffffff;
+    border: none;
+    font-size: 1em;
+    padding-left: 11%;
+    padding-top: 3%;
+    padding-right: 3%;
+    padding-bottom: 3%;
+    width: 85%;
+    border-radius: 5px;
+    background-image: url(../../img/portal/user.png);
+    background-size: 20px 20px;
+    background-position: 5px 5px;
+    background-repeat: no-repeat;
+}
+.clave{
+    background: #ffffff;
+    border: none;
+    font-size: 1em;
+    padding-left: 11%;
+    padding-top: 3%;
+    padding-right: 3%;
+    padding-bottom: 3%;
+    width: 85%;
+    border-radius: 5px;
+    background-image: url(../../img/portal/key.png);
+    background-size: 20px 20px;
+    background-position: 5px 5px;
+    background-repeat: no-repeat;
+}
+.publicidad{
+    margin-left: 3%;
+    width: 62%;
+    height: auto;
+    text-align: center;
+    background-color: #edeeef;
+    color: black;
+    border-radius: 5px;
+    position: relative;
+    float: left;
+    padding: 2.5%;
+    //
+    //margin-top: 3%;
+}
+.primera{
+    margin-top: 5%;
+    width: 24%;
+    height: 20%;
+    position: relative;
+    text-align: center;
+    float: left;
+}
+.primera_text{
+    color: #1e3589;
+    position: relative;
+    float: left;
+}
+.videos{
+    margin-top: 5%;
+    width: 70%;
+    height: 20%;
+    position: relative;
+    float: left;
+    text-align: center;
+}
+.video1{
+    margin-left: 10%;
+    width: 23%;
+    height: 120px;
+    position: relative;
+    background-color: #008F40;       
+    float: left;
+    border-radius: 5px;
+}
+
+.video2{
+    margin-left: 7%;
+    width: 23%;
+    height: 120px;
+    position: relative;
+    float: left;
+    background-color: #008F40;       
+    border-radius: 5px;
+}
+.video3{
+    margin-left: 7%;
+    width: 23%;
+    height: 120px;
+    position: relative;
+    float: left;
+    background-color: #008F40;       
+    border-radius: 5px;
+}
+
+footer{
+    margin: 4% 0% 0% 2%;
+    width: 100%;
+    height: 20%;
+    position: relative;
+    float: left;
+}
+.politicas{
+    width: 15%;
+    height: 20%;
+    position: relative;
+    float: left;
+    color: #1e368c;
+}
+.terminos_condiciones{
+    width: 15%;
+    height: 20%;
+    position: relative;
+    float: left;
+    color: #1e368c;
+}
+.linea{
+    width: 40%;
+    height: 20%;
+    position: relative;
+    text-align: left;
+    float: left;
+}
+.vigilado{
+    width: 25%;
+    height: 20%;
+    position: relative;
+    text-align: right;
+    float: left;
+}

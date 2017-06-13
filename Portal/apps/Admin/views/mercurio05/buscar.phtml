@@ -1,0 +1,42 @@
+<?php if($botones){ ?>
+<div id="botones" align="right">
+    <table>
+        <tr>
+            <td><?php echo Tag::linkTo(Router::getController()."/index",Tag::image("exit.png","title: Salir","class: boton")) ?></td>
+        </tr>
+    </table>
+</div>
+<?php }
+
+$field = 3;
+
+if(count($mercurio->items)>0){ ?>
+<div id="consulta" align="center" style="width: 650px;">
+    <table align="center" width="100%" cellpadding='0' cellspacing='1'>
+        <thead>
+            <tr>
+                <th width="25px">Cod.Caja</th>
+                <th width="25px">Razon Social</th>
+            </tr>
+        </thead>
+        <?php $i=0; foreach($mercurio->items as $mmercurio){ ?>
+            <tr class="td<?php echo $i%2+1 ?>" ondblclick="window.location='<?php echo Core::getInstancePath()."/".Router::getActiveApplication()."/".Router::getController()."/detalle/{$mmercurio->getCodcaj()}"?>'"height="25px" title="DobleClick para editar">
+                <td align="center" width="20px"><?php echo $mmercurio->getCodcaj(); ?></td>
+                <td align="center" width="200px"><?php echo $mmercurio->getRazsoc(); ?></td>
+                <td align="center" width="5px"><?php echo Tag::image("report2.png","style: border: none;","title: Click para hacer Reporte","onclick: reporte(['{$mmercurio->getCodcaj()}'])") ?></td>
+            </tr>
+        <?php $i++; } for($i=10-count($mercurio->items);$i>0;$i--){
+            echo "<tr class='td".($i%2+1)."' height='25px'>";
+            for($j=0;$j<$field;$j++) echo "<td></td>";
+            echo "</tr>";
+        } ?>
+        <tr>
+            <td colspan="<?php echo $field ?>" align="right" style="border: none;">
+                <?php echo $html; ?>
+            </td>
+        </tr>
+    </table>
+</div>
+<?php } else { ?>
+    No hay Resultados para la b&uacute;squeda.
+<?php } ?>

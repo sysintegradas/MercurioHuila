@@ -1,0 +1,43 @@
+<?php View::getContent(); ?>
+<?php Tag::addJavascript('cajas/banners');?>
+<script>
+function verBanimg(numero,ruta){
+    UI.Window.addMethods({
+        CloseWinBanner: function(){
+            this.destroy();
+        }
+    });
+   manager = new UI.WindowManager({
+      container: 'captura'
+   });
+    var ventana = new UI.Window({
+            id: 'bannerWin',
+            theme: 'leopard',
+            //minimize: false,
+            //maximize: false,
+            ////resizable: false,
+            close: 'CloseWinBanner',
+            width: 800,
+            height: 470, 
+    });
+    ventana.center().setHeader("Imagen de Banner No. "+ numero).show();
+    ventana.activate();
+    manager.register(ventana);
+    new Ajax.Request(Utils.getKumbiaURL("mercurio26/verbanners"),{
+        parameters: {
+            ruta: ruta,
+        },
+        
+        onSuccess: function(transport){
+            lista = transport.responseText.evalJSON();
+            ventana.setContent(lista).show();
+        },
+
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }    
+    });
+}
+
+</script>
+<?php echo $html; ?>

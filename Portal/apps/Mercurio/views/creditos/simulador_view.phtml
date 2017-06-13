@@ -1,0 +1,49 @@
+<?php echo View::getContent(); ?>
+<script type="text/javascript">
+    var val = new Validator();
+    val.addField("tipcre","select",null,{'alias': 'Tipo de Credito','isNull': false,'doToUpperCase': false});
+    val.addField("codcat","select",null,{'alias': 'Categoria','isNull': false,'doToUpperCase': false});
+    val.addField("valsim","number",null,{'alias': 'Valor Simulacion','isNull': false,'doToUpperCase': false});
+    val.addField("cuotas","number",null,{'alias': 'Cuotas','isNull': false,'doToUpperCase': false});
+    Guardar = function(){
+        if(!val.valide()){
+            Messages.valide(val);
+            return;
+        }
+        simular();
+    }
+    
+    Reporte = function(){
+        if(!val.valide()){
+            Messages.valide(val);
+            return;
+        }
+        $('form').submit();
+    }
+ </script>
+ <br>
+ <?php echo Tag::form(Router::getController()."/reporteSimulador","id: form","autocomplete: off"); ?>
+<div>
+  <table align="center" cellspacing="10">
+    <tr>
+      <td align='right'><label>Línea de Crédito:</label></td>
+      <td><?php echo Tag::selectStatic("tipcre",$lineas,"use_dummy: true");?></td>
+      <td align='right'><label>Categoría:</label></td>
+      <td><?php echo Tag::selectStatic("codcat",array("A"=>"A","B"=>"B","C"=>"C"),"use_dummy: true");?></td>
+    </tr>
+    <tr>
+      <td align='right'><label>Valor Simulación:</label></td>
+      <td><?php echo Tag::numericField("valsim"); ?></td>
+      <td align='right'><label>Cuotas:</label></td>
+      <td><?php echo Tag::numericField("cuotas"); ?></td>
+    </tr>
+    <tr>
+      <td colspan="2" align="center"><?php echo Tag::button("Simular","class: submit","onclick: Guardar();") ?></td>
+      <td colspan="2" align="center"><?php echo Tag::button("Reporte","class: submit","onclick: Reporte();"); ?></td>
+    </tr>
+  </table>
+</div>
+<?php echo Tag::endForm(); ?>
+<div id='simular'>
+  
+</div>

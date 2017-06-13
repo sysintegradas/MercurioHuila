@@ -1,0 +1,71 @@
+<?php echo View::getContent(); ?>
+<script type="text/javascript">
+
+    Guardar = function(){
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("opciones/verificarIp"),
+            data: {
+               registra: $('#registra').val(),
+               pregunta1: $('#pregunta1').val(),
+               respuesta1: $('#respuesta1').val(),
+               pregunta2: $('#pregunta2').val(),
+               respuesta2: $('#respuesta2').val(),
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            //Messages.display(response['msg'],"error");
+            window.location = Utils.getKumbiaURL("principal/index");
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+/*
+        new Ajax.Request(Utils.getKumbiaURL("opciones/verificarIp"), {
+            asynchronous : false,
+            parameters: {
+                registra: $F('registra'),
+                pregunta1: $F('pregunta1'),
+                respuesta1: $F('respuesta1'),
+                pregunta2: $F('pregunta2'),
+                respuesta2: $F('respuesta2')
+            },
+            onSuccess: function(transport){
+                response = transport.responseText.evalJSON();
+                if(response['flag']==true){
+                    Messages.display(Array(response['msg']),"success");
+                    window.location = Utils.getKumbiaURL("principal/index");
+                }else{
+                    Messages.display(Array(response['msg']),"warning");
+                }
+            },
+            onFailure: function(transport){
+                alert(transport.responseText);
+            }
+        });
+*/
+    }
+ </script>
+
+<?php echo Tag::form("","autocomplete: off"); ?>
+<div align='center'>
+    <table align='center'>
+        <tr>
+          <td align="right"><?php echo $pregunta1; ?> ?</td>
+          <td align="left"><?php echo Tag::hiddenField("pregunta1"); ?><?php echo Tag::textField("respuesta1","placeholder: Respuesta 1","style: margin-top: 2%","class: form-control") ?></td>
+        </tr>
+        <tr>
+          <td align="right"><?php echo $pregunta2; ?> ?</td>
+          <td align="left"><?php echo Tag::hiddenField("pregunta2"); ?><?php echo Tag::textField("respuesta2","placeholder: Respuesta 2","style: margin-top: 4%","class: form-control") ?></td>
+        </tr>
+        <tr>
+            <td align="right"><b>Registro:</b></td>
+            <td align="left"><?php echo Tag::selectStatic("registra",array("N"=>"NO","S"=>"SI"),"value: N","style: width: 80px; margin-top: 4%","class: form-control") ?></td>
+        </tr>
+        <tr>
+          <td colspan="2" align="center"><?php echo Tag::button("Registrar Ip","class: submit","onclick: Guardar();","style: margin-top: 4%","class: btn btn-success") ?></td>
+        </tr>
+    </table>
+</div>
+<?php echo Tag::endForm(); ?>

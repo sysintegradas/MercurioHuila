@@ -1,0 +1,666 @@
+/*
+*   Javascript para el aplicativo desktop
+*   Author: Alejandro Mora
+*/
+/*
+*   Observadores para capturas los eventos de toda la pagina
+*/
+Event.observe(document, 'dom:loaded', function(){
+    window.document.observe('click',closeAll);
+    $('inicio').hide();
+    $('calendar').hide();
+    $('chat').hide();
+    $('contact').hide();
+    $('notas').hide();
+    $('img-off').observe('click',clickClsSesion);
+    $('img-not').observe('click',clickBtnNotas);
+    $('img-con').observe('click',clickBtnCon);
+    $('img-chat').observe('click',clickBtnChat);
+    $('img-cal').observe('click',clickBtnCalen);
+    $('btn-inicio').observe('click',clickBtnInicio);
+    $('del-nota').observe('click',delListNotas);
+    $('add-nota').observe('click',addListNotas);
+    $('welcome').observe('click',clickBtnBas2);
+    mes = new Date();
+    ano_act = mes.getFullYear();
+    mes_act = parseInt(mes.getMonth())+parseInt(1);
+    ano = mes.getFullYear();
+    mes = parseInt(mes.getMonth())+parseInt(1);
+    nota_selec = "";
+    usuario_act = "";
+    view_user_info = false;
+    verOpciones = true;
+    //tinyMCE.init({
+        //mode : "textareas",
+        //theme: "advanced"
+    //});
+    actTime();
+});
+
+function showCapBas2(){
+    new Ajax.Request(Utils.getKumbiaURL("desktop/showCapBas2"), {
+        parameters: {
+        },
+        onSuccess: function(transport){
+            response = transport.responseText.evalJSON();
+            $('capt-basica02').innerHTML = response;
+            $('codare_basica02').focus();
+            $('basica02').select('input, select').each(function(e){
+                $(e).observe('change',saveCapBas2);
+            });
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+}
+
+function saveCapBas2(){
+    new Ajax.Request(Utils.getKumbiaURL("desktop/saveCapBas2"), {
+        asynchronous: false,
+        parameters: {
+            codare: $F('codare_basica02'),
+            ext: $F('ext_basica02'),
+            celular: $F('celular_basica02'),
+            telefono: $F('telefono_basica02'),
+            email: $F('email_basica02')
+        },
+        onSuccess: function(transport){
+            response = transport.responseText.evalJSON();
+            //clickBtnBas2();
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+}
+
+function showBas2(){
+    showCapBas2();
+}
+
+
+function clickBtnBas2(){
+    if(view_user_info==true)
+        $('basica02').morph('top: -350px',{duration: .7});
+    else{
+        showBas2();
+        $('basica02').morph('top: 30px',{duration: .7});
+    }
+    view_user_info = !(view_user_info);
+}
+
+function closeAll(evento){
+    var flag = true;
+    $(evento.target).ancestors().each(
+        function(elem){
+            if(elem.id=="no_cerrar"){
+                flag=false;
+                return;
+            }
+        }
+    );
+    if(flag==false)return;
+    if($('inicio').visible()==true)$('inicio').hide();
+    if($('calendar').visible()==true)$('calendar').hide();
+    if($('chat').visible()==true)$('chat').hide();
+    if($('contact').visible()==true)$('contact').hide();
+    if($('notas').visible()==true)$('notas').hide();
+}
+
+function clickClsSesion(){
+    new Ajax.Request(Utils.getKumbiaURL("login/ClsSesion"), {
+        parameters: {
+        },
+        onSuccess: function(transport){
+            response = transport.responseText.evalJSON();
+            window.location = Utils.getKumbiaURL("login"); 
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+}
+
+function actTime(){
+  new Ajax.PeriodicalUpdater("time","Restaurante/desktop/actTime",{
+    method: 'get', frequency: 1,
+    onSuccess: function(transport){
+      response = transport.responseText.evalJSON();
+      $('content-time').innerHTML = response;
+      countNot();
+    }
+  });
+}
+
+/*
+*   Funcion para contar Notificaciones 
+*/
+
+function countNot(){
+    new Ajax.Request(Utils.getKumbiaURL("desktop/countNot"), {
+        parameters: {
+        },
+        onSuccess: function(transport){
+            response = transport.responseText.evalJSON();
+            $('content-numnoti').innerHTML = response;
+            if(usuario_act!="")showListChatInfo();
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+}
+
+/*
+*   Funcion para seleccionar la nota 
+*/
+
+function selectNota(numero){
+    if(nota_selec!="")
+        $(nota_selec).removeClassName('active');
+    $(numero).addClassName('active');
+    nota_selec = numero;
+    showListNotasMsg();
+}
+
+/*
+*   Funcion para mostrar Las Notas 
+*/
+
+function showListNotas(act){
+    new Ajax.Request(Utils.getKumbiaURL("desktop/showListNotas"), {
+        parameters: {
+            numero: nota_selec,
+            act: act
+        },
+        onSuccess: function(transport){
+            response = transport.responseText.evalJSON();
+            $('content-notas-listas').innerHTML = response['html'];
+            nota_selec = response['id'];
+            showListNotasMsg();
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+}
+
+/*
+*   Funcion para mostrar el mensaje de la Nota
+*/
+
+function showListNotasMsg(){
+    new Ajax.Request(Utils.getKumbiaURL("desktop/showListNotasMsg"), {
+        parameters: {
+            numero: nota_selec
+        },
+        onSuccess: function(transport){
+            response = transport.responseText.evalJSON();
+            $('nota').value = response;
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+}
+
+/*
+*   Funcion para borrar el mensaje seleccionado
+*/
+
+function delListNotas(){
+    new Ajax.Request(Utils.getKumbiaURL("desktop/delListNotas"), {
+        parameters: {
+            numero: nota_selec
+        },
+        onSuccess: function(transport){
+            showNotas();
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+}
+
+/*
+*   Funcion para adicionar el mensaje seleccionado
+*/
+
+function addListNotas(){
+    new Ajax.Request(Utils.getKumbiaURL("desktop/addListNotas"), {
+        parameters: {
+            numero: nota_selec,
+            nota: $F('nota')
+        },
+        onSuccess: function(transport){
+            response = transport.responseText.evalJSON();
+            if(response['flag']==false)alert(response['msg']);
+            else nota_selec = response['data'];
+            showListNotas(false);
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+}
+
+/*
+ * Function para crear uno notas
+ */
+
+function newNota(){
+    if(nota_selec!="")
+        $(nota_selec).removeClassName('active');
+    nota_selec = "";
+    $('nota').value="";
+    $('nota').focus();
+}
+
+/*
+ * Function para traer las notas y crear la opcion
+ */
+
+function showNotas(){
+    showListNotas(true);
+}
+
+/*
+*   Funcion para mostrar/ocultar el menu o iconos
+*/
+
+function clickBtnNotas(){
+    if($('notas').visible()){
+        hideInicio('notas');
+    }else{
+        showInicio('notas');
+    }
+    showNotas();
+}
+
+/*
+ * Function para traer los Contactos  y crear la opcion
+ */
+
+function showContact(){
+    showListContact();
+}
+
+function selectContact(elem,usuario){
+    $$('.content-contact-listas').each(function(ele){
+        ele.removeClassName('active');
+    });
+    elem.addClassName('active');
+    showListContactInfo(usuario);
+}
+
+/*
+*   Funcion para mostrar Los Contactos 
+*/
+
+function showListContact(){
+    new Ajax.Request(Utils.getKumbiaURL("desktop/showListContact"), {
+        parameters: {
+        },
+        onSuccess: function(transport){
+            response = transport.responseText.evalJSON();
+            $('content-contact-listas').innerHTML = response;
+            $('content-contact-info').innerHTML = "";
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+}
+
+/*
+*   Funcion para mostrar la informacion del contacto
+*/
+
+function showListContactInfo(usuario){
+    new Ajax.Request(Utils.getKumbiaURL("desktop/showListContactInfo"), {
+        parameters: {
+            usuario: usuario
+        },
+        onSuccess: function(transport){
+            response = transport.responseText.evalJSON();
+            $('content-contact-info').innerHTML = response;
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+}
+
+/*
+*   Funcion para mostrar/ocultar el menu o iconos
+*/
+
+function clickBtnCon(){
+    if($('contact').visible()){
+        hideInicio('contact');
+    }else{
+        showInicio('contact');
+    }
+    showContact();
+}
+
+/*
+ * Function para Guardar el Chat
+ */
+
+function saveChat(){
+    if($F('msg_chat').blank())return;
+    $('btn_snd_msg').addClassName("no_send");
+    new Ajax.Request(Utils.getKumbiaURL("desktop/saveChat"), {
+        parameters: {
+            usuario: usuario_act,
+            msg: $F('msg_chat')
+        },
+        onSuccess: function(transport){
+            response = transport.responseText.evalJSON();
+            $('btn_snd_msg').removeClassName("no_send");
+            showListChatInfo(usuario_act);
+            $('msg_chat').value="";
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+}
+
+/*
+ * Function para traer los Contactos  y crear la opcion
+ */
+
+function showChat(){
+    showListChat();
+}
+
+
+function selectChat(elem,usuario){
+    $$('.content-chat-listas').each(function(ele){
+        ele.removeClassName('active');
+    });
+    elem.addClassName('active');
+    showListChatInfo(usuario);
+    usuario_act = usuario;
+}
+
+/*
+*   Funcion para mostrar Los Contactos 
+*/
+
+function showListChat(){
+    new Ajax.Request(Utils.getKumbiaURL("desktop/showListChat"), {
+        parameters: {
+        },
+        onSuccess: function(transport){
+            response = transport.responseText.evalJSON();
+            $('content-chat-listas').innerHTML = response;
+            $('content-conversation').innerHTML = "";
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+}
+
+/*
+*   Funcion para mostrar la informacion del contacto
+*/
+
+function showListChatInfo(usuario){
+    if(usuario==undefined && usuario_act!="")usuario=usuario_act;
+    new Ajax.Request(Utils.getKumbiaURL("desktop/showListChatInfo"), {
+        parameters: {
+            usuario: usuario
+        },
+        onSuccess: function(transport){
+            response = transport.responseText.evalJSON();
+            $('content-conversation').innerHTML = response;
+            var di = $('content-conversation');
+            di.scrollTop = di.scrollHeight - di.clientHeight;
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+}
+
+/*
+*   Funcion para mostrar/ocultar el menu o iconos
+*/
+
+function clickBtnChat(){
+    if($('chat').visible()){
+        hideInicio('chat');
+    }else{
+        showInicio('chat');
+    }
+    showChat();
+}
+
+/*
+ * Function para traer el Calendario 
+ */
+
+function showCalen(){
+    showListCalen(0);
+}
+
+
+/*
+*   Funcion para mostrar el Calendario 
+*/
+
+function showListCalen(tipo){
+    if(tipo==1){
+        mes--;
+    }else if(tipo==2){
+        mes++;
+    }
+    if(mes==13){
+        ano++;
+        mes=1;
+    }else if(mes==0){
+        ano--;
+        mes=12;
+    }
+    if(tipo==3){
+        mes=mes_act;
+        ano=ano_act;
+    }
+    new Ajax.Request(Utils.getKumbiaURL("desktop/showListCalen"), {
+        parameters: {
+            mes: mes,
+            ano: ano
+        },
+        onSuccess: function(transport){
+            response = transport.responseText.evalJSON();
+            $('content-calen').innerHTML = response;
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+}
+
+/*
+*   Funcion para mostrar/ocultar el menu o iconos
+*/
+
+function clickBtnCalen(){
+    if($('calendar').visible()){
+        hideInicio('calendar');
+    }else{
+        showInicio('calendar');
+    }
+    showCalen();
+}
+
+/*
+*   Funcion para mostrar/ocultar el menu o iconos
+*/
+function clickBtnInicio(){
+    if($('inicio').visible()){
+        hideInicio('inicio');
+    }else{
+        showInicio('inicio');
+    }
+}
+/*
+*   Funcion para ocultar el menu de inicio
+*/
+function hideInicio(name){
+    $(name).hide();
+    if(name=='inicio') $('btn-inicio').removeClassName('press');
+}
+/*
+*   Funcion para mostrar el menu de inicio
+*/
+function showInicio(name){
+    $('inicio').hide();
+    $('notas').hide();
+    $('calendar').hide();
+    $('chat').hide();
+    $('contact').hide();
+    $(name).show();
+    if(name=='inicio') $('btn-inicio').addClassName('press');
+}
+/*
+ * Funcion para Crear la ventana de la Vista
+*/
+function newWindow(id,title,help){
+    if($(id)!=null){
+        alert("Ya Tiene Esa Opcion Abierta");
+        return;
+    }
+    UI.Window.addMethods({
+        cerrar_ventana: function(){
+            this.destroy();
+        }
+    });
+    manager = new UI.WindowManager({
+        container: 'user-bg'
+    });
+    var ventana = new UI.Window({
+        id: id,
+        theme: 'leopard',
+        minimize: true,
+        maximize: true,
+        activeOnClick: false,
+        close: 'cerrar_ventana',
+        width: 600,
+        height: 380
+    });
+    ventana.center().setHeader(title).show();
+    ventana.activate();
+    manager.register(ventana);
+    traerCap(id,ventana,help);
+}
+
+function traerCap(url,ventana,help){
+    new Ajax.Request(Utils.getKumbiaURL(url), {
+        parameters: {
+            url: url,
+            help: help
+        },
+        onSuccess: function(transport){
+            response = transport.responseText;
+            ventana.setContent(response).show();
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+}
+
+function showSubMenu(elem){
+    $$('.admin-suboptions').invoke("hide");
+    elem.next().show();
+}
+
+function seleccionarFila(elem_pri){
+    elem_sub = elem_pri.next();
+    if(!verOpciones) return;
+    verOpciones = false;
+    if(!elem_sub.visible()){
+        elem_sub.show();
+        elem_pri.addClassName("active");
+        verOpciones = true;
+    } else {
+        elem_pri.removeClassName("active");
+        elem_sub.hide();
+        verOpciones = true;
+    }
+}
+
+function redirect(url,ventana,help){
+    ventana = manager.getWindow(ventana);
+    traerCap(url,ventana,help);
+}
+
+function help(elem){
+    if(elem.next().visible())
+        $(elem.next()).fade();
+    else
+        $(elem.next()).appear();
+}
+
+function guardar_default(url,ventana){
+    new Ajax.Request(Utils.getKumbiaURL("desktop/saveChat"), {
+        parameters: {
+            usuario: usuario_act,
+            msg: $F('msg_chat')
+        },
+        onSuccess: function(transport){
+            response = transport.responseText.evalJSON();
+            ventana = manager.getWindow(ventana);
+            traerCap(url,ventana,help);
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+}
+
+function remove_default(controller,condi,elem){
+    new Ajax.Request(Utils.getKumbiaURL(controller+"/borrar"), {
+        parameters: {
+            condi: condi
+        },
+        onSuccess: function(transport){
+            response = transport.responseText.evalJSON();
+            alert(response);
+            if(response==true){
+                elem.up("tr").remove();
+            }else{
+                alert("Paso Algo");
+            }
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+}
+
+function paginate(controller,model,option,query,pagina){
+    new Ajax.Request(Utils.getKumbiaURL(controller+"/buscar"), {
+        parameters: {
+            model: model,
+            option: option,
+            query: query,
+            pagina: pagina
+        },
+        onSuccess: function(transport){
+            response = transport.responseText.evalJSON();
+            //response;
+            //ventana = manager.getWindow(ventana);
+            //traerCap(url,ventana,help);
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+}

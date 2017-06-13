@@ -1,0 +1,138 @@
+<script>
+function verDetalle(id,tipo){
+    UI.Window.addMethods({
+        CloseWinTrabajador: function(){
+        this.destroy();
+        }
+    });
+   manager = new UI.WindowManager({
+      container: 'captura'
+   });
+    var ventana = new UI.Window({
+            id: 'trabajadorWin',
+            theme: 'leopard',
+            //minimize: false,
+            //maximize: false,
+            ////resizable: false,
+            close: 'CloseWinTrabajador',
+            width: 800,
+            height: 600, 
+    });
+    ventana.center().setHeader("Detalle de la informacion").show();
+    ventana.activate();
+    manager.register(ventana);
+    
+    new Ajax.Request(Utils.getKumbiaURL("mercurio21/detalleInformacion"), {
+        parameters: {
+            id: id,
+            tipo: tipo,
+        },
+        asyncronous: false,
+        onSuccess: function(transport){
+            formu = transport.responseText.evalJSON();
+            ventana.setContent(formu).show();
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+}
+</script>
+
+
+
+
+<?php if($botones){ ?>
+
+<div id="botones" align="right">
+    <table>
+        <tr>
+            <td><?php echo Tag::image("reporte.png","title: Reporte","class: boton","onclick: reporte()") ?></td>
+            <td><?php echo Tag::linkTo(Router::getController()."/index",Tag::image("exit.png","title: Salir","class: boton")) ?></td>
+        </tr>
+    </table>
+</div>
+<?php }
+
+            echo Tag::stylesheetLink('front', true);
+$field = 9;
+
+if(count($gener->items)>0){ ?>
+<div id="consulta" align="center" >
+    <table align="center" width="100%" cellpadding='0' cellspacing='1'>
+        <thead>
+            <tr>
+                <th width="25px">Numero de radicado</th>
+                <th width="25px">Documento</th>
+                <th width="25px">Nombre</th>
+                <th width="25px">Fecha de Registro</th>
+                <th width="25px">Accion</th>
+                <th width="25px">Usuario Encargado</th>
+                <th width="25px">Estado</th>
+                <th width="25px">Motivo</th>
+            </tr>
+        </thead>
+        <?php $i=0; foreach($gener->items as $mgener){ ?>
+            <tr class="td<?php echo $i%2+1 ?>">
+                <td align="center" width="25px"><?php echo $mgener->getId(); ?></td>
+                <td align="center" width="25px"><?php echo $mgener->getDocumento(); ?></td>
+                <?php $mercurio07 = $Mercurio07->findFirst("documento = {$mgener->getDocumento()}")?>
+                <td align="center" width="25px"><?php echo $mercurio07->getNombre(); ?></td>
+                <td align="center" width="25px"><?php echo $mgener->getFecha(); ?></td>
+                <td align="center" width="25px"><?php echo $mgener->getAccionDetalle(); ?></td>
+                <?php 
+                  switch($mgener->getAccion()){
+                      case "addempresa":
+                            $tipo = "30";
+                            $mtabla = $Mercurio30->findFirst("log = '{$mgener->getId()}'");
+                          break;
+                      case "addtrabajador":
+                            $tipo = "31";
+                            $mtabla = $Mercurio31->findFirst("log = '{$mgener->getId()}'");
+                          break;
+                      case "actdat":
+                            $tipo = "33";
+                            $mtabla = $Mercurio33->findFirst("log = '{$mgener->getId()}'");
+                          break;
+                      case "cambioDatosPrincipales": 
+                            $tipo = "43";
+                            $mtabla = $Mercurio43->findFirst("log = '{$mgener->getId()}'");
+                          break;
+                      case "cargueCertificados":
+                            $tipo = "45";
+                            $mtabla = $Mercurio45->findFirst("log = '{$mgener->getId()}'");
+                          break;
+                      case "ingben":
+                            $tipo = "34";
+                            $mtabla = $Mercurio34->findFirst("log = '{$mgener->getId()}'");
+                          break;
+                      case "ingcon":
+                            $tipo = "32";
+                            $mtabla = $Mercurio32->findFirst("log = '{$mgener->getId()}'");
+                          break;
+                  }
+                ?>
+                <?php if($mtabla != FALSE){ ?>
+                    <td align="center" width="25px"><?php echo $mtabla->getGener02()->getNombre(); ?></td>
+                    <td align="center" width="25px"><?php echo $mtabla->getEstadoDetalle(); ?></td>
+                    <td align="center" width="25px"><?php echo $mtabla->getMotivo(); ?></td>
+                    <td align="center" width="25px"><button onclick="verDetalle('<?php echo $mtabla->getId();?>','<?php echo $tipo; ?>')">Ver Detalle</button></td>
+                <?php }else{ ?>
+                    <td align="center" width="25px"><?php echo $mgener->getId(); ?></td>
+                <?php } ?>
+            </tr>
+        <?php $i++; } for($i=10-count($gener->items);$i>0;$i--){
+            echo "<tr class='td".($i%2+1)."' height='25px'>";
+            for($j=0;$j<$field;$j++) echo "<td></td>";
+            echo "</tr>";
+        } ?>
+        <tr>
+            <td colspan="<?php echo $field ?>" align="right" style="border: none;">
+                <?php echo $html; ?>
+            </td>
+        </tr>
+    </table>
+</div>
+<?php } else { ?>
+    No hay Resultados para la b&uacute;squeda.
+<?php } ?>

@@ -1,0 +1,108 @@
+<?php View::getContent(); ?>
+<script>
+    
+    buscar = function(){
+      if($F('cedtra') == ""){
+        $('cedtra').focus();
+        Messages.display("Por favor digite la cedula a la que se quiere buscar","warning");
+      }else{
+        var cedtra = $F('cedtra');
+        new Ajax.Request(Utils.getKumbiaURL("subsidio/novmue"), {
+          parameters: {
+            cedtra: cedtra
+          },
+          onSuccess: function(transport){
+            response = transport.responseText.evalJSON();
+          $('trabajador').innerHTML= response;  
+           if(response == false){
+                 Messages.display("la cedula no existe, digite una cedula valida para registrarse","warning");
+            }
+          },
+          onFailure: function(transport){
+            alert(transport.responseText);
+          }
+        });
+       }
+    }
+ 
+    muerte = function(){
+      if($F('cedtra') == ""){
+        $('cedtra').focus();
+        Messages.display("Por favor digite la cedula","warning");
+      }if($F('codest')==""){
+        $('codest').focus();
+        Messages.display("Por favor digite el codigo de estado","warning");
+      }if($F('fecret') == ""){
+        $('fecret').focus();
+        Messages.display("Por favor digite la fecha de retiro","warning");
+      }if($F('nota')==""){
+        $('nota').focus();
+        Messages.display("Por favor digite la nota","warning");
+      }else{
+        var cedtra = $F('cedtra');
+        var codest = $F('codest');
+        var fecret = $F('fecret');
+        var nota = $F('nota');
+        new Ajax.Request(Utils.getKumbiaURL("subsidio/muerte"), {
+          parameters: {
+            cedtra: cedtra,
+            codest: codest,
+            fecret: fecret,
+            nota: nota
+          },
+          onSuccess: function(transport){
+            response = transport.responseText.evalJSON();
+           if(response['flag'] == true ){
+                 Messages.display("La transacion fue exitosa ","success");
+                 $('trabajador').remove();
+                 $('cedtra').value="";
+                 $('codest').value="@";
+                 $('fecret').value="";
+                 $('nota').value="";
+
+           }else{
+                 Messages.display("La transacion  no fue exitosa ","warning");
+           }
+          },
+          onFailure: function(transport){
+            alert(transport.responseText);
+          }
+        });
+       }
+   }
+</script>
+
+<?php echo Tag::form(Router::getController()."/novmue","id: form","autocomplete: off","enctype: multipart/form-data"); ?>
+<div>
+<table style="margin: auto; border-collapse: separate; border-spacing: 5px;">
+  <tr>
+    <td align='center'><label>Cédula:</label></td>
+    <td><?php echo Tag::numericField("cedtra","style: width: 174px;"); ?></td>
+    <td><?php echo Tag::Button("Buscar",'class: submit','style: margin-top:5%; margin-left:25%; width: 200px; height: 24px;',"onclick: buscar();") ?></td>
+  </tr>
+<table style="margin: auto; border-collapse: separate; border-spacing: 5px;">
+  <tr>
+     <td id='trabajador'> </td>  
+  </tr>
+</table>
+<table style="margin: auto; border-collapse: separate; border-spacing: 5px;">
+  <tr>
+    <td><label>Codigo de Estado:</label></td>
+    <td><?php echo Tag::selectStatic("codest",$codest,"style: width: 140px;","use_dummy: true"); ?></td>
+    <td><label>Fecha de Retiro:</label></td>
+    <td><?php echo TagUser::Calendar("fecret"); ?></td>
+  </tr>
+</table>
+<table style="margin: auto; border-collapse: separate; border-spacing: 5px;">
+  <tr colspan=4>
+    <td align='center'><label>Nota : </label></td>
+    <td><?php echo Tag::textArea("nota","cols: 50","rows: 5");?></td>
+  </tr>
+</table>
+<table style="margin: auto; border-collapse: separate; border-spacing: 5px;">
+  <tr colspan=4>
+    <td><?php echo Tag::Button("Retirar",'class: submit','style: margin-top:5%; margin-left:25%; width: 200px; ',"onclick: muerte();") ?></td>
+  </tr>
+</table>
+</div>
+<?php echo Tag::endForm(); ?>

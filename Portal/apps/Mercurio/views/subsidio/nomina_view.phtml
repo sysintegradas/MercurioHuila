@@ -1,0 +1,68 @@
+<?php View::getContent(); ?>
+<script>
+$(document).ready(function(){   
+    $('[data-toggle="tooltip"]').tooltip();
+});
+    buscar = function(){
+        if($('#periodo').val().substring(4,6) == 00){
+            $('#periodo').focus();
+            Messages.display("Verifique que el periodo el mes sea diferente a 00","warning");
+            $('#periodo').val('');
+            return;
+        }
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/nomina"),
+            data: {
+                periodo: $('#periodo').val()
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            $("#respuesta").html(response); 
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+    validaperiodo = function(){
+        if($('#periodo').val().substring(4,6) == 00){
+            $('#periodo').focus();
+            Messages.display("Verifique que el periodo el mes sea diferente a 00","warning");
+            $('#periodo').val('');
+            return;
+        }
+    }
+</script>
+<?php echo Tag::form(Router::getController()."/nomina","id: form","autocomplete: off","enctype: multipart/form-data"); ?>
+<div >
+<table class="contenedor" style="margin: auto; border-collapse: separate; border-spacing: 5px;" width="95%">
+<div>
+    <table class="contenedor" style="margin: auto; border-collapse: separate; border-spacing: 5px;" width="95%">
+        <tr style="padding= 2%" align="cedter">
+                <td align='right' width="31%"><label>Per&iacute;odo:</label></td>
+                <td align='center' width="30%">
+                    <div class="input-group" >
+                        <div class="input-group-addon"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"  data-toggle="tooltip" title="El per&iacute;odo inicial se utiliza con la uni&oacute;n de a&ntilde;o-mes"  ></span></div>
+                        <?php echo Tag::numericField("periodo","class: form-control col-sm-10","style: margin-left: -3%; ","maxlength: 6","onchange: validaperiodo()"); ?>
+                    </div>
+                </td>
+                <td  align="left" width="30%"><?php echo Tag::Button("Buscar",'class: btn btn-success',"onclick: buscar();") ?></td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <table style="margin: auto; border-collapse: separate; border-spacing: 5px;" width="100%">
+                    <tr>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+<?php echo Tag::endForm(); ?>
+<div id='respuesta'> 
+
+
+
+</div>  
+

@@ -1,0 +1,91 @@
+<?php View::getContent(); ?>
+<script>
+    generar = function(tipfor){
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/generarCertificados"),
+            data: {
+                tipfor: tipfor,
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            if(response['flag'] == false){
+                    Messages.display(response['msg'],"warning");
+                    return;
+            }
+            win = window.open(Utils.getKumbiaURL("../"+response['data']),"Descarga", 'width=800, height=750, toolbar=no, statusbar=no, scrollbars=yes, Menubar=yes');
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+</script>
+<?php echo Tag::form(Router::getController()."/generarCertificados") ?>
+<div>
+    <table style="margin: auto; border-collapse: separate; border-spacing: 5px;" width="95%">
+        <?php if(SESSION::getData('estado')=='A' || SESSION::getData('estado')=='N'){ ?>
+            <tr>
+                <td align='center'>
+                    <?php echo Tag::Button("Generar Certificado Estado de Afiliaci&oacute;n",'class: btn btn-success','style: margin-top: 19px; width:375px;',"onclick: generar('a');") ?>
+                </td>
+            </tr>    
+            <tr>
+                <td align='center'>
+                    <?php echo Tag::Button("Generar Certificado  Estado de Afiliaci&oacute;n con Categoria",'class: btn btn-success','style: margin-top: 19px; width:375px;',"onclick: generar('c');") ?>
+                </td>
+            </tr>    
+            <tr>
+                <td align='center'>
+                    <?php echo Tag::Button("Generar Certificado Estado de afiliaci&oacute;n con Trayectoria ",'class: btn btn-success','style: margin-top: 19px;width:375',"onclick: generar('d');") ?>
+                </td>
+            </tr>    
+            <tr>
+                <td align='center'>
+                    <?php echo Tag::Button("Generar Certificado con Ultima Trayectoria",'class: btn btn-success','style: margin-top: 19px;',"onclick: generar('f');"); ?>
+                </td>
+            </tr>    
+            <?php if($benefic == false){ ?>
+                <tr>
+                    <td align='center'>
+                        <?php echo Tag::Button("Generar Certificado sin Beneficiarios",'class: btn btn-success','style: margin-top: 19px;',"onclick: generar('i');") ?>
+                    </td>
+                </tr>    
+            <?php }else{ ?>
+                <tr>
+                    <td align='center'>
+                        <?php echo Tag::Button("Generar Certificado con Beneficiarios",'class: btn btn-success','style: margin-top: 19px;',"onclick: generar('g');") ?>
+                    </td>
+                </tr>    
+            <?php } ?>
+        <?php } ?>
+        <?php if(SESSION::getData('estado')=='I'){ ?>
+            <tr>
+                <td align='center'>
+                    <?php echo Tag::Button("Generar Certificado Estado Inactivo",'class: btn btn-success','style: margin-top: 19px;',"onclick: generar('b');") ?>
+                </td>
+            </tr>    
+            <tr>
+                <td align='center'>
+                    <?php echo Tag::Button("Generar Certificado con Trayectoria Inactivo",'class: btn btn-success','style: margin-top: 19px;',"onclick: generar('e');") ?>
+                </td>
+            </tr>    
+            <tr>
+                <td align='center'>
+                    <?php echo Tag::Button("Generar Certificado  Estado de Afiliaci&oacute;n Inactivo con Categoria",'class: btn btn-success','style: margin-top: 19px; width:420px;',"onclick: generar('k');") ?>
+                </td>
+            </tr>    
+        <?php } ?>
+        <tr>
+            <td align='center'>
+                <?php echo Tag::Button("Generar Certificado Beneficiario(a) Individual",'class: btn btn-success','style: margin-top: 19px;',"onclick: generar('h');") ?>
+            </td>
+        </tr>    
+        <tr>
+            <td align='center'>
+                <?php echo Tag::Button("Generar Certificado de Beneficiario(a) y Categoria",'class: btn btn-success','style: margin-top: 19px; ',"onclick: generar('j');") ?>
+            </td>
+        </tr>    
+    </table>
+</div>
+<?php echo Tag::endForm(); ?>

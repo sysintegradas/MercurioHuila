@@ -1,0 +1,28 @@
+<script>
+    downpdf = function(){
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/morepresunta_report"),
+            data: {},
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            if(window.open(Utils.getKumbiaURL("../"+response['data']),"Descarga", 'width=800, height=750, toolbar=no, statusbar=no, scrollbars=yes, Menubar=yes')){
+                    win = window.open(Utils.getKumbiaURL("../"+response['data']),"Descarga", 'width=800, height=750, toolbar=no, statusbar=no, scrollbars=yes, Menubar=yes');
+                }else{
+                    $('.ocl_tr').each(function(elem){
+                        elem.hide();
+                    });
+                    Messages.display(Array(response['msg']),"warning");
+                }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+    downxls = function(){
+      window.location=Utils.getKumbiaURL("subsidio/morepresunta_repxls");
+    }
+</script>
+<?php View::getContent(); ?>
+ 

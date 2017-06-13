@@ -1,0 +1,68 @@
+<?php View::getContent(); ?>
+
+<script type="text/javascript">
+
+Event.observe(window,'load',function(){
+    $('vista').setStyle({
+        'width': '1000px',
+        'marginLeft': '-40px'
+      });
+});
+
+function aprobar(id,elem){
+
+	var com = confirm("Seguro de aprobar este Clasificado?");
+	if(com == false)return;
+	elem = elem.up();
+	new Ajax.Request(Utils.getKumbiaURL("mercurio24/aprobar"), {
+	  parameters: {
+	    id: id
+	  },
+	  onSuccess: function(transport){
+	    response = transport.responseText.evalJSON();
+	    if(response['flag']==true){
+	      Messages.display(Array(response['msg']),"success");
+	      elem.remove();
+	    }else{
+	      Messages.display(Array(response['msg']),"warning");
+	    }
+	  },
+	  onFailure: function(transport){
+	    alert(transport.responseText);
+	  }
+	});
+}
+
+function rechazar(id,elem){
+	var com = confirm("Seguro de rechazar este Clasificado?");
+	if(com==false)return;
+	var motivo = prompt("Motivo de Rechazo?","");
+	if(motivo == "" || motivo == null){
+	    alert("Debe digitar un Motivo");
+	    return;
+	}
+	elem = elem.up();
+	new Ajax.Request(Utils.getKumbiaURL("mercurio24/rechazar"), {
+	  parameters: {
+	    motivo: motivo,
+	    id: id
+	  },
+	  onSuccess: function(transport){
+	    var response = transport.responseText.evalJSON();
+	    if(response['flag']==true){
+	      Messages.display(Array(response['msg']),"success");
+	      elem.remove();
+	    }else{
+	      Messages.display(Array(response['msg']),"warning");
+	    }
+	  },
+	  onFailure: function(transport){
+	    alert(transport.responseText);
+	  }
+	});
+}
+</script>
+
+<?php
+	echo $html;
+?>

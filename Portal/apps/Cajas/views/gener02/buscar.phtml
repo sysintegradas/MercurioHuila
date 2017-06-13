@@ -1,0 +1,49 @@
+<?php if($botones){ ?>
+<div id="botones" align="right">
+    <table>
+        <tr>
+            <td><?php echo Tag::image("reporte.png","title: Reporte","class: boton","onclick: reporte()") ?></td>
+            <td><?php echo Tag::linkTo(Router::getController()."/index",Tag::image("exit.png","title: Salir","class: boton")) ?></td>
+        </tr>
+    </table>
+</div>
+<?php }
+
+$field = 6;
+
+if(count($gener->items)>0){ ?>
+<div id="consulta" align="center" style="width: 650px;">
+    <table align="center" width="100%" cellpadding='0' cellspacing='1'>
+        <thead>
+            <tr>
+                <th width="25px">Usuario</th>
+                <th width="25px">Cedula</th>
+                <th width="25px">Nombre</th>
+                <th width="25px">Login</th>
+                <th width="25px">Estado</th>
+            </tr>
+        </thead>
+        <?php $i=0; foreach($gener->items as $mgener){ ?>
+            <tr class="td<?php echo $i%2+1 ?>" ondblclick="window.location='<?php echo Core::getInstancePath()."/".Router::getActiveApplication()."/".Router::getController()."/editar/{$mgener->getUsuario()}"?>'"height="25px" title="DobleClick para editar">
+                <td align="center" width="20px"><?php echo $mgener->getUsuario(); ?></td>
+                <td align="center" width="200px"><?php echo $mgener->getCedtra(); ?></td>
+                <td align="center" width="200px"><?php echo $mgener->getNombre(); ?></td>
+                <td align="center" width="200px"><?php echo $mgener->getLogin(); ?></td>
+                <td align="center" width="200px"><?php echo $mgener->getEstadoDetalle(); ?></td>
+                <td align="center" width="5px"><?php echo Tag::image("minus.png","title: Click para Borrar","onclick: borrar('{$mgener->getUsuario()}')") ?></td>
+            </tr>
+        <?php $i++; } for($i=10-count($gener->items);$i>0;$i--){
+            echo "<tr class='td".($i%2+1)."' height='25px'>";
+            for($j=0;$j<$field;$j++) echo "<td></td>";
+            echo "</tr>";
+        } ?>
+        <tr>
+            <td colspan="<?php echo $field ?>" align="right" style="border: none;">
+                <?php echo $html; ?>
+            </td>
+        </tr>
+    </table>
+</div>
+<?php } else { ?>
+    No hay Resultados para la b&uacute;squeda.
+<?php } ?>

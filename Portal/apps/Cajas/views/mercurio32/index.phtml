@@ -1,0 +1,238 @@
+<?php echo View::getContent(); ?>
+
+<script type="text/javascript">
+
+elem = '';
+id  = '';
+Event.observe(window,'load',function(){
+    $('vista').setStyle({
+        'width': '1000px',
+        'marginLeft': '-40px'
+      });
+});
+
+  function aprobarF(id_,elem_){
+      /*
+    if(!val.valide()){
+        Messages.valide(val);    
+        return;
+    }
+    */
+    id = id_;
+    elem = elem_;
+    var com = confirm("Seguro de aprobar este Conyuge?");
+   if(com==false)return;
+    //elem = elem.up();
+    new Ajax.Request(Utils.getKumbiaURL("mercurio32/aprobar"), {
+      parameters: {
+        id: id
+        //fecafi: $F('fecafi'),
+        //comper: $F('comper'),
+        //observacion: $F('observacion')
+
+      },
+      onSuccess: function(transport){
+        var response = transport.responseText.evalJSON();
+        if(response['flag']==true){
+            //$('empresaWin').remove();
+            elem = elem.up();
+            elem.remove();
+            Messagespro.display(Array(response['msg']),"success");
+            return;
+        }else{
+          Messagespro.display(Array(response['msg']),"warning");
+        }
+      },
+      onFailure: function(transport){
+        alert(transport.responseText);
+      }
+    });
+  }
+
+  function rechazar(id,elem){
+    var com = confirm("Seguro de rechazar este conyuge?");
+    if(com==false)return;
+    var motivo = prompt("Motivo de Rechazo?","");
+    if(motivo=="" || motivo==null){
+        alert("Debe digitar un Motivo");
+        return;
+    }
+    new Ajax.Request(Utils.getKumbiaURL("mercurio32/rechazar"), {
+      parameters: {
+        id: id,
+        motivo: motivo
+      },
+      onSuccess: function(transport){
+        var response = transport.responseText.evalJSON();
+        if(response['flag']==true){
+          elem = elem.up();
+          elem.remove();
+          Messagespro.display(Array(response['msg']),"success");
+        }else{
+          Messagespro.display(Array(response['msg']),"warning");
+        }
+      },
+      onFailure: function(transport){
+        alert(transport.responseText);
+      }
+    });
+  }
+
+function completar(id_,elem_){
+    UI.Window.addMethods({
+        CloseWinEmpresa: function(){
+        this.destroy();
+        }
+    });
+   manager = new UI.WindowManager({
+      container: 'captura'
+   });
+    var ventana = new UI.Window({
+            id: 'empresaWin',
+            theme: 'leopard',
+            close: 'CloseWinEmpresa',
+            width:380,
+            height: 100, 
+    });
+    ventana.center().setHeader("Formulario Registro").show();
+    ventana.activate();
+    manager.register(ventana);
+    new Ajax.Request(Utils.getKumbiaURL("mercurio32/formulario"), {
+        asyncronous: false,
+        onSuccess: function(transport){
+            formu = transport.responseText.evalJSON();
+            ventana.setContent(formu).show();
+            val = new Validator();
+            //val.addField('fecafi','date',null,{'alias': 'fechaAfiliacion','isNull': false});
+            //val.addField('comper','select',null,{'alias': 'Companera Permanente','isNull': false});
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+    id = id_;
+    elem = elem_;
+    return;
+}
+
+function verdoc(conyug){
+    UI.Window.addMethods({
+        CloseWinEmpresa: function(){
+            this.destroy();
+        }
+    });
+   manager = new UI.WindowManager({
+      container: 'captura'
+   });
+    var ventana = new UI.Window({
+            id: 'empresaWin',
+            theme: 'leopard',
+            //minimize: false,
+            //maximize: false,
+            ////resizable: false,
+            close: 'CloseWinEmpresa',
+            width: 400,
+            height: 470, 
+    });
+    ventana.center().setHeader("Documentación Conyuge  No"+conyug).show();
+    ventana.activate();
+    manager.register(ventana);
+    new Ajax.Request(Utils.getKumbiaURL("mercurio32/verdocumentos"),{
+        parameters: {
+           conyuge : conyug,
+        },
+        
+        onSuccess: function(transport){
+            lista = transport.responseText.evalJSON();
+            ventana.setContent(lista).show();
+        },
+
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }    
+    });
+}
+
+function revisar(id_,elem_){
+    UI.Window.addMethods({
+        CloseWinEmpresa: function(){
+        this.destroy();
+        }
+    });
+   manager = new UI.WindowManager({
+      container: 'captura'
+   });
+    var ventana = new UI.Window({
+            id: 'empresaWin',
+            theme: 'leopard',
+            close: 'CloseWinEmpresa',
+            width:380,
+            height: 100, 
+    });
+    ventana.center().setHeader("Formulario Registro").show();
+    ventana.activate();
+    manager.register(ventana);
+    new Ajax.Request(Utils.getKumbiaURL("mercurio32/revisar"), {
+        asyncronous: false,
+        onSuccess: function(transport){
+            formu = transport.responseText.evalJSON();
+            ventana.setContent(formu).show();
+            val = new Validator();
+            //val.addField('fecafi','date',null,{'alias': 'fechaAfiliacion','isNull': false});
+            //val.addField('comper','select',null,{'alias': 'Companera Permanente','isNull': false});
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+    id = id_;
+    elem = elem_;
+    return;
+}
+function info(id_,elem_){
+    UI.Window.addMethods({
+        CloseWinTrabajador: function(){
+        this.destroy();
+        }
+    });
+   manager = new UI.WindowManager({
+      container: 'captura'
+   });
+    var ventana = new UI.Window({
+            id: 'trabajadorWin',
+            theme: 'leopard',
+            close: 'CloseWinTrabajador',
+            width: 800,
+            height: 500, 
+    });
+    ventana.center().setHeader("Certificado de aprobación").show();
+    ventana.activate();
+    manager.register(ventana);
+    
+    new Ajax.Request(Utils.getKumbiaURL("mercurio32/info"), {
+        parameters: {
+            id: id_
+        },
+        asyncronous: false,
+        onSuccess: function(transport){
+            formu = transport.responseText.evalJSON();
+            ventana.setContent(formu).show();
+
+            val = new Validator();
+            val.addField('fecafi','date',null,{'alias': 'fecha de Afiliacion','isNull': false});
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+    id = id_;
+    elem = elem_;
+return;
+
+}
+
+</script>
+
+<?php
+	echo $html;
+?>

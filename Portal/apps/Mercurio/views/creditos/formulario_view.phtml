@@ -1,0 +1,10 @@
+<?php echo View::getContent(); ?>
+<script>
+  desFormulario = function(){
+    win = window.open("../public/files/formulario_credito.pdf","Descarga_credito", 'width=800, height=750, toolbar=no, statusbar=no, scrollbars=yes, Menubar=yes');
+  }
+</script>
+<br>
+<div align="center">
+<?php echo Tag::button("Descargar Formulario de Solicitud de Credito","class: submit","onclick: desFormulario();"); ?>
+</div>

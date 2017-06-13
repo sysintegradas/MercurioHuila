@@ -1,0 +1,153 @@
+<?php echo View::getContent(); ?>
+<script type="text/javascript">
+var val = new Validator();
+Event.observe(window,'load',function(){
+    gener18 = new Detail({
+        view: 'capt_det',
+        fields: ['coddoc','detdoc'],
+        classTr: ['det_row1','det_row2'],
+        empty: 'empty_msg'
+    });
+    $('coddoc').focus();
+    val.addField("coddoc","text",null,{'alias': 'Codigo','isNull': false});
+    val.addField("detdoc","text",null,{'alias': 'Detalle','isNull': false});
+});
+
+function save(){
+    if(!val.valide()){
+        Messages.valide(val);
+    } else {       
+        error = false;
+        for(i=1;i<=gener18.getNumRows();i++){
+            if(gener18.getRow(i)['coddoc']==$F('coddoc')){
+                if(!gener18.isEdit()){
+                    Messagespro.display(Array("El registro ya existe"),"warning");
+                    error=true;
+                    $('coddoc').value='';
+                    $('coddoc').focus();    
+                }       
+            }
+        }
+        if(!error){
+            gener18.save({
+                afterSave: function(){
+                    new Effect.Fade('edit_msg',{queue: 'end', scope: 'detalle'});
+                }
+            });
+            $('coddoc').enable();  
+            $('coddoc').focus();  
+        }
+    }
+}
+function removeRow(row){
+    gener18.remove(row,{
+        beforeRemove: function(elem){
+            if(gener18.isEdit(elem)){
+                Messagespro.display(Array("El registro actual esta en edicion"),"warning");
+                return false;
+            }
+        }
+    });
+    $('coddoc').focus();
+}
+
+function edit(e){
+    $('coddoc').disable(); 
+    gener18.edit(e,{
+        beforeEdit: function(){
+            if(gener18.isEdit()){
+                Messagespro.display(Array("Hay un registro en edicion"),"warning");
+                return false;
+            }
+        },
+        afterEdit: function(){
+            new Effect.Appear('edit_msg',{queue: 'end', scope: 'detalle'});
+        },
+    });
+    $('detdoc').focus(); 
+}
+
+function saveIntro(evt,element){
+    Bs.getKey(evt,{
+        action: function(kc){
+            if(kc==Event.KEY_RETURN) {
+                save();
+            }
+        }
+    });
+}
+
+function cancel(){
+    $('coddoc').enable(); 
+    gener18.cancelEdit();
+    new Effect.Fade('edit_msg',{queue: 'end', scope: 'detalle'});
+    $('coddoc').focus();
+}
+</script>
+
+<div id="botones" align="right">
+    <table>
+        <tr>
+            <td><?php echo Tag::image("guardar.png","title: Guardar","onclick: $('form').submit();","class: boton") ?></td>
+            <td><?php echo Tag::image("reporte.png","title: Reporte","class: boton","onclick: reporte()") ?></td>
+            <td><?php echo Tag::linkTo("gener18/index",Tag::image("exit.png","title: Cancelar","class: boton")) ?></td>
+        </tr>
+    </table>
+</div>
+
+<?php
+ $width="400px";
+ $rows=10;
+ $field=4;
+?>
+
+<div>
+    <table style="width: <?php echo $width ?>;">
+        <tr>
+            <td align="center" colspan="<?php echo $field ?>" height="30px">
+                <div id="edit_msg" style="display: none; cursor: pointer; background-color: #DDFFDD" onclick="cancel();">
+                    Registro en Edici&oacute;n (Click aqui para Cancelar)
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td align="center"><?php echo Tag::textUpperField("coddoc","maxlength: 1","size: 7","autocomplete: off","onkeydown: saveIntro(event,this);") ?> </td>
+            <td align="center"><?php echo Tag::textUpperField("detdoc","maxlength: 20","size: 35","autocomplete: off","onkeydown: saveIntro(event,this);") ?> </td>
+            <td align="center" class="det_img"><?php echo Tag::image("Plus.png","title: Agregar Fila","onclick: save();") ?></td>
+        </tr>
+        <tr>
+            <td align="center" class="titulos">Codigo</td>
+            <td align="center" class="titulos">Detalle</td>
+            <td>&nbsp;</td>
+        </tr>
+    </table>
+</div>
+
+<?php echo Tag::form("gener18/guardar", "id: form"); ?>
+    <div id="capt_det" style="height: <?php echo ($rows*27)+($rows+2) ?>px;width: <?php echo $width ?>;">
+        <table align="center" width="100%" cellpadding="0" cellspacing="1">
+            <thead align="center">
+                <tr id="empty_msg" style="display: <?php echo count($gener18)>0 ? 'none' : 'block' ?>;">
+                    <td colspan="<?php echo $field ?>" align="center">No hay <?php echo $titulo; ?> que mostrar</td>
+                </tr>
+            </thead>
+            <tbody>
+        <?php if(!count($gener18)){ ?>
+                <tr height="25px" ondblclick="edit(this);"  title="DobleClick para Editar">
+                    <td class="coddoc_" align="center" width="100px"></td>
+                    <td class="detdoc_" align="center" width="300px"></td>
+                    <td class="det_img" align="center" width="40px"><?php echo Tag::image("Minus.png","title: Borrar Fila","onclick: removeRow(this.ancestors()[1])") ?></td>
+                </tr>
+        <?php } else {
+                $i=0;
+                foreach ($gener18 as $gener18){ ?>
+                <tr class="det_row<?php echo $i%2+1 ?>" height="25px" ondblclick="edit(this);"  title="DobleClick para Editar">
+                    <td class="coddoc_" align="center" width="100px"><?php echo Tag::hiddenField("coddoc[]","value: {$gener18->getCoddoc()}") ?><?php echo $gener18->getCoddoc() ?></td>
+                    <td class="detdoc_" align="center" width="300px"><?php echo Tag::hiddenField("detdoc[]","value: {$gener18->getDetdoc()}") ?><?php echo $gener18->getDetdoc() ?></td>
+                    <td class="det_img" align="center" width="40px"><?php echo Tag::image("Minus.png","title: Borrar Fila","onclick: removeRow(this.ancestors()[1])") ?></td>
+                </tr>
+        <?php $i++; } } ?>
+            </tbody>
+        </table>
+    </div>
+<?php echo Tag::endForm() ?>

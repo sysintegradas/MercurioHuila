@@ -1,0 +1,35 @@
+<?php echo View::getContent(); ?>
+
+<script type="text/javascript">
+    Event.observe(window, 'load',function(){
+        $('codcaj').focus();
+    });
+ </script>
+
+<div id='botones' align='right'>
+    <table>
+        <tr>
+            <td><?php echo Tag::linkTo(Router::getController()."/nuevo",Tag::image("nuevo.png","title: Nuevo","class: boton")) ?></td>
+            <td><?php echo Tag::image("buscar.png","title: Buscar","onclick: $('form').submit();","class: boton") ?></td>
+        </tr>
+    </table>
+</div>
+
+<?php echo Tag::form(Router::getController()."/buscar","id: form","autocomplete: off"); ?>
+    <div align='center'>
+        <table align='center'>
+            <tr>
+                <td align="right"><b>Cod.Caja:</b></td>
+                <td colspan="2"><?php echo Tag::numericField("codcaj","size: 6","maxlength: 6") ?></td>
+            </tr>
+            <tr>
+                <td align='right'><b>Nit:</b></td>
+                <td align='left'><?php echo Tag::textUpperField("nit","size: 15","maxlength: 15") ?></td>
+            </tr>
+            <tr>
+                <td align='right'><b>Razon Social:</b></td>
+                <td align='left'><?php echo Tag::textUpperField("razsoc","size: 30","maxlength: 35") ?></td>
+            </tr>
+        </table>
+    </div>
+ <?php echo Tag::endForm() ?>

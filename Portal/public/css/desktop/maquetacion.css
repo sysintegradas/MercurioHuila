@@ -1,0 +1,52 @@
+/*
+*   CSS para el aplicativo Desktop
+*   Importacion de estilos
+*   Author: AlejandroMora
+*/
+
+html, body {
+    padding: 0;
+    margin: 0;
+}
+body#desktop {
+    background-image: url('../../img/desktop/desktop-bg.jpg');
+    background-attachment: fixed;
+    padding: 0;
+    position: relative;
+}
+section#user-bg {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    position: fixed;
+}
+footer#content-task-bar {
+    width: 100%;
+    height: 60px;
+    position: absolute;
+    bottom: 0;
+    background: inherit;
+}
+div.task-bar {
+    width: 100%;
+    position: absolute;
+    /*bottom: -50px;
+    -webkit-transition: all 0.5s ease-in;
+    -moz-transition-property: all;
+    -moz-transition-duration: 0.5s;*/
+}
+header#content-head div.task-bar{
+    top: 0;
+    height: 30px;
+}
+footer#content-task-bar div.task-bar{
+    bottom: 0;
+    height: 40px;
+}
+
+/*footer#content-task-bar:hover div#task-bar,
+div#task-bar.show
+{
+    bottom: 0;
+}*/

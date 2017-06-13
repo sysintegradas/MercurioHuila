@@ -1,0 +1,17 @@
+---rt_restandar
+    el editar no me deja quitar un registro
+    y si dejo que estaba lleno en vacio sale error al guardar
+
+--rt_menu
+    el campo foto no esta sirviendo se selecciona una foto pero no la carga al editarlo (se adjunta fotos)
+
+--rt_inventario
+    reporte sale error
+
+--ventas
+    --sigue con el error en la venta por las primarias en mayuscula
+    --revisar toda la base de datos y los campos y primarias y foraneas
+    -- al darle un clik a una mesa no tra la informacion ni nada sale error de javascript
+    -- no sirve crear una mesa saca error de javascript
+    --sale el mensaje No esta configurado el menu en este ambiente y si esta configurado
+

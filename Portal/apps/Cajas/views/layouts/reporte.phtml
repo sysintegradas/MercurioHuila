@@ -1,0 +1,54 @@
+<script type="text/javascript">
+
+params = "";
+function reporte(){
+	params = Object.isArray(arguments[0]) ? arguments[0].join("/") : "";
+	if(Object.isElement($("formatReport"))){
+		$('formatReport').show();
+		format = $("formatReport");
+	}
+	ventReport = new UI.Window({
+			id: 'vent',
+            theme: 'leopard',
+			minimize: false,
+			maximize: false,
+			resizable: false,
+			shadow: true,
+			width:  300,
+			height: 160}).center().setHeader('Reporte').activate().setContent(format).show(true);
+}
+
+function makeReport(){
+    var tipo = $F('tipo_reporte_pdf');
+    if(tipo==null){
+        tipo=$F('tipo_reporte_excel');
+        console.log(params)
+            window.location=Utils.getKumbiaURL('<?php echo "/".Router::getController(); ?>/reporte/'+tipo+"/" + params); 
+	    ventReport.close();
+    }else{
+	window.open('<?php echo Core::getInstancePath().Router::getActiveApplication()."/".Router::getController(); ?>/reporte/' + tipo + "/" + params,
+		"Reporte",
+		'width=500, height=750, toolbar=no, statusbar=no, scrollbars=yes, Menubar=yes');
+	ventReport.close();
+    }
+}
+</script>
+
+<?php echo View::getContent(); ?>
+
+<div id="formatReport" align="center" style="display: none;">
+	<table align="center" style="margin-top: 10px;">
+		<tr>
+			<td>Formato del reporte:&nbsp;</td>
+			<td><label>PDF</label></td>
+			<td><input type="radio" name="tipo_reporte" id="tipo_reporte_pdf" value="pdf" checked></td>
+			<td><label>EXCEL</label></td>
+			<td><input type="radio" name="tipo_reporte" id="tipo_reporte_excel" value="excel"></td>
+		</tr>
+		<tr>
+			<td colspan="6" align="center">
+				<?php echo Tag::image("reporte.png","onclick: makeReport()"); ?>
+			</td>
+		</tr>
+	</table>
+</div>

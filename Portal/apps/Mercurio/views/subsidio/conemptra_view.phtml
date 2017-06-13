@@ -1,0 +1,44 @@
+<?php View::getContent(); ?>
+<script>
+    buscar = function(){
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/conemptra"),
+            data: {
+                estado: $('#estado').val(),
+            }
+        });
+        request.done(function( transport ) {
+            //var response = transport;
+            var response = jQuery.parseJSON(transport);
+            $("#respuesta").html(response); 
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+    conemptra_rep = function(){
+      window.location=Utils.getKumbiaURL("subsidio/conemptra_rep/"+$('#estado').val());
+    }
+</script>
+<?php echo Tag::form(Router::getController()."/conemptra","id: form","autocomplete: off","enctype: multipart/form-data"); ?>
+<div style='min-height: 310px; max-height: auto;'>
+    <table class="contenedor" style="margin: auto; border-collapse: separate; border-spacing: 5px;" width="95%">
+        <div class="col-sm-12 col-sm-offset-1">
+            <div class="col-sm-1 col-sm-offset-1"><label style="margin-top: 17%">Estado:</label></div>
+            <?php 
+            if(Session::getData('estado') == 'I' || Session::getData('estado') == 'INACTIVO'){
+            ?>
+            <div class="col-sm-3"><?php echo Tag::selectStatic("estado",array("A"=>"Activo","P"=>"Pendiente","t"=>"Todos"),"class: form-control"); ?></div>
+            <?php }else{ ?>
+            <div class="col-sm-3"><?php echo Tag::selectStatic("estado",array("A"=>"Activo","I"=>"Inactivo","P"=>"Pendiente","t"=>"Todos"),"class: form-control"); ?></div>
+            <?php } ?>
+            <div class="col-sm-2"><?php echo Tag::Button("Consultar","style: margin-left: 10%","class: btn btn-primary","onclick: buscar();") ?></div>
+            <div class="col-sm-2"><?php echo Tag::button("Generar Reporte Excel","class: btn btn-success",'onclick: conemptra_rep();');?></div>
+        </div>
+        <div>
+            <div id='respuesta'> </div>  
+        </div>
+    </table>
+</div>
+<?php echo Tag::endForm(); ?>

@@ -1,0 +1,64 @@
+<?php echo View::getContent(); ?>
+<script type="text/javascript">
+    var val = new Validator();
+    val.addField("claveant","text",null,{'alias': 'Clave Anterior','isNull': false,'doToUpperCase': false});
+    val.addField("clavenue","text",null,{'alias': 'Clave Nueva','isNull': false,'doToUpperCase': false});
+    val.addField("clavecon","text",null,{'alias': 'Confirmar Clave','isNull': false,'doToUpperCase': false});
+
+    Guardar = function(){
+        if(!val.valide()){
+            Messages.valide(val);
+            return;
+        }
+        new Ajax.Request(Utils.getKumbiaURL("opciones/cambiarClave"), {
+            asynchronous : false,
+            parameters: {
+                claveant: $F('claveant'),
+                clavenue: $F('clavenue'),
+                clavecon: $F('clavecon')
+            },
+            onSuccess: function(transport){
+                response = transport.responseText.evalJSON();
+                if(response['flag']==true){
+                    Messages.display(Array(response['msg']),"success");
+                    $('claveant').value = "";
+                    $('clavenue').value = "";
+                    $('clavecon').value = "";
+                }else{
+                    Messages.display(Array(response['msg']),"warning");
+                }
+            },
+            onFailure: function(transport){
+                alert(transport.responseText);
+            }
+        });
+    }
+ </script>
+
+<?php echo Tag::form("","autocomplete: off"); ?>
+<div align='center'>
+    <table align='center'>
+        <tr>
+            <td colspan="2">&nbsp;</td>
+        </tr>
+        <tr>
+            <td align="right"><b>Clave Anterior:</b></td>
+            <td align="left"><?php echo Tag::passwordField("claveant","maxlength: 10") ?></td>
+        </tr>
+        <tr>
+            <td align="right"><b>Clave Nueva:</b></td>
+            <td align="left"><?php echo Tag::passwordField("clavenue","maxlength: 10") ?></td>
+        </tr>
+        <tr>
+            <td align="right"><b>Confirmar Clave:</b></td>
+            <td align="left"><?php echo Tag::passwordField("clavecon","maxlength: 10") ?></td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td colspan="2" align="center"><?php echo Tag::button("Cambiar Clave","class: submit","onclick: Guardar();") ?></td>
+        </tr>
+    </table>
+</div>
+<?php echo Tag::endForm(); ?>

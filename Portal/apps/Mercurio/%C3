@@ -1,0 +1,1854 @@
+<?php
+
+class SubsidioController extends ApplicationController {
+
+    public function indexAction(){
+      $this->setResponse("ajax");
+    }
+    
+    public function nucfam_viewAction(){
+      $this->setResponse("ajax");
+      echo parent::showTitle('Consulta de Nucleo Familiar');
+      $param = array("cedtra"=>Session::getData('documento'));
+      $result = parent::webService("nucfamtrabajador", $param);
+      $response = "";
+      $response .= "<div>";
+      $response .= "<table style='width: 100%; margin-top: 20px;'>";
+      $response .= "<tr>";
+      $response .= "<td><strong>Cédula</strong></td><td>{$result[0]['trcedtra']}</td>";
+      $response .= "<td><strong>Nombre</strong></td><td>{$result[0]['tranombre']}</td>";
+      $response .= "<td><strong>Estado</strong></td><td>{$result[0]['traestado']}</td>";
+      $response .= "</tr>";
+      $response .= "<tr>";
+      $response .= "<td><strong>Fecha Afiliación</strong></td><td>{$result[0]['tadfecafi']}</td>";
+      $response .= "<td><strong>Fecha Retiro</strong></td><td>{$result[0]['trafecret']}</td>";
+      $response .= "<td><strong>Salario</strong></td><td>{$result[0]['trasalario']}</td>";
+      $response .= "</tr>";
+      $response .= "<tr>";
+      $response .= "<td><strong>Categoría</strong></td><td>{$result[0]['tracodcat']}</td>";
+      $response .= "<td><strong>Dirección</strong></td><td>{$result[0]['tradireccion']}</td>";
+      $response .= "<td><strong>Teléfono</strong></td><td>{$result[0]['tratelefono']}</td>";
+      $response .= "</tr>";
+      $codcue = $result[0]['tracodcue'];
+      $nit =  $result[0]['tranit'];
+      $nomban = parent::webService("nomban", array("codcue"=> $codcue));
+      $empresa = parent::webService("datosEmpresa", array("nit"=> $nit));
+      $response .= "<td><strong>Empresa</strong></td><td>{$empresa[0]['razsoc']}</td>";
+      $response .= "<td><strong>Banco :</strong></td><td>{$nomban[0]['detalle']}</td>";
+      $response .= "<td><strong>Agro</strong></td><td>{$result[0]['tra-agro']}</td>";
+      $response .= "</tr>";
+      $response .= "</table>";
+      $response .= "</div>";
+      $param = array("cedtra"=>Session::getData('documento'));
+      $result = parent::webService("nucfamconyuge", $param);
+      if($result!=false){
+        $response .= "<div><hr width='100%'><strong>Conyuge(s)</strong><hr width='100%'></div>";
+        $response .= "<div>";
+        $response .= "<table class='resultado-sec' border='1' cellpadding='5' style='border-collapse: collapse; width: 100%;'>";
+        $response .= "<thead class='tr-result'>";
+        $response .= "<th>Cédula</th>";
+        $response .= "<th>Nombre</th>";
+        $response .= "<th>Estado</th>";
+        $response .= "<th>Fecha Afiliación</th>";
+        $response .= "<th>Fecha Retiro</th>";
+        $response .= "<th>Salario</th>";
+        $response .= "<th>Dirección</th>";
+        $response .= "<th>Teléfono</th>";
+        $response .= "<th>Comper</th>";
+        $response .= "<th>Forma Pago</th>";
+        $response .= "</thead>";
+        foreach ($result as $rresult) {
+          $response .= "<tbody>";
+          $response .= "<tr style='text-align: center;'>";
+          $response .= "<td>{$rresult['concedcon']}</td>";
+          $response .= "<td>{$rresult['connombre']}</td>";
+          $response .= "<td>{$rresult['conestado']}</td>";
+          $response .= "<td>{$rresult['confecafi']}</td>";
+          $response .= "<td>{$rresult['confecret']}</td>";
+          $response .= "<td>{$rresult['consalario']}</td>";
+          $response .= "<td>{$rresult['condireccion']}</td>";
+          $response .= "<td>{$rresult['contelefono']}</td>";
+          $response .= "<td>{$rresult['concomper']}</td>";
+          $response .= "<td>{$rresult['contippag']}</td>";
+          $response .= "</tr>";
+          $response .= "</tbody>";
+        }
+        $response .= "</table>";
+        $response .= "</div>";
+      }
+      $param = array("cedtra"=>Session::getData('documento'));
+      $result = parent::webService("nucfambeneficiarios", $param);      
+      if($result!=false){
+        $response .= "<div><hr width='100%'><strong>Beneficiario(s)</strong><hr width='100%'></div>";
+        $response .= "<div>";
+        $response .= "<table class='resultado-sec' border='1' cellpadding='5' style='border-collapse: collapse; width: 100%;'>";
+        $response .= "<thead class='tr-result'>";
+        $response .= "<th>Documento</th>";
+        $response .= "<th>Nombre</th>";
+        $response .= "<th>Estado</th>";
+        $response .= "<th>Fecha Afiliacion</th>";
+        $response .= "<th>Fecha Retiro</th>";
+        $response .= "<th>Parentezco</th>";
+        $response .= "<th>Fecha Nacimiento</th>";
+        $response .= "<th>Capacidad de Trabajo</th>";
+        $response .= "</thead>";
+
+        foreach ($result as $rresult) {
+          $response .= "<tbody>";
+          $response .= "<tr style='text-align: center;'>";
+          $response .= "<td>{$rresult['ben-documento']}</td>";
+          $response .= "<td>{$rresult['ben-nombre']}</td>";
+          $response .= "<td>{$rresult['ben-estado']}</td>";
+          $response .= "<td>{$rresult['ben-fecafi']}</td>";
+          $response .= "<td>{$rresult['ben-fecret']}</td>";
+          $response .= "<td>{$rresult['ben-parent']}</td>";
+          $response .= "<td>{$rresult['ben-fecnac']}</td>";
+          $response .= "<td>{$rresult['ben-captra']}</td>";
+          $response .= "</tr>";
+          $response .= "</tbody>";
+        }
+        $response .= "</table>";
+        $response .= "</div>";
+      }
+      echo $response;
+    }
+    
+    public function giro_viewAction(){
+      $this->setResponse("ajax");
+      echo parent::showTitle('Consulta de Giro Familiar');
+      $param = array("cedtra"=>Session::getData('documento'),"cedcon"=>"","documento"=>"");
+      //$param = array("cedtra"=>"1124012966","cedcon"=>"","documento"=>"");
+      $result = parent::webService("giro", $param);
+      $response = "";
+      $response .="<br>";
+      $response .="<div class='resultado-prin'>";
+      $response .="<table class='resultado-sec' border=1>";
+      $response .="<tr class='tr-result' cellspacing='10'>";
+      $response .="<td>Periodo Girado</td>";
+      $response .="<td>Periodo a Pagar</td>";
+      $response .="<td>Empresa</td>";
+      $response .="<td>Beneficiario</td>";
+      $response .="<td>Cuotas</td>";
+      $response .="<td>Tipo Pago</td>";
+      $response .="<td>Valor</td>";
+      $response .="<td>Valor Credito</td>";
+      $response .="<td>Valor Pagado</td>";
+      $response .="</tr>";
+      $response .="<tr>";
+      if($result!=false){
+      foreach($result as $mresult){
+        $response .="<tr>";
+        $response .="<td>{$mresult['pergir']}</td>";
+        $response .="<td>{$mresult['periodo']}</td>";
+        $response .="<td>{$mresult['nit']}</td>";
+        $response .="<td>{$mresult['codben']}</td>";
+        $response .="<td>{$mresult['numcuo']}</td>";
+        $response .="<td>{$mresult['tippag']}</td>";
+        $response .="<td>{$mresult['valor']}</td>";
+        $response .="<td>{$mresult['valcre']}</td>";
+        $valorpag = ($mresult['valor'])-($mresult['valcre']);
+        $response .="<td>{$valorpag}</td>";
+        $response .="</tr>";
+      }
+      }
+      $response .="</tr>";
+      echo $response;
+    }
+    
+    public function nogiro_viewAction(){
+      $this->setResponse("ajax");
+      echo parent::showTitle('Consulta de No Giro');
+      $param = array("cedtra"=>Session::getDATA('documento'),"cedcon"=>"","documento"=>"");
+      $result = parent::webService("nogiro", $param);
+      $response = "";
+      $response .="<br>";
+      $response .="<div class='resultado-prin'>";
+      $response .="<table class='resultado-sec' border=1>";
+      $response .="<tr class='tr-result' cellspacing='10'>";
+      $response .="<td>Periodo Girado</td>";
+      $response .="<td>Periodo a Pagar</td>";
+      $response .="<td>Nit</td>";
+      $response .="<td>Beneficiario</td>";
+      $response .="<td>Motivo</td>";
+      $response .="</tr>";
+      $response .="<tr>";
+      if($result!=false){
+      foreach($result as $mresult){
+        $response .="<tr>";
+        $response .="<td>{$mresult['pergir']}</td>";
+        $response .="<td>{$mresult['periodo']}</td>";
+        $response .="<td>{$mresult['nit']}</td>";
+        $response .="<td>{$mresult['codben']}</td>";
+        $response .="<td>{$mresult['tipo']}</td>";
+        $response .="</tr>";
+      }
+      }
+      $response .="</tr>";
+      echo $response;
+    }
+
+    public function certificadoAfiliacion_viewAction(){
+      $this->setResponse("ajax");
+      echo parent::showTitle('Certificado de Afiliacion');
+    }
+
+    public function certificado($texto){
+        $estados = array('A'=>'ACTIVO','I'=>'INACTIVO');
+        $fecha = new Date();
+        $ano = $fecha->getYear();
+        $mes = $fecha->getMonthName();
+        $dia = $fecha->getDay();
+        $formu = new FPDF('P','mm','Letter');
+        $formu->SetMargins(15,30,20);
+        $formu->AddPage();
+        $formu->SetFillColor(236,248,240); 
+        $formu->SetFont('Arial','','12');
+        $formu->Ln();
+        $formu->Cell(175,4,"DF-07-20921",0,1,"L",0,0);
+        $formu->Image('public/img/comfamiliar-logo.jpg',10,5,63,18);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Cell(175,4,"DF-07-20921",0,1,"L",0,0);
+        $formu->Cell(175,4,"Neiva, ".$dia." de ".$mes." de ".$ano,0,0,"L",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Cell(15,4,html_entity_decode("Se&ntilde;ores"),0,1,"L",0,0);
+        $formu->SetFont('Arial','B','12');
+        $formu->Cell(190,4,Session::getDATA("nombre"),0,1,"L",0,0);
+        $formu->SetFont('Arial','','12');
+        $formu->Cell(190,4,"Calle 19 40-41 B/ Centro",0,1,"L",0,0);
+        $formu->Cell(190,4,"Telefono 8714243",0,1,"L",0,0);
+        $formu->Cell(190,4,"NEIVA (HUILA)",0,1,"L",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Cell(190,4,"Asunto: Certificado de Afiliacion.",0,1,"L",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Cell(190,4,"Cordial Saludo.",0,1,"L",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $estado = $estados[Session::getData('estado')];
+        $formu->MultiCell(195,4,html_entity_decode("$texto"),0,"J",0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Cell(190,4,"Atentamente, ",0,1,"L",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Cell(190,4,"YAZMIN OSPINA GAITAN ",0,1,"L",0,0);
+        $formu->Cell(190,4,"COORDINADORA AFILIACIONES Y SUBSIDIO",0,1,"L",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->SetFont('Arial','','8');
+        $formu->Cell(190,4,html_entity_decode("Y. OSPINA GAITAN / M.Y. MU&Ntilde;OZ LOZANO"),0,1,"L",0,0);
+        $formu->Ln();
+        $formu->Cell(190,4,html_entity_decode("Copia Interna: Centro de Documentaci&oacute;n e Informaci&oacute;n "),0,1,"L",0,0);
+        $formu->Image('public/img/portal/piepaginaCartas.png',1,237,214,42);
+        $formu->Ln();
+        $this->setResponse('view');
+        $file = "public/temp/reportes/trabajador_inact.pdf";
+        ob_clean();
+        $formu->Output( $file,"I");       
+    }
+
+    public function certificadoAfiActAction(){
+        $texto = "Me permito certificar que la se&ntilde;ora DOLLY PATRICIA PENNA MEDINA identificada con c&eacute;dula de ciudadan&iacute; No. 1.061.219.195, se encuentra afiliada a nuestra Entidad desde el 3 de febrero de 2015 en la modalidad de SERVICIO por intermedio de la empresa COOPERATIVA EPSIFARMA. Nit No. 900.067.659 con Fecha de Ingreso 2 febrero de 2015.";
+        $this->certificado($texto);
+    }
+ 
+
+    public function certificadoAfiliacionEmpresa_viewAction(){
+      $this->setResponse("ajax");
+      echo parent::showTitle('Certificado de Afiliacion');
+    }
+
+    public function certificadoAfiliacionEmpresaAction(){
+        $fecha = new Date();
+        $ano = $fecha->getYear();
+        $mes = $fecha->getMonthName();
+        $dia = $fecha->getDay();
+        $formu = new FPDF('P','mm','A4');
+        $formu->AddPage();
+        $formu->SetFillColor(236,248,240); 
+        $formu->SetFont('Arial','','12');
+        $formu->Cell(15,4,"iDF-07-20921",0,1,"L",0,0);
+        $formu->Image('public/img/comfamiliar-logo.jpg',5,5,77,22);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->SetFont('Arial','B','12');
+        $formu->Cell(190,4,html_entity_decode("LA COORDINADORA DE GESTI&Oacute;N DE RECAUDO DE APORTES"),0,1,"C",0,0);
+        $formu->Cell(190,4,"DE COMFAMILIAR HUILA",0,0,"C",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->SetFont('Arial','','12');
+        $formu->MultiCell(190,4,html_entity_decode("(El/La) (TIPO DE APORTANTE) (RAZON SOCIAL)  Identificada con Nit. No (NO. DE IDENTIFICACION), se encuentra en estado (ACTIVO/INACTIVO) en nuestro sistema y cancel&oacute; Aporte Parafiscales del (INDICA DE APORTE %) (CAJA DE COMPENSACION) por el (PERIODO/A&Ntilde;O*inicio DE) hasta (PERIODO/A&Ntilde;O*final) (A&Ntilde;OGRAVABLE-RANGODEPERIODOS-RANGODEA&Ntilde;OS)"),0,"J",0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->SetFont('Arial','','9');
+        $formu->Cell(190,4,"Anexo: Kardex de aportes",0,1,"L",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->MultiCell(190,4,'"La expedici&oacute;n de este documento no impide que Comfamiliar Huila pueda realizar visitas de verificaci&oacute;n de la correcta y oportuna liquidaci&oacute;n de los aportes, bases de liquidaci&oacute;n y el pago oportuno de los mismos. (Decreto 562/90).',0,1,"L",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Cell(190,4,html_entity_decode('"ESTE CERTIFICADO NO ES VALIDO PARA EFECTOS DE AFILIACION A OTRA CAJA DE COMPENSACI&Oacute;N."'),0,1,"L",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Cell(190,4,"YAZMIN OSPINA GAITAN ",0,1,"C",0,0);
+        $formu->Cell(190,4,"COORDINADORA AFILIACIONES Y SUBSIDIO",0,1,"C",0,0);
+        $formu->Image('public/img/portal/piepaginaCartas.png',0,255,210,42);
+
+
+        $formu->Ln();
+        $this->setResponse('view');
+        $file = "public/temp/reportes/empresa_e.pdf";
+        ob_clean();
+        $formu->Output( $file,"I");
+    }
+    
+    public function moremp_viewAction(){
+        $this->setResponse("ajax");
+        echo parent::showTitle('Consulta Mora');
+        $nit = Session::getDATA('documento');
+        $response = "";
+        $response .="<br>";
+        $response .="<div class='resultado-prin'>";
+        $response .="<table class='resultado-sec' border=1>";
+        $response .="<tr class='tr-result' cellspacing='10'>";
+        $response .="<td>Razon Social</td>";
+        $response .="<td>Periodo</td>";
+        $response .="<td>estado</td>";
+        $response .="</tr>";
+        $response .="<tr>";
+        $morosa = parent::webService("morosa",array("nit"=>$nit));
+        if($morosa !=false){
+            foreach($morosa as $mresult){
+                $response .="<tr>";
+                $response .="<td>{$mresult['razsoc']}</td>";
+                $response .="<td>{$mresult['periodo']}</td>";
+                $response .="<td>{$mresult['nota']}</td>";
+                $response .="</tr>";
+            }
+        }
+        echo $response;
+        echo parent::showHelp('<p>Mediante esta opción se puede genera la consultar el estado de mora actual. </p>');
+    }
+
+    public function morempAction(){
+        
+    }
+    
+    public function novret_viewAction(){
+      $this->setResponse("ajax");
+      echo parent::showTitle('Novedades de Retiro Trabajador');
+      echo parent::showHelp('<p>Mediante esta opción se puede generar las novedades de retiro trabajador. </p>');
+     
+
+      $codest = parent::webService("codigoEstado",array());
+         foreach($codest as $mcodest){
+               $_codest[$mcodest['codest']] = $mcodest['detalle'];
+         }
+      $this->setParamToView("codest", $_codest);
+    }
+    public function novretAction(){
+              
+      $this->setResponse("ajax");
+      $response = "";
+      $response .="<table class='resultado-sec' border='1'>";
+      $response .="<tr class='tr-result' cellspacing='10'>";
+      $response .="<td>Cedula</td>";
+      $response .="<td>Nombre</td>";
+      $response .="<td>Salario</td>";
+      $response .="<td>Sexo</td>";
+      $response .="<td>Fecha Nacimiento</td>";
+      $response .="<td>Direccion</td>";
+      $response .="<td>Telefono</td>";
+      $response .="<td>Fecha Afiliacion</td>";
+      $response .="</tr>";
+      $cedtra = $this->getPostParam("cedtra","addslaches","extraspaces","striptags");
+      $result = parent::webService("datosTrabajador",array("cedtra"=> $cedtra));
+      if($result!=false){
+        foreach($result as $mresult){
+          $response .="<tr>";
+          $response .="<td>{$mresult['cedtra']}</td>";
+          $response .="<td>{$mresult['nombre']}</td>";
+          $response .="<td>{$mresult['salario']}</td>";
+          $response .="<td>{$mresult['sexo']}</td>";
+          $response .="<td>{$mresult['fecnac']}</td>";
+          $response .="<td>{$mresult['direccion']}</td>";
+          $response .="<td>{$mresult['telefono']}</td>";
+          $response .="<td>{$mresult['fecafi']}</td>";
+          $response .="</tr>";
+        }
+      }
+      $response .="</table>";
+      return $this->renderText(json_encode($response));
+    }
+    
+    public function retirarAction(){
+        try{
+            try{
+                $this->setResponse("ajax");
+                $modelos = array("mercurio35");
+                $Transaccion = parent::startTrans($modelos);
+                $response = parent::startFunc();
+                $cedtra = $this->getPostParam("cedtra","addslaches","alpha","extraspaces","striptags");
+                $codest = $this->getPostParam("codest","addslaches","alpha","extraspaces","striptags");
+                $fecret = $this->getPostParam("fecret","addslaches","alpha","extraspaces","striptags");
+                $nota = $this->getPostParam("nota","addslaches","alpha","extraspaces","striptags");
+    
+                $mercurio35 = new Mercurio35();
+                $mercurio35->setTransaction($Transaccion);
+                $mercurio35->setCedtra($cedtra);
+                $mercurio35->setCodest($codest);
+                $mercurio35->setFecret($fecret);
+                $mercurio35->setNota($nota);
+                $mercurio35->setEstado("P");
+                $mercurio35->setFecest(NULL);
+                $mercurio35->setMotivo(NULL);
+                if(!$mercurio35->save()){
+                    parent::setLogger($mercurio35->getMessages());
+                    parent::ErrorTrans();
+                }
+                parent::finishTrans();
+                $response = parent::successFunc("BIEN",null);
+                return $this->renderText(json_encode($response));
+            } catch (DbException $e) {
+                parent::setLogger($e->getMessage());
+                parent::ErrorTrans();
+            }
+        } catch (TransactionFailed $e) {
+            $response = parent::errorFunc("Mal");
+            return $this->renderText(json_encode($response));
+        }
+    }
+
+    public function novmue_viewAction(){
+      $this->setResponse("ajax");
+      echo parent::showTitle('Novedades de Retiro por Muerte');
+      echo parent::showHelp('<p>Mediante esta opción se puede generar las novedades de retiro por muete. </p>');
+      $codest = parent::webService("codigoEstado",array());
+         foreach($codest as $mcodest){
+               $_codest[$mcodest['codest']] = $mcodest['detalle'];
+      }
+      $this->setParamToView("codest", $_codest);
+    }
+ 
+    public function novmueAction(){
+               
+      $this->setResponse("ajax");
+          $response = "";
+          $response .="<table class='resultado-sec' border='1'>";
+          $response .="<tr class='tr-result' cellspacing='10'>";
+          $response .="<td>Cedula</td>";
+          $response .="<td>Nombre</td>";
+          $response .="<td>Salario</td>";
+          $response .="<td>Sexo</td>";
+          $response .="<td>Fecha Nacimiento</td>";
+          $response .="<td>Direccion</td>";
+          $response .="<td>Telefono</td>";
+          $response .="<td>Fecha Afiliacion</td>";
+          $response .="</tr>";
+          $cedtra = $this->getPostParam("cedtra","addslaches","extraspaces","striptags");
+          $result = parent::webService("datosTrabajador",array("cedtra"=> $cedtra));
+          if($result!=false){
+            foreach($result as $mresult){
+              $response .="<tr>";
+              $response .="<td>{$mresult['cedtra']}</td>";
+              $response .="<td>{$mresult['nombre']}</td>";
+              $response .="<td>{$mresult['salario']}</td>";
+              $response .="<td>{$mresult['sexo']}</td>";
+              $response .="<td>{$mresult['fecnac']}</td>";
+              $response .="<td>{$mresult['direccion']}</td>";
+              $response .="<td>{$mresult['telefono']}</td>";
+              $response .="<td>{$mresult['fecafi']}</td>";
+              $response .="</tr>";
+            }
+          }
+          $response .="</table>";
+           return $this->renderText(json_encode($response));  
+   
+    }
+
+    public function muerteAction(){
+        try{
+            try{
+
+                $this->setResponse("ajax");
+                $modelos = array("mercurio36");
+                $Transaccion = parent::startTrans($modelos);
+                $response = parent::startFunc();
+                $cedtra = $this->getPostParam("cedtra","addslaches","alpha","extraspaces","striptags");
+                $codest = $this->getPostParam("codest","addslaches","alpha","extraspaces","striptags");
+                $fecret = $this->getPostParam("fecret","addslaches","alpha","extraspaces","striptags");
+                $nota = $this->getPostParam("nota","addslaches","alpha","extraspaces","striptags");
+                $mercurio36 = new Mercurio36();
+                $mercurio36->setTransaction($Transaccion);
+                $mercurio36->setCedtra($cedtra);
+                $mercurio36->setCodest($codest);
+                $mercurio36->setFecret($fecret);
+                $mercurio36->setNota($nota);
+                $mercurio36->setEstado("P");
+                $mercurio36->setFecest(NULL);
+                $mercurio36->setMotivo(NULL);
+                if(!$mercurio36->save()){
+                    parent::setLogger($mercurio36->getMessages());
+                    parent::ErrorTrans();
+                }
+                parent::finishTrans();
+                $response = parent::successFunc("BIEN",null);
+
+                return $this->renderText(json_encode($response));
+            } catch (DbException $e) {
+                parent::setLogger($e->getMessage());
+                parent::ErrorTrans();
+            }
+        } catch (TransactionFailed $e) {
+            $response = parent::errorFunc("Mal");
+            return $this->renderText(json_encode($response));
+        }
+    }
+
+    
+    public function nomina_viewAction(){
+      $this->setResponse("ajax");
+      echo parent::showTitle('Consulta de Nomina');
+      echo parent::showHelp('<p>Mediante esta herramienta se visualiza la nomina actual, mostrando el periodo actual, el numero de documento del empleado, el nombre, el porcentaje de aportes, las horas y su respectivo sueldo.</p> ');     
+/*
+      $response = "";
+      $response .="<br>";
+      $response .="<div class='resultado-prin'>";
+      $response .="<table class='resultado-sec' border=1>";
+      $response .="<tr class='tr-result' cellspacing='10'>";
+      $response .="<td>Periodo</td>";
+      $response .="<td>Cedula</td>";
+      $response .="<td>Nombre</td>";
+      $response .="<td>Porcentaje Aporte</td>";
+      $response .="<td>horas</td>";
+      $response .="<td>Sueldo</td>";
+      $response .="</tr>";
+      $total = 0;
+      $param = array("nit"=>Session::getDATA('documento'));
+      $result = parent::webService("nomina", $param);
+      if($result!=false){
+        foreach($result as $mresult){
+          $perapo = (int)$mresult['proapo'];  
+          $response .="<tr>";
+          $response .="<td>{$mresult['periodo']}</td>";
+          $response .="<td>{$mresult['cedtra']}</td>";
+          $response .="<td>{$mresult['nombre']}</td>";
+          $response .="<td>{$perapo}</td>";
+          $response .="<td>{$mresult['horas']}</td>";
+          $response .="<td>{$mresult['sueldo']}</td>";
+          $response .="</tr>";
+          $total +=$mresult['sueldo'];
+        }
+      }
+      $response .="<tr>";
+      $response .="<td>Total</td>";
+      $response .="<td>$total</td>";
+      $response .="</tr>";
+      echo $response;
+*/
+    }
+    public function nominaAction(){
+      $this->setResponse("ajax");
+      $response = "";
+      $response .="<br>";
+      $response .="<table class='resultado-sec' border=1>";
+      $response .="<tr class='tr-result' cellspacing='10'>";
+      $response .="<td>Periodo</td>";
+      $response .="<td>Cedula</td>";
+      $response .="<td>Nombre</td>";
+      $response .="<td>Porcentaje Aporte</td>";
+      $response .="<td>horas</td>";
+      $response .="<td>Sueldo</td>";
+      $response .="</tr>";
+      $total = 0;
+      $periodo = $this->getPostParam("periodo","addslaches","alpha","extraspaces","striptags");
+      $result = parent::webService("nomina",array("nit"=>Session::getDATA('documento')));
+      if($result!=false){
+        foreach($result as $mresult){
+          if($periodo != $mresult['periodo'])continue;
+          $response .="<tr>";
+          $response .="<td>{$mresult['periodo']}</td>";
+          $response .="<td>{$mresult['cedtra']}</td>";
+          $response .="<td>{$mresult['nombre']}</td>";
+          $response .="<td>{$mresult['proapo']}</td>";
+          $response .="<td>{$mresult['horas']}</td>";
+          $response .="<td>{$mresult['sueldo']}</td>";
+          $response .="</tr>";
+          $total +=$mresult['sueldo'];
+        }
+      }
+      $response .="<tr>";
+      $response .="<td>Total</td>";
+      $response .="<td>$total</td>";
+      $response .="</tr>";
+      $response .="</tr>";
+      $response .="</table>";
+      return $this->renderText(json_encode($response));
+    }
+
+    public function aportes_viewAction(){
+      $this->setResponse("ajax");
+      echo parent::showTitle('Consulta de Aporte');     
+      echo parent::showHelp('<p>Mediante esta herramienta podemos visualizar los aportes, mostrando el numero de recibo, el periodo, el valor de la nomina, el valor que se debe consignado, el valor del interés, la cantidad de trabajadores y la fecha en la cual se realizo el pago.</p>');
+/*
+      $response = "";
+      $response .="<br>";
+      $response .="<div class='resultado-prin'>";
+      $response .="<table class='resultado-sec' border=1>";
+      $response .="<tr class='tr-result' cellspacing='10'>";
+      $response .="<td>Recibo</td>";
+      $response .="<td>Periodo</td>";
+      $response .="<td>Valor Nomina</td>";
+      $response .="<td>Valor Consignada</td>";
+      $response .="<td>Valor Interes</td>";
+      $response .="<td>Trabajadores</td>";
+      $response .="<td>Fecha Pago</td>";
+      $response .="</tr>";
+      $param = array("nit"=>Session::getDATA('documento'));
+      $result = parent::webService("aporte", $param);
+      if($result!=false){
+        foreach($result as $mresult){
+          if($mresult['periodo']<'201501')continue;
+          $response .="<tr>";
+          $response .="<td>{$mresult['numrec']}</td>";
+          $response .="<td>{$mresult['periodo']}</td>";
+          $valnom = number_format(round($mresult['valnom']));
+          $response .="<td>{$valnom}</td>";
+          $valapo = number_format(round($mresult['valapo']));
+          $response .="<td>{$valapo}</td>";
+          $valint = number_format(round($mresult['valint']));
+          $response .="<td>{$valint}</td>";
+          $response .="<td>{$mresult['traapo']}</td>";
+          $response .="<td>{$mresult['fecpag']}</td>";
+          $response .="</tr>";
+        }
+      }
+      echo $response;
+*/
+    }
+    public function aportesAction(){
+      $this->setResponse("ajax");
+      $response = "";
+      $response .="<br>";
+      $response .="<table class='resultado-sec' border=1>";
+      $response .="<tr class='tr-result' cellspacing='10'>";
+      $response .="<td>Recibo</td>";
+      $response .="<td>Periodo</td>";
+      $response .="<td>Valor Nomina</td>";
+      $response .="<td>Valor Consignada</td>";
+      $response .="<td>Valor Interes</td>";
+      $response .="<td>Trabajadores</td>";
+      $response .="<td>Fecha Pago</td>";
+      $response .="</tr>";
+      $periodo = $this->getPostParam("periodo","addslaches","alpha","extraspaces","striptags");
+      $result = parent::webService("aporte",array('nit'=>Session::getDATA('documento'),'periodo'=>$periodo));
+      if($result!=false){
+        foreach($result as $mresult){
+          if($periodo != $mresult['periodo'])continue;  
+          $response .="<tr>";
+          $response .="<td>{$mresult['numrec']}</td>";
+          $response .="<td>{$mresult['periodo']}</td>";
+          $valnom = number_format(round($mresult['valnom']));
+          $response .="<td>{$valnom}</td>";
+          $valapo = number_format(round($mresult['valapo']));
+          $response .="<td>{$valapo}</td>";
+          $valint = number_format(round($mresult['valint']));
+          $response .="<td>{$valint}</td>";
+          $response .="<td>{$mresult['traapo']}</td>";
+          $response .="<td>{$mresult['fecpag']}</td>";
+          $response .="</tr>";
+        }
+      }
+      $response .="</table>";
+      return $this->renderText(json_encode($response));
+    } 
+
+    public function convenios_viewAction(){
+      $this->setResponse("ajax");
+      echo parent::showTitle('Consulta Convenios');
+      echo parent::showHelp('<p>Mediante esta herramiente se puede visualizar los convenios a los cuales tiene la empresa, mostrando el tipo <strong>C es convenio e I es interrupcion</strong> ,ademas demuestra el periodo inicial, el preiodo final, la fecha de ingreso y el valor del convenio. </p>  ');  
+ 
+      $param = array("nit"=>Session::getDATA('documento'));
+      $response = "";
+      $response .="<br>";
+      $response .="<div class='resultado-prin'>";
+      $response .="<table class='resultado-sec' border=1>";
+      $response .="<tr class='tr-result' cellspacing='10'>";
+      $response .="<td>Tipo</td>";
+      $response .="<td>Periodo Inicial</td>";
+      $response .="<td>Periodo Final</td>";
+      $response .="<td>Fecha de Ingreso</td>";
+      $response .="<td>Valor de Convenio </td>";
+      $response .="</tr>";
+      $response .="<tr>";
+      $result = parent::webService("consultaConvenio",$param );
+      if($result!=false){
+        foreach($result as $mresult){
+          $response .="<tr>";
+          if($mresult['tipo']=='I'){
+              $tipo="INTERRUPCI&Oacute;N";
+          }else{
+              $tipo="CONVENIO";
+          }  
+          $response .="<td>{$tipo}</td>";
+          $response .="<td>{$mresult['perini']}</td>";
+          $response .="<td>{$mresult['perfin']}</td>";
+          $response .="<td>{$mresult['fecing']}</td>";
+          $response .="<td>{$mresult['valdoc']}</td>";
+          $response .="</tr>";
+        }
+      }
+      $response .="</tr>";
+      echo $response;
+    
+    }
+
+    public function precer_viewAction(){
+      $this->setResponse("ajax");
+      echo parent::showTitle('Presentacion de Certificados');   
+    }
+
+    public function actdatobl_viewAction(){
+      $this->setTemplateAfter('escritorio');
+      echo parent::showTitle('Actualización Datos Básicos');
+      $mercurio28  = $this->Mercurio28->find("tipo = '".Session::getDATA('tipo')."'");
+      foreach($mercurio28 as $mmercurio28){
+        $campos[$mmercurio28->getCampo()] = $mmercurio28->getDetalle();
+      }
+      $script = "";
+      $script .= "<script type='text/javascript'>";
+      $script .= "var val = new Validator();";
+      $script .= "Event.observe(document, 'dom:loaded', function(){";
+      foreach($campos as $key => $value){
+        $script .= "val.addField('$key','text',null,{'alias': '$value','isNull': false});";
+      }
+      $script .= "});";
+      
+      $script .= "
+      Guardar = function(){
+        if(!val.valide()){
+          Messages.valide(val);
+          return;
+        }
+        ajaxRemoteForm($('form'), 'content',{
+          success: function(transport){
+            var response = transport.responseText.evalJSON();
+            if(response['flag']==true){
+              Messages.display(Array(response['msg']),'success');
+              window.location = Utils.getKumbiaURL('principal');
+            }else{
+              Messages.display(Array(response['msg']),'warning');
+            }";
+            $script .= "}
+        });
+      }";
+    
+      $script .= "</script>";
+      if(Session::getDATA('tipo')=="T")$titulo = "Datos del Trabajador";
+      if(Session::getDATA('tipo')=="E")$titulo = "Datos de la Empresa";
+      if(Session::getDATA('tipo')=="C")$titulo = "Datos del Conyuge";
+      $result = parent::webService('infobasica',array("tipo"=>Session::getDATA('tipo'),"cedtra"=>SESSION::getDATA('documento')));
+      $html  = "";
+      $html .= "<tr>";
+      $html .="<td colspan=6>$titulo</td>";
+      $html .= "</tr>";
+      foreach($campos as $key => $value){
+        $html .= "<tr>";
+        $html .= "<td><label>{$value}</label></td>";
+        $value = "value: ";
+        if($result!=false){
+            $value = "value: {$result[0][$key]}";
+        }
+        $html .= "<td>".Tag::textField($key,$value)."</td>";
+        $html .= "</tr>";
+      }
+      $html .= "";
+      $this->setParamToView("script", $script);
+      $this->setParamToView("html", $html);
+      
+    }
+    
+    public function actdatoblAction(){
+      try{
+        try{
+          $this->setResponse("ajax");
+          $response = parent::startFunc();
+          $modelos = array("mercurio33","mercurio21");
+          $Transaccion = parent::startTrans($modelos);
+          Session::setData('nota_audit',"Actualizacion de Datos Prueba");
+          $log_id = parent::registroOpcion();
+          if($log_id==false)parent::ErrorTrans();
+          $result = parent::webService('infobasica',array("tipo"=>Session::getDATA('tipo'),"cedtra"=>SESSION::getDATA('documento')));
+          $mercurio28 = $this->Mercurio28->find("tipo = '".Session::getDATA('tipo')."'");
+          foreach($mercurio28 as $mmercurio28){
+              $valor = $this->getPostParam("{$mmercurio28->getCampo()}","addslaches","extraspaces","striptags");
+            $mercurio33 = new Mercurio33();
+            $mercurio33->setTransaction($Transaccion);
+            $mercurio33->setId(0);
+            $mercurio33->setCodcaj(Session::getDATA('codcaj'));
+            $mercurio33->setTipo(Session::getDATA('tipo'));
+            $mercurio33->setDocumento(Session::getDATA('documento'));
+            $mercurio33->setCampo($mmercurio28->getCampo());
+            $mercurio33->setValor($valor);
+            $mercurio33->setEstado("P");
+            $mercurio33->setLog($log_id);
+
+            if($result!=false){
+                if($result[0][$mmercurio28->getCampo()]==$valor)continue;
+            }
+            if(!$mercurio33->save()){
+              parent::setLogger($mercurio33->getMessages());
+              parent::ErrorTrans();
+            }
+          }
+          $asunto = "Nueva Actualización de Datos ".Session::getDATA("documento")." - ".Session::getDATA('nombre');
+          $msg = "Cordial Saludos<br><br>Esta pendiente por actualizar los datos<br><br>";
+          foreach($mercurio28 as $mmercurio28){
+            $msg .="<b>{$mmercurio28->getDetalle()}:</b> ".$this->getPostParam("{$mmercurio28->getCampo()}","addslaches","extraspaces","striptags")."<br>";
+          }
+          $msg .="<br><br>Atentamente,<br><br>MERCURIO";
+          $ruta_file = "";
+          parent::enviarCorreo("Actualización datos Trabajador Mercurio",  Session::getData("documento"), "", $asunto, $msg, $ruta_file);
+          parent::finishTrans();
+          $response = parent::successFunc("Actualización exitosa",null);
+          return $this->renderText(json_encode($response));
+        } catch (DbException $e) {
+          parent::setLogger($e->getMessage());
+          parent::ErrorTrans();
+        }
+      } catch (TransactionFailed $e) {
+        $response = parent::errorFunc("Error al Actualizar Datos");
+        return $this->renderText(json_encode($response));
+      }
+    }
+    
+    public function actdat_viewAction(){
+      $this->setResponse("ajax");
+      echo parent::showTitle('Actualización Datos Básicos');
+      echo parent::showHelp('<p>Mediante  esta herramienta se permite actualizar los datos de la empresa, permitiendo  hacer una actualización de forma rápida y segura, con solo ingresar en el campo <strong>Dirección</strong>, en el campo <strong>Email</strong> ingresamos el correo electrónico, en el campo <strong>Teléfono</strong> ingresamos el numero telefónico y para finalizar damos clic en el botón  <strong> Guardar</strong> para completar el proceso.</p>');
+      $mercurio28 = $this->Mercurio28->find("tipo = '".Session::getDATA('tipo')."'");
+      foreach($mercurio28 as $mmercurio28){
+        $campos[$mmercurio28->getCampo()] = $mmercurio28->getDetalle();
+      }
+      if(Session::getDATA('tipo')=="T")$titulo = "Datos del Trabajador";
+      if(Session::getDATA('tipo')=="E")$titulo = "Datos de la Empresa";
+      if(Session::getDATA('tipo')=="C")$titulo = "Datos del Conyuge";
+      $result = parent::webService('infobasica',array("tipo"=>Session::getDATA('tipo'),"cedtra"=>SESSION::getDATA('documento')));
+      $depar= substr($result [0]['codciu'],0,2);
+      $ciuda= $result [0]['codciu'];
+      $tipo = Session::getDATA('tipo');
+      if($tipo == 'E'){
+        $deppri= substr($result [0]['ciupri'],0,2);
+        $ciupri = $result [0]['ciupri'];
+        $this->setParamToView("deppri",$deppri);
+        $this->setParamToView("ciupri",$ciupri);
+        
+        $codci = parent::webService("ciudadesFiltradas",array("coddep"=>$deppri));
+        foreach($codci as $mcodci){
+            $_codci[$mcodci['codciu']] = $mcodci['detalle'];
+        }
+        $this->setParamToView("codci", $_codci);
+      }
+      $html  = "";
+      $html .= "<tr>";
+      $html .="<td colspan=6><strong>$titulo</strong></td>";
+      $html .= "</tr>";
+      $html .= "<tr>";
+      foreach($campos as $key => $value){
+        $html .= "<tr>";
+        if($value == 'Ciudad Principal' || $value == 'Ciudad local' ){
+            $html .= "<td><label></label></td>";
+        }else{
+            $html .= "<td><label>{$value}</label></td>";
+        }
+        $value = "value: ";
+        if($result!=false){
+            $value = "value: {$result[0][$key]}";
+        }
+        if($tipo=='E'){
+            if($key == 'ciupri' || $key == 'codciu'){
+
+                $html .= "<td>".Tag::hiddenField($key,$value)."</td>";
+            }
+            else{
+                $html .= "<td>".Tag::textField($key,$value)."</td>";
+            }
+        }
+        if($tipo=='T'){
+            if($key == 'codciu'){
+                $html .= "<td>".Tag::hiddenField($key,$value)."</td>";
+            }
+            else{
+                $html .= "<td>".Tag::textField($key,$value)."</td>";
+            }
+        }
+        $html .= "</tr>";
+      }
+      $html .= "";
+      $depart = parent::webService('departamento',array());
+      foreach($depart as $mdepart ){
+        $_depart[$mdepart['coddep']] = $mdepart['detalle'];
+      }
+      $codciu = parent::webService("ciudadesFiltradas",array("coddep"=>$depar));
+      foreach($codciu as $mcodciu){
+        $_codciu[$mcodciu['codciu']] = $mcodciu['detalle'];
+      }
+      $this->setParamToView("html", $html);
+      $this->setParamToView("coddep", $_depart);
+      $this->setParamToView("codciu", $_codciu);
+      $this->setParamToView("depar",$depar);
+      $this->setParamToView("ciuda",$ciuda);
+      $this->setParamToView("campos",$campos);
+      $this->setParamToView("tipo",$tipo);
+    }
+
+    public function traerCiudadAction(){
+        $this->setResponse("ajax");
+        $coddep = $this->getPostParam("coddep");
+        $codciu = parent::webService("ciudadesFiltradas",array("coddep"=>$coddep));
+        
+        if($codciu != false){
+            $response = "<option value='@'>Seleccione...</option>";
+            foreach($codciu as $ciudad)
+                $response .= "<option value='$ciudad[codciu]'>$ciudad[detalle]</option>";
+        }else{
+            $response = false;
+        }
+        $this->renderText(json_encode($response));
+    }    
+
+   
+    public function actdatAction(){
+      try{
+        try{
+          $this->setResponse("ajax");
+          $response = parent::startFunc();
+          $modelos = array("mercurio33","mercurio21");
+          $Transaccion = parent::startTrans($modelos);
+          Session::setData('nota_audit',"Actualización de Datos Prueba");
+          $log_id = parent::registroOpcion();
+          if($log_id==false)parent::ErrorTrans();
+          $result = parent::webService('infobasica',array("tipo"=>Session::getDATA('tipo'),"cedtra"=>SESSION::getDATA('documento')));
+
+          $mercurio28 = $this->Mercurio28->find("tipo = '".Session::getDATA('tipo')."'");
+         $depart = $this->getPostParam("depart","addslaches","alpha","extraspaces","striptags");
+         $codciu = $this->getPostParam("codciu","addslaches","alpha","extraspaces","striptags");
+         if(Session::getDATA('tipo') == 'E' ){
+            $deppri = $this->getPostParam("deppri","addslaches","alpha","extraspaces","striptags");
+            $codpri = $this->getPostParam("codpri","addslaches","alpha","extraspaces","striptags");
+         }
+
+          foreach($mercurio28 as $mmercurio28){
+              $valor = $this->getPostParam("{$mmercurio28->getCampo()}","addslaches","extraspaces","striptags");
+              
+            $mercurio33 = new Mercurio33();
+            $mercurio33->setTransaction($Transaccion);
+            $mercurio33->setId(0);
+            $mercurio33->setCodcaj(Session::getDATA('codcaj'));
+            $mercurio33->setTipo(Session::getDATA('tipo'));
+            $mercurio33->setDocumento(Session::getDATA('documento'));
+            $mercurio33->setCampo($mmercurio28->getCampo());
+            $mercurio33->setValor($valor);
+            $mercurio33->setEstado("P");
+            $mercurio33->setLog($log_id);
+
+            if($result!=false){
+                if($result[0][$mmercurio28->getCampo()]==$valor)continue;
+            }
+            if(!$mercurio33->save()){
+              parent::setLogger($mercurio33->getMessages());
+              parent::ErrorTrans();
+            }
+          }
+          $asunto = "Nueva Actualización de Datos ".Session::getDATA("documento")." - ".Session::getDATA('nombre');
+          $msg = "Cordial Saludos<br><br>Esta pendiente por actualizar los datos<br><br>";
+          foreach($mercurio28 as $mmercurio28){
+            $msg .="<b>{$mmercurio28->getDetalle()}:</b> ".$this->getPostParam("{$mmercurio28->getCampo()}","addslaches","extraspaces","striptags")."<br>";
+          }
+          $msg .="<br><br>Atentamente,<br><br>MERCURIO";
+          $ruta_file = "";
+          parent::enviarCorreo("Actualización datos Trabajador Mercurio",  Session::getData("documento"), "", $asunto, $msg, $ruta_file);
+          parent::finishTrans();
+          $response = parent::successFunc("Actualización exitosa",null);
+          return $this->renderText(json_encode($response));
+        } catch (DbException $e) {
+          parent::setLogger($e->getMessage());
+          parent::ErrorTrans();
+        }
+      } catch (TransactionFailed $e) {
+        $response = parent::errorFunc("Error al Actualizar Datos");
+        return $this->renderText(json_encode($response));
+      }
+    }
+
+    public function comprobarDocumentoAction(){
+        $this->setResponse('ajax');
+        $documento = $this->getPostParam("documento");
+        $flag = parent::webService("autenticar",array('tipo' => 'B', 'cedtra' => $documento));
+        $response = true;
+        if($flag != false){
+            $response = false;
+        }
+        $this->renderText(json_encode($response));
+    }
+
+    public function ingben_viewAction(){
+        $this->setResponse("ajax");
+        $codare = $this->getPostParam('codare');
+        $codope = $this->getPostParam('codope');
+        echo parent::showTitle('Ingreso Beneficiarios');
+        Tag::displayTo("cedtra", Session::getData("documento"));
+        Tag::displayTo("nombre", Session::getData("nombre"));
+        $coddoc = parent::webService('tiposdocumentos',array());
+        foreach($coddoc as $mcoddoc){
+            $_coddoc[$mcoddoc['coddoc']] = $mcoddoc['detalle'];
+        }
+        $sexo = parent::webService('sexos',array());
+        foreach($sexo as $msexo){
+            $_sexo[$msexo['sexo']] = $msexo['detalle'];
+        }
+        $conyuge = parent::webservice('nucfamconyuge', array("cedtra"=>Session::getDATA('documento')));
+        //$conyuge = $conyuge[0];
+        $_conyuge = array();
+        if($conyuge!=false){
+        foreach ($conyuge as $mconyuge) {
+            $_conyuge[$mconyuge['con-cedcon']] = $mconyuge['con-cedcon']."-".$mconyuge['con-nombre'];
+        }
+        }
+        $depart = parent::webService('departamento',array());
+        foreach($depart as $mdepart ){
+            $_depart[$mdepart['coddep']] = $mdepart['detalle'];
+        }
+
+
+      $nivedu = parent::webService('nivedu',array());
+      foreach($nivedu as $mnivedu){
+        $_nivedu[$mnivedu['nivedu']] = $mnivedu['detalle'];
+      }
+      $huerfano = array('0' => 'No aplica','1' => 'Huerfano de Padre', '2' => 'Huerfano de Madre');
+
+      $tiphij = array('0' => 'No aplica','1' => 'Hijo', '2' => 'Hijastro');
+
+      $captra = parent::webService('captra',array());
+      foreach($captra as $mcaptra){
+        $_captra[$mcaptra['captra']] = $mcaptra['detalle'];
+      }
+
+      $tipdis = parent::webService('tipdis',array());
+      foreach($tipdis as $mtipdis){
+        $_tipdis[$mtipdis['tipdis']] = $mtipdis['detalle'];
+      }
+
+      $ciunac = parent::webService('ciudades',array());
+      foreach($ciunac as $mciunac){
+        $_ciunac[$mciunac['codciu']] = $mciunac['detalle'];
+      }
+
+      $calendario = array('A' => 'A', 'B' => 'B', 'N' => 'NO APLICA');
+
+      $this->setParamToView("calendario",$calendario);
+      $this->setParamToView("ciunac",$_ciunac);
+
+      $this->setParamToView("tipdis",$_tipdis);
+      $this->setParamToView("captra",$_captra);
+      $this->setParamToView("tiphij",$tiphij);
+      $this->setParamToView("huerfano",$huerfano);
+      $this->setParamToView("nivedu", $_nivedu);
+      $this->setParamToView("conyuge", $_conyuge);
+      $this->setParamToView("coddoc", $_coddoc);
+      $this->setParamToView("sexo", $_sexo);
+      $this->setParamToView("codare", $codare);
+      $this->setParamToView("codope", $codope);
+      $this->setParamToView("coddep", $_depart);
+    }
+    
+    public function ingbenAction(){
+      try{
+        try{
+          $modelos = array("mercurio34","mercurio21","mercurio40");
+          $Transaccion = parent::startTrans($modelos);
+          $cedtra = $this->getPostParam("cedtra","addslaches","alpha","extraspaces","striptags");
+          $nombre = $this->getPostParam("nombre","addslaches","alpha","extraspaces","striptags");
+          $cedcon = $this->getPostParam("cedcon","addslaches","alpha","extraspaces","striptags");
+          $documento = $this->getPostParam("documento","addslaches","alpha","extraspaces","striptags");
+          $coddoc = $this->getPostParam("coddoc","addslaches","alpha","extraspaces","striptags");
+          $priape = $this->getPostParam("priape","addslaches","alpha","extraspaces","striptags");
+          $segape = $this->getPostParam("segape","addslaches","alpha","extraspaces","striptags");
+          $prinom = $this->getPostParam("prinom","addslaches","alpha","extraspaces","striptags");
+          $segnom = $this->getPostParam("segnom","addslaches","alpha","extraspaces","striptags");
+          $sexo = $this->getPostParam("sexo","addslaches","alpha","extraspaces","striptags");
+          $fecnac = $this->getPostParam("fecnac","addslaches","extraspaces","striptags");
+          $parent = $this->getPostParam("parent","addslaches","alpha","extraspaces","striptags");
+          $estudio = $this->getPostParam("estudio","addslaches","alpha","extraspaces","striptags");
+          $captra = $this->getPostParam("captra","addslaches","alpha","extraspaces","striptags");
+          $huerfano = $this->getPostParam("huerfano","addslaches","alpha","extraspaces","striptags");
+          $tiphij = $this->getPostParam("tiphij","addslaches","alpha","extraspaces","striptags");
+          $tipdis = $this->getPostParam("tipdis","addslaches","alpha","extraspaces","striptags");
+          $nivedu = $this->getPostParam("nivedu","addslaches","alpha","extraspaces","striptags");
+          $ciunac = $this->getPostParam("ciunac","addslaches","alpha","extraspaces","striptags");
+          $calendario = $this->getPostParam ("calendario","addslaches","alpha","extraspaces","striptags");
+          $codare = $this->getPostParam("codare");
+          $codope = $this->getPostParam("codope");
+          Session::setData('nota_audit',"Ingreso de Beneficiario");
+          $log_id = parent::registroOpcion();
+          if($log_id==false)parent::ErrorTrans();
+          $mercurio34 = new Mercurio34();
+          $mercurio34->setTransaction($Transaccion);
+          $mercurio34->setId(0);
+          $mercurio34->setLog($log_id);
+          $mercurio34->setCodcaj(Session::getDATA('codcaj'));
+          $mercurio34->setCedtra($cedtra);
+          $mercurio34->setCedcon($cedcon);
+          $mercurio34->setDocumento($documento);
+          $mercurio34->setCoddoc($coddoc);
+          $mercurio34->setPriape($priape);
+          $mercurio34->setSegape($segape);
+          $mercurio34->setPrinom($prinom);
+          $mercurio34->setSegnom($segnom);
+          $mercurio34->setSexo($sexo);
+          $mercurio34->setFecnac($fecnac);
+          $mercurio34->setParent($parent);
+          $mercurio34->setEstudio($estudio);
+          $mercurio34->setEstado("P");
+          $mercurio34->setCaptra($captra);
+          $mercurio34->setHuerfano($huerfano);
+          $mercurio34->setTiphij($tiphij);
+          $mercurio34->setTipdis($tipdis);
+          $mercurio34->setNivedu($nivedu);
+          $mercurio34->setCiunac($ciunac);
+          $mercurio34->setCalendario($calendario);
+          if(!$mercurio34->save()){
+            parent::setLogger($mercurio34->getMessages());
+            parent::ErrorTrans();
+          }
+          $mercurio07 = $this->Mercurio07->findFirst("documento = $cedtra");
+          $emailTra = $mercurio07->getEmail();
+          $nomben = $priape." ".$segape." ".$prinom." ".$segnom;
+          $asunto = "Ingreso de Beneficiario del Trabajador $cedtra";
+          $msg = "Cordial Saludos<br><br>Esta pendiente por afiliar al Beneficiario $documento - $nomben<br><br>Atentamente,<br><br>COMFAGUAJIRA";
+          $ruta_file = "";
+
+          $mercurio13 = $this->Mercurio13->find("codcaj = '".Session::getDATA('codcaj')."' AND codare = '$codare' AND codope = '$codope'");
+          foreach($mercurio13 as $mmercurio13){
+              if(isset($_FILES['archivo_'.$mmercurio13->getCoddoc()])){
+                  $_FILES["archivo_{$mmercurio13->getCoddoc()}"]['name'] = $mercurio34->getId()."_".$mmercurio13->getCoddoc()."_".$documento.substr($_FILES["archivo_{$mmercurio13->getCoddoc()}"]['name'],-4);
+                  $path = "public/files/";
+                  $this->uploadFile("archivo_{$mmercurio13->getCoddoc()}",getcwd()."/$path/");
+                  $dd = pathinfo($_FILES["archivo_{$mmercurio13->getCoddoc()}"]["name"]);
+                  $archivo_nombre = $path.$dd['basename'];
+                  $ruta_file[] = $archivo_nombre;
+                  $mercurio40 = new Mercurio40();
+                  $mercurio40->setTransaction($Transaccion);
+                  $mercurio40->setNumero($mercurio34->getId());
+                  $mercurio40->setCoddoc($mmercurio13->getCoddoc());
+                  $mercurio40->setNomarc($archivo_nombre);
+                  if(!$mercurio40->save()){
+                    parent::setLogger($mercurio40->getMessages());
+                    parent::ErrorTrans();
+                  }
+              }
+          }
+          $flag_email = parent::enviarCorreo("Afiliación de Beneficiario",$nomben,"mercurio@syseu.com",$asunto,$msg,$ruta_file);
+          if($flag_email==false){
+              return $this->redirect("principal/index/Se envio el Formulario pero sin correo electrónico");
+          } 
+         
+          $asuntoben = "Solicitud de Ingreso de Beneficiario $nomben";
+          $msgben ="";
+          $msgben .= "<p>Apreciado(a) ".Session::getDATA('nombre')."</p><br/><br/>";
+          $msgben .= "<p>La solicitud de afiliacion del beneficiario identificado con documento No.$documento y de nombre $nomben se encuentra en estado pendiente por aprobacion. En breve estaremos informandole acerca del estado de su solicitud.</p><br/><br/><br/>";
+          $msgben .= "<p>Atentamente,</p><br/><br/><br/>";
+          $msgben .= "<p>Mercurio";
+          $flag_email = parent::enviarCorreo("Afiliación de Beneficiario",$nombre, $emailTra, $asuntoben, $msgben, "");
+          if($flag_email==false){
+              return $this->redirect("principal/index/Se envio el formulario pero sin correo electrónico");
+          }
+          parent::finishTrans();
+          return $this->redirect("principal/index/Se Registro Exitosamente");
+        } catch (DbException $e) {
+          parent::setLogger($e->getMessage());
+          parent::ErrorTrans();
+        }
+      } catch (TransactionFailed $e) {
+        return $this->redirect("principal/index/No se pudo registrar");
+      }
+    }
+
+    public function comprobarCedconAction(){
+        $this->setResponse('ajax');
+        $cedcon = $this->getPostParam("cedcon");
+        $flag = parent::webService("autenticar",array('tipo' => 'C', 'cedtra' => $cedcon));
+        $response = true;
+        if($flag != false){
+            $response = false;
+        }
+        $this->renderText(json_encode($response));
+    }
+    
+    public function ingcon_viewAction(){
+      $this->setResponse("ajax");
+      $codare = $this->getPostParam('codare');
+      $codope = $this->getPostParam('codope');
+      echo parent::showTitle('Ingreso Conyuge');
+      Tag::displayTo("cedtra", Session::getData("documento"));
+      Tag::displayTo("nombre", Session::getData("nombre"));
+      $coddoc = parent::webService('tiposdocumentos',array());
+      foreach($coddoc as $mcoddoc){
+        $_coddoc[$mcoddoc['coddoc']] = $mcoddoc['detalle'];
+      }
+      $sexo = parent::webService('sexos',array());
+      foreach($sexo as $msexo){
+        $_sexo[$msexo['sexo']] = $msexo['detalle'];
+      }
+      $codciu = parent::webService('ciudades',array());
+      foreach($codciu as $mcodciu){
+        $_codciu[$mcodciu['codciu']] = $mcodciu['detalle'];
+      }
+      $estciv = parent::webService('estadosciviles',array());
+      foreach($estciv as $mestciv){
+        $_estciv[$mestciv['estciv']] = $mestciv['detalle'];
+      }
+      $captra = parent::webService('captra',array());
+      foreach($captra as $mcaptra){
+        $_captra[$mcaptra['captra']] = $mcaptra['detalle'];
+      }
+      $ocupacion = parent::webService('codocuMercurio32',array());
+      foreach($ocupacion as $mocupacion){
+        $_ocupacion[$mocupacion['codocu']] = $mocupacion['detalle'];
+      }
+      $nivedu = parent::webService('nivedu',array());
+      foreach($nivedu as $mnivedu){
+        $_nivedu[$mnivedu['nivedu']] = $mnivedu['detalle'];
+      }
+      $cajcon = parent::webService('cajas',array());
+      foreach($cajcon as $mcajcon){
+        $_cajcon[$mcajcon['codcaj']] = $mcajcon['detalle'];
+      }
+     $depart = parent::webService('departamento',array());
+     foreach($depart as $mdepart ){
+        $_depart[$mdepart['coddep']] = $mdepart['detalle'];
+     }
+    $tipdis = parent::webService('tipdis',array());
+      foreach($tipdis as $mtipdis){
+        $_tipdis[$mtipdis['tipdis']] = $mtipdis['detalle'];
+      }
+    
+      $this->setParamToView("tipdis",$_tipdis);
+      $this->setParamToView("coddoc", $_coddoc);
+      $this->setParamToView("sexo", $_sexo);
+      $this->setParamToView("codciu", $_codciu);
+      $this->setParamToView("estciv", $_estciv);
+      $this->setParamToView("captra", $_captra);
+      $this->setParamToView("codocu", $_ocupacion);
+      $this->setParamToView("nivedu", $_nivedu);
+      $this->setParamToView("cajcon", $_cajcon);
+      $this->setParamToView("codare", $codare);
+      $this->setParamToView("codope", $codope);
+      $this->setParamToView("coddep", $_depart);
+    }
+    
+    public function ingconAction(){
+      try{
+        try{
+          $this->setResponse("ajax");
+          $today = new Date();
+          $response = parent::startFunc();
+          $modelos = array("mercurio32","mercurio21","mercurio39");
+          $Transaccion = parent::startTrans($modelos);
+          $codcaj = Session::getData('codcaj');
+          $cajcon = $this->getPostParam("cajcon","addslaches","alpha","extraspaces","striptags");
+          $cedtra = $this->getPostParam("cedtra","addslaches","alpha","extraspaces","striptags");
+          $nombre = $this->getPostParam("nombre","addslaches","alpha","extraspaces","striptags");
+          $cedcon = $this->getPostParam("cedcon","addslaches","alpha","extraspaces","striptags");
+          $coddoc = $this->getPostParam("coddoc","addslaches","alpha","extraspaces","striptags");
+          $priape = $this->getPostParam("priape","addslaches","alpha","extraspaces","striptags");
+          $segape = $this->getPostParam("segape","addslaches","alpha","extraspaces","striptags");
+          $prinom = $this->getPostParam("prinom","addslaches","alpha","extraspaces","striptags");
+          $segnom = $this->getPostParam("segnom","addslaches","alpha","extraspaces","striptags");
+          $fecnac = $this->getPostParam("fecnac","addslaches","extraspaces","striptags");
+          $direccion = $this->getPostParam("direccion","addslaches","alpha","extraspaces","striptags");
+          $telefono = $this->getPostParam("telefono","addslaches","alpha","extraspaces","striptags");
+          $email = $this->getPostParam("email","addslaches","extraspaces","striptags");
+          $salario = $this->getPostParam("salario","addslaches","alpha","extraspaces","striptags");
+          $sexo = $this->getPostParam("sexo","addslaches","alpha","extraspaces","striptags");
+          $estciv = $this->getPostParam("estciv","addslaches","alpha","extraspaces","striptags");
+          $ciunac = $this->getPostParam("ciunac","addslaches","alpha","extraspaces","striptags");
+          $codocu = $this->getPostParam("codocu","addslaches","alpha","extraspaces","striptags");
+          $nivedu = $this->getPostParam("nivedu","addslaches","alpha","extraspaces","striptags");
+          $captra = $this->getPostParam("captra","addslaches","alpha","extraspaces","striptags");
+          $codare = $this->getPostParam("codare");
+          $codope = $this->getPostParam("codope");
+          Session::setData('nota_audit',"Ingreso de Conyuge");
+          $log_id = parent::registroOpcion();
+          if($log_id==false)parent::ErrorTrans();
+          $mercurio32 = new Mercurio32();
+          $mercurio32->setTransaction($Transaccion);
+          $mercurio32->setId(0);
+          $mercurio32->setLog($log_id);
+          $mercurio32->setCodcaj($codcaj);
+          $mercurio32->setCajcon($cajcon);
+          $mercurio32->setCedtra($cedtra);
+          $mercurio32->setCedcon($cedcon);
+          $mercurio32->setCoddoc($coddoc);
+          $mercurio32->setPriape($priape);
+          $mercurio32->setSegape($segape);
+          $mercurio32->setPrinom($prinom);
+          $mercurio32->setSegnom($segnom);
+          $mercurio32->setFecnac($fecnac);
+          $mercurio32->setDireccion($direccion);
+          $mercurio32->setTelefono($telefono);
+          $mercurio32->setEmail($email);
+          $mercurio32->setSalario($salario);
+          $mercurio32->setSexo($sexo);
+          $mercurio32->setEstciv($estciv);
+          $mercurio32->setCiunac($ciunac);
+          $mercurio32->setCodocu($codocu);
+          $mercurio32->setNivedu($nivedu);
+          $mercurio32->setCaptra($captra);
+          $mercurio32->setFecing($today->getUsingFormatDefault());
+          $mercurio32->setEstado("P");
+          if(!$mercurio32->save()){
+            parent::setLogger($mercurio32->getMessages());
+            parent::ErrorTrans("Error del controller");
+          }
+          $mercurio07 = $this->Mercurio07->findFirst("documento = $cedtra");
+          $emailTra = $mercurio07->getEmail();
+          $nomcon = $priape." ".$segape." ".$prinom." ".$segnom;
+          $asunto = "Nuevo Ingreso de Conyuge del Trabajador $cedtra - $nombre";
+          $msg = "Cordial Saludos<br><br>Esta pendiente por afiliar al Conyuge $cedcon - $nomcon<br><br>Atentamente,<br><br>MERCURIO";
+          $ruta_file = "";
+          $mercurio13 = $this->Mercurio13->find("codcaj = '".Session::getDATA('codcaj')."' AND codare = '$codare' AND codope = '$codope'");
+          foreach($mercurio13 as $mmercurio13){
+              if(isset($_FILES['archivo_'.$mmercurio13->getCoddoc()])){
+                  $_FILES["archivo_{$mmercurio13->getCoddoc()}"]['name'] = $mercurio32->getId()."_".$mmercurio13->getCoddoc()."_".$cedcon.substr($_FILES["archivo_{$mmercurio13->getCoddoc()}"]['name'],-4);
+                  $path = "public/files/";
+                  $this->uploadFile("archivo_{$mmercurio13->getCoddoc()}",getcwd()."/$path/");
+                  $dd = pathinfo($_FILES["archivo_{$mmercurio13->getCoddoc()}"]["name"]);
+                  $archivo_nombre = $path.$dd['basename'];
+                  $ruta_file[] = $archivo_nombre;
+                  $mercurio39 = new Mercurio39();
+                  $mercurio39->setTransaction($Transaccion);
+                  $mercurio39->setNumero($mercurio32->getId());
+                  $mercurio39->setCoddoc($mmercurio13->getCoddoc());
+                  $mercurio39->setNomarc($archivo_nombre);
+                  if(!$mercurio39->save()){
+                    parent::setLogger($mercurio39->getMessages());
+                    parent::ErrorTrans();
+                  }
+              }
+          }
+          $flag_email = parent::enviarCorreo("Afiliación de Conyuge",$nomcon,"mercurio@syseu.com",$asunto, $msg, $ruta_file);
+          $asuntocon = "Solicitud de Ingreso de Conyuge $nomcon";
+          $msgcon ="";
+          $msgcon .= "<p>Apreciado(a) ".Session::getDATA('nombre')."</p><br/><br/>";
+          $msgcon .= "<p>La solicitud de afiliacion del conyuge identificado con documento No.$cedcon y de nombre $nomcon se encuentra en estado pendiente por aprobacion. En breve estaremos informandole acerca del estado de su solicitud.</p><br/><br/><br/>";
+          $msgcon .= "<p>Atentamente,</p><br/><br/><br/>";
+          $msgcon .= "<p>Mercurio";
+          $flag_email = parent::enviarCorreo("Afiliación de Conyuge",$nombre, $emailTra, $asuntocon, $msgcon, "");
+          if($flag_email==false){
+                return $this->redirect("principal/index/Se envio el Formulario pero sin correo electrónico");
+          }
+          parent::finishTrans();
+          return $this->redirect("principal/index/Se registro Exitosamente");
+        } catch (DbException $e) {
+          parent::setLogger($e->getMessage());
+          parent::ErrorTrans();
+        }
+      } catch (TransactionFailed $e) {
+        parent::setLogger($e->getMessage());
+        return $this->renderText("principal/index/No se pudo registrar");
+      }
+    }
+    
+       
+    public function kitEscolar_viewAction(){
+      $this->setResponse("ajax");
+      echo parent::showTitle('Consulta de Kit Escolar');
+      //$param = array("cedtra"=>"1124012966","cedcon"=>"","documento"=>"");
+      //$result = parent::webService("giro", $param);
+      $param = array("cedtra"=>Session::getDATA('documento'));
+      $response = "";
+      $response .="<br>";
+      $response .="<div class='resultado-prin'>";
+      $response .="<table class='resultado-sec' border=1>";
+      $response .="<tr class='tr-result' cellspacing='10'>";
+      $response .="<td>Año</td>";
+      $response .="<td>Beneficiario</td>";
+      $response .="<td>Fecha</td>";
+      $response .="<td>Estado</td>";
+      $response .="</tr>";
+      $response .="<tr>";
+      $result = parent::webService("kitescolarTra", $param);
+      if($result!=false){
+        foreach($result as $mresult){
+          $response .="<tr>";
+          $response .="<td>{$mresult['ano']}</td>";
+          $response .="<td>{$mresult['beneficiario']}</td>";
+          $response .="<td>{$mresult['fecha']}</td>";
+          $response .="<td>{$mresult['estado']}</td>";
+          $response .="</tr>";
+        }
+      }
+      $response .="</tr>";
+      $response .="</table>";
+      $response .="</div>";
+      echo $response;
+    }
+    
+    public function conemptra_viewAction(){
+      $this->setResponse("ajax");
+      echo parent::showTitle('Consulta de Trabajadores de la Empresa');
+      echo parent::showHelp('Mediante esta herramienta la empresa puede visualizar el total de los trabajadores, mostrando la cédula, el nombre, el salario actual, el sexo, la fecha de nacimiento, la dirección de residencia, el numero de teléfono y la fecha en la cual fue afiliado.');
+      $param = array("nit"=>Session::getDATA('documento'));
+      $response = "";
+      //$response .=Tag::button("Generar Reporte Excel",'class: submit','style: margin-top:8%; margin-left:25%; ');
+      $response .="<br>";
+      $response .="<div class='resultado-prin'>";
+      $response .="<table class='resultado-sec' border=1>";
+      $response .="<tr class='tr-result' cellspacing='10'>";
+      $response .="<td>Cedula</td>";
+      $response .="<td>Nombre</td>";
+      $response .="<td>Salario</td>";
+      $response .="<td>Sexo</td>";
+      $response .="<td>Fecha Nacimiento</td>";
+      $response .="<td>Direccion</td>";
+      $response .="<td>Telefono</td>";
+      $response .="<td>Fecha Afiliacion</td>";
+      $response .="</tr>";
+      $result = parent::webService("Conemptra", $param);
+      if($result!=false){
+        foreach($result as $mresult){
+          $salario = number_format($mresult['salario'],0,".",".");
+          $fecnac = str_replace("12:00:00 AM","",$mresult['fecnac']);
+          $fecafi = str_replace("12:00:00 AM","",$mresult['fecafi']);
+          $response .="<tr>";
+          $response .="<td>{$mresult['cedtra']}</td>";
+          $response .="<td>{$mresult['nombre']}</td>";
+          $response .="<td>{$salario}</td>";
+          $response .="<td>{$mresult['sexo']}</td>";
+          $response .="<td>{$fecnac}</td>";
+          $response .="<td>{$mresult['direccion']}</td>";
+          $response .="<td>{$mresult['telefono']}</td>";
+          $response .="<td>{$fecafi}</td>";
+          $response .="</tr>";
+        }
+      }
+      echo $response;
+
+    }
+    
+    public function kitEscolarEmp_viewAction() {
+      $this->setResponse("ajax");
+      echo parent::showTitle('Consulta de Kit Escolar Empresa');
+      echo parent::showHelp('<p>Mediante esta herramienta se visualiza el año el nombre del trabajador, el nombre del beneficiario al  que  fue entregado  el kit, la fecha y el estado actual.</p>   ');      
+      $param = array("nit"=>Session::getDATA('documento'));
+      //$param = array("nit"=>'892115007');
+      $response = "";
+      $response .="<br>";
+      $response .="<div class='resultado-prin'>";
+      $response .="<table class='resultado-sec' border=1>";
+      $response .="<tr class='tr-result' cellspacing='10'>";
+      $response .="<td>Ano</td>";
+      $response .="<td>Trabajador</td>";
+      $response .="<td>Beneficiario</td>";
+      $response .="<td>Fecha</td>";
+      $response .="<td>Estado</td>";
+      $response .="</tr>";
+      $response .="<tr>";
+      $result = parent::webService("kitescolarEmp", $param);
+      if($result!=false){
+        foreach($result as $mresult){
+          $response .="<tr>";
+          $response .="<td>{$mresult['ano']}</td>";
+          $response .="<td>{$mresult['trabajador']}</td>";
+          $response .="<td>{$mresult['beneficiario']}</td>";
+          $response .="<td>{$mresult['fecha']}</td>";
+          $response .="<td>{$mresult['estado']}</td>";
+          $response .="</tr>";
+        }
+      }
+      $response .="</tr>";
+      echo $response;
+    }
+    
+    
+    public function giroEmp_viewAction(){
+      $this->setResponse("ajax");
+      echo parent::showTitle('Consulta de Giro Empresa');
+      echo parent::showHelp('Mediante esta herramienta permite consultar el giro familiar, mostrando el periodo girado, el actual a pagar, el NIT, el trabajador, el cóyugue, el beneficiario, el nuemero de cuotas, el tipo de pago, el valor y el valor del crédito.</p>');
+      $param = array("nit"=>Session::getDATA('documento'));
+      $result = parent::webService("giroemp", $param);
+      $response = "";
+      $response .="<br>";
+      $response .="<div class='resultado-prin'>";
+      $response .="<table class='resultado-sec' border=1>";
+      $response .="<tr class='tr-result' cellspacing='10'>";
+      $response .="<td>Periodo Girado</td>";
+      $response .="<td>Periodo a Pagar</td>";
+      $response .="<td>Nit</td>";
+      $response .="<td>Trabajador</td>";
+      $response .="<td>Conyuge</td>";
+      $response .="<td>Beneficiario</td>";
+      $response .="<td>Cuotas</td>";
+      $response .="<td>Tipo Pago</td>";
+      $response .="<td>Valor</td>";
+      $response .="<td>Valor Credito</td>";
+      $response .="</tr>";
+      $response .="<tr>";
+      if($result!=false){
+      foreach($result as $mresult){
+        $response .="<tr>";
+        $response .="<td>{$mresult['pergir']}</td>";
+        $response .="<td>{$mresult['periodo']}</td>";
+        $response .="<td>{$mresult['nit']}</td>";
+        $response .="<td>{$mresult['cedtra']}</td>";
+        $response .="<td>{$mresult['cedcon']}</td>";
+        $response .="<td>{$mresult['codben']}</td>";
+        $response .="<td>{$mresult['numcuo']}</td>";
+        $response .="<td>{$mresult['tippag']}</td>";
+        $response .="<td>{$mresult['valor']}</td>";
+        $response .="<td>{$mresult['valcre']}</td>";
+        $response .="</tr>";
+      }
+      } 
+      $response .="</tr>";
+      echo $response;
+    }
+
+    public function planilla_viewAction(){
+      parent::showTitle('Consulta de Planilla Unica');     
+      echo parent::showHelp('<p>Mediante esta herramienta se puede visualizar el contenido de la planilla unica mostranndo en su contenido el numero del radicado, el periodo, el valor de la nomina, el valor del interes, los trabajadores, la fecha n la que se realizo el pago.</p>');
+      $response = "";
+      $response .="<br>";
+      $response .="<div class='resultado-prin'>";
+      $response .="<table class='resultado-sec' border=1>";
+      $response .="<tr class='tr-result' cellspacing='10'>";
+      $response .="<td>Radicado</td>";
+      $response .="<td>Periodo</td>";
+      $response .="<td>Valor Nomina</td>";
+      $response .="<td>Valor Consignada</td>";
+      $response .="<td>Valor Interes</td>";
+      $response .="<td>Trabajadores</td>";
+      $response .="<td>Fecha Pago</td>";
+      $response .="</tr>";
+      $param = array("nit"=>Session::getDATA('documento'));
+      $result = parent::webService("planilla", $param);
+      if($result!=false){
+        foreach($result as $mresult){
+          $response .="<tr>";
+          $response .="<td>{$mresult['numrad']}</td>";
+          $response .="<td>{$mresult['perapo']}</td>";
+          $valnom = number_format(round($mresult['valnom']));
+          $response .="<td>{$valnom}</td>";
+          $valcon = number_format(round($mresult['valcon']));
+          $response .="<td>{$valcon}</td>";
+          $valint = number_format(round($mresult['valint']));
+          $response .="<td>{$valint}</td>";
+          $response .="<td>{$mresult['tottra']}</td>";
+          $response .="<td>{$mresult['fecrec']}</td>";
+          $response .="</tr>";
+        }        
+      }
+      echo $response;
+    }
+
+    public function pazysalvo_viewAction(){
+      echo parent::showTitle('Certificado de Paz y Salvo');
+      echo parent::showHelp('Mediante esta herramienta se puede generar el reporte de paz y salvo, según el estado actual de la empresa, con solo dar clic en el boton <strong>Generar Paz y salvo.</strong>');
+
+    }
+    
+    public function pazysalvoAction(){
+      $today = new Date();
+      $title = "Certificado Paz y Salvo";
+      $report = new UserReportPdf($title,array(),"P","A4");
+      $report->startReport();
+      $report->setX(15);
+      $report->Ln();
+      $report->Ln();
+      $report->Ln();
+      $report->Ln();
+      $report->Image('public/img/portal/comfaguajira.jpg',6,27,73,20);
+      $report->Image('public/img/LogoSuperSubsi.png',198,245,12,35);
+      $report->__MultiCell(0,4,"La Caja de Compensacion Familiar certifica que la empresa ".Session::getDATA("nombre")." Identificado(a) con el Nit No ".Session::getDATA('documento')." se encuentra a paz y salvo",0,"J",0);
+      $report->Ln();
+      $report->Ln();
+      $report->Ln();
+      $report->Ln();
+      $report->Ln();
+      $report->Ln();
+      $report->Ln();
+      $report->Ln();
+      $report->setX(15);
+      $report->__Cell(0,4,"Esta certificacion se expide en RIOHACHA a solicitud del interesado el dia {$today->getDay()} de {$today->getMonthName()} de {$today->getYear()}. ",0,0,"L",0,0);
+      $report->Ln();
+      $report->Ln();
+      $report->Ln();
+      $report->Ln();
+      $report->Ln();
+      $report->Ln();
+      $report->Ln();
+      $report->Ln();
+      $report->Ln();
+      $report->Ln();
+      $report->Ln();
+      $report->Ln();
+      $report->Ln();
+      $report->Ln();
+      $report->setX(25);
+      $report->__Cell(50,4,"",0,0,"L",0,0);
+      $report->__Cell(45,4,"","B",1,"L",0,0);
+      $report->setX(25);
+      $report->__Cell(50,4,"",0,0,"L",0,0);
+      $report->__Cell(45,4,"LICETH RIVEIRA BARROS",0,1,"C",0,0);
+      $report->setX(25);
+      $report->__Cell(50,4,"",0,0,"L",0,0);
+      $mercurio05 = $this->Mercurio05->findFirst("codcaj = '".Session::getDATA('codcaj')."' AND codfir = 'CSA'");
+      $report->__Cell(45,4,$mercurio05->getCargo(),0,100,"C",0,0);
+      if($mercurio05->getNomimg()!="") $report->Image("public/img/firmas/firmajefa.jpg",70,150,60,13);
+      $file = "public/temp/reportes";
+      echo $report->FinishReport($file);
+      $this->setResponse('view');
+    }
+
+    public function adjuntobenAction(){
+        $this->setResponse("ajax");
+        $codare = $this->getPostParam("codare");
+        $codope = $this->getPostParam("codope");
+        $coddoc = $this->getPostParam("coddoc");
+        $mercurio13 = $this->Mercurio13->find("codcaj = '".SESSION::getDATA('codcaj')."' AND codare = '$codare' AND codope='$codope'");
+        $response = "";
+        
+        foreach($mercurio13 as $mmercurio13){
+            $mercurio12 = $this->Mercurio12->findFirst("coddoc = '{$mmercurio13->getCoddoc()}'");
+            if($mmercurio13->getCoddoc() == 1){
+                $response .= "<tr>";
+                $response .= " <td colspan='2' style='text-align: right;'><label>Archivo {$mercurio12->getDetalle()} (pdf):</label></td>";
+                $response .= "<td colspan='2'>".Tag::fileField("archivo_{$mmercurio13->getCoddoc()}")."</td>";
+                $response .= "</tr>";
+            }
+
+            if($pymes == 'S' && $mmercurio13->getCoddoc() == '3'){ 
+                $response .= "<tr>";
+                $response .= " <td colspan='2' style='text-align: right;'><label>Archivo {$mercurio12->getDetalle()} (pdf):</label></td>";
+                $response .= "<td colspan='2'>".Tag::fileField("archivo_{$mmercurio13->getCoddoc()}")."</td>";
+                $response .= "</tr>";
+            }
+        }
+        $this->renderText(json_encode($response));
+   
+    }    
+    
+    public function certificadoAfiliacionTrabInacAction(){
+        $estados = array('A'=>'ACTIVO','I'=>'INACTIVO');
+        $fecha = new Date();
+        $ano = $fecha->getYear();
+        $mes = $fecha->getMonthName();
+        $dia = $fecha->getDay();
+        $formu = new FPDF('P','mm','Letter');
+        $formu->AddPage();
+        $formu->SetFillColor(236,248,240); 
+        $formu->SetFont('Arial','','12');
+        $formu->Ln();
+        $formu->Cell(175,4,"DF-07-20921",0,1,"L",0,0);
+        $formu->Image('public/img/comfamiliar-logo.jpg',10,5,63,18);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Cell(175,4,"DF-07-20921",0,1,"L",0,0);
+        $formu->Cell(175,4,"Neiva, ".$dia." de ".$mes." de ".$ano,0,0,"L",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Cell(15,4,html_entity_decode("Se&ntilde;ores"),0,1,"L",0,0);
+        $formu->SetFont('Arial','B','12');
+        $formu->Cell(190,4,Session::getDATA("nombre"),0,1,"L",0,0);
+        $formu->SetFont('Arial','','12');
+        $formu->Cell(190,4,"Calle 19 40-41 B/ Centro",0,1,"L",0,0);
+        $formu->Cell(190,4,"Telefono 8714243",0,1,"L",0,0);
+        $formu->Cell(190,4,"NEIVA (HUILA)",0,1,"L",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Cell(190,4,"Asunto: Certificado de Afiliacion.",0,1,"L",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Cell(190,4,"Cordial Saludo.",0,1,"L",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $estado = $estados[Session::getData('estado')];
+        $formu->MultiCell(195,4,html_entity_decode("Me permito certificar que " 
+                    .Session::getDATA('nombre')."  identificada(o) con c&eacute;dula de ciudadan&iacute;a No. "
+                    .Session::getDATA('documento').", se encuentra "
+                    .$estado." en nuestro sistema desde el 1 de Julio de 2014."),0,"J",0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Cell(190,4,"Atentamente, ",0,1,"L",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Cell(190,4,"YAZMIN OSPINA GAITAN ",0,1,"L",0,0);
+        $formu->Cell(190,4,"COORDINADORA AFILIACIONES Y SUBSIDIO",0,1,"L",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->SetFont('Arial','','8');
+        $formu->Cell(190,4,html_entity_decode("Y. OSPINA GAITAN / M.Y. MU&Ntilde;OZ LOZANO"),0,1,"L",0,0);
+        $formu->Ln();
+        $formu->Cell(190,4,html_entity_decode("Copia Interna: Centro de Documentaci&oacute;n e Informaci&oacute;n "),0,1,"L",0,0);
+        $formu->Image('public/img/portal/piepaginaCartas.png',1,237,214,42);
+
+
+        $formu->Ln();
+        $this->setResponse('view');
+        $file = "public/temp/reportes/trabajador_inact.pdf";
+        ob_clean();
+        $formu->Output( $file,"I");
+    }
+
+    public function certificadoAfiliacionTrabCatAction(){
+        $estados = array('A'=>'ACTIVO','I'=>'INACTIVO');
+        $fecha = new Date();
+        $ano = $fecha->getYear();
+        $mes = $fecha->getMonthName();
+        $dia = $fecha->getDay();
+        $formu = new FPDF('P','mm','A4');
+        $formu->AddPage();
+        $formu->SetFillColor(236,248,240); 
+        $formu->SetFont('Arial','','12');
+        $formu->Cell(15,4,"iDF-07-20921",0,1,"L",0,0);
+        $formu->Image('public/img/comfamiliar-logo.jpg',5,5,77,22);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Cell(15,4,"DF-07-20921",0,1,"L",0,0);
+        $formu->Cell(15,4,"Neiva, ".$dia." de ".$mes." de ".$ano,0,0,"L",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Cell(15,4,html_entity_decode("Se&ntilde;ores"),0,1,"L",0,0);
+        $formu->SetFont('Arial','B','12');
+        $formu->Cell(190,4,Session::getDATA("nombre"),0,1,"L",0,0);
+        $formu->SetFont('Arial','','12');
+        $formu->Cell(190,4,"Calle 19 40-41 B/ Centro",0,1,"L",0,0);
+        $formu->Cell(190,4,"Telefono 8714243",0,1,"L",0,0);
+        $formu->Cell(190,4,"NEIVA (HUILA)",0,1,"L",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Cell(190,4,"Asunto: Certificado de Afiliacion.",0,1,"L",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Cell(190,4,"Cordial Saludo.",0,1,"L",0,0);
+        $formu->Ln();
+        $formu->SetFont('Arial','B','12');
+        $estado = $estados[Session::getDATA('estado')];
+        $formu->SetFont('Arial','','12');
+        $formu->Ln();
+        $formu->MultiCell(170,4,html_entity_decode("Me permito certificar que  ".Session::getDATA('nombre')."  identificada(o) con c&eacute;dula de ciudadan&iacute;a No. ".Session::getDATA('documento').", se encuentra afiliada a nuestra Entidad en la modalidad de ".$estado." en nuestro sistema desde el 1 de Julio de 2014."),0,"J",0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Cell(190,4,"Atentamente, ",0,1,"L",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Ln();
+        $formu->Cell(190,4,"YAZMIN OSPINA GAITAN ",0,1,"L",0,0);
+        $formu->Cell(190,4,"COORDINADORA AFILIACIONES Y SUBSIDIO",0,1,"L",0,0);
+        $formu->Ln();
+        $formu->Ln();
+        $formu->SetFont('Arial','','8');
+        $formu->Cell(190,4,html_entity_decode("Y. OSPINA GAITAN / M.Y. MU&Ntilde;OZ LOZANO"),0,1,"L",0,0);
+        $formu->Ln();
+        $formu->Cell(190,4,html_entity_decode("Copia Interna: Centro de Documentaci&oacute;n e Informaci&oacute;n "),0,1,"L",0,0);
+        $formu->Image('public/img/portal/piepaginaCartas.png',0,255,210,42);
+
+
+        $formu->Ln();
+        $this->setResponse('view');
+        $file = "public/temp/reportes/empresa_T.pdf";
+        ob_clean();
+        $formu->Output( $file,"I");
+    }
+
+}
+?>

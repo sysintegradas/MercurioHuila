@@ -1,0 +1,395 @@
+<?php View::getContent(); ?>
+<script>
+//$("#codciu").attr("disabled",true);
+Guardar = function(){
+    <?php
+    if($tipo == 'T'){
+    ?>
+        console.log("trabajador");
+    $("#form").validate({
+        rules: {
+            direccion   : { required:true},
+            codciu      : { required:true},
+            email       : { required:true},
+            telefono    : { required:true},
+            direcorresp : { required:true},
+            idciucorresp: { required:true},
+            idbarrio: { required:true}
+        },
+    });
+    <?php
+    }
+    else if($tipo == 'E'){
+    ?>
+        console.log("empresa");
+    $("#form").validate({
+        rules: {
+            direccion   : { required:true},
+            codciu      : { required:true},
+            email       : { required:true},
+            telefono    : { required:true},
+            direcorresp : { required:true},
+            coddep: { required:true},
+            codciu: { required:true},
+            idzona: { required:true},
+            idbarrio: { required:true},
+            iddepcorresp: { required:true},
+            idciucorresp: { required:true},
+            idbarriocorresp: { required:true}
+        },
+    });
+    <?php
+    }
+    else{
+    ?>
+        console.log("else");
+    $("#form").validate({
+        rules: {
+            direccion   : { required:true},
+            codciu      : { required:true},
+            email       : { required:true},
+            telefono    : { required:true},
+            direcorresp : { required:true},
+            idciucorresp: { required:true}
+        },
+    });
+    <?php
+    }
+    ?>
+    if($("#email").val()==""){
+        Messages.display("El email no puede ser vacio","warning");
+        $("#email").focus();
+    }else{
+        if(!$("#form").valid()){
+            console.log(1);
+            Messages.display("Faltan Campos por Digitar","error");
+            return;
+        }
+        expr = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        var email = $('#email').val();
+        if(!expr.test(email)){
+            Messages.display("Email invalido","error");
+            $('#email').focus();
+            return;
+        }
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/actdat"),
+            data: {
+                direccion: $('#direccion').val(),
+                celular: $('#celular').val(),
+                codciu : $('#codciu').val(),
+                email : $('#email').val(),
+                telefono : $('#telefono').val(),
+                direcorresp : $('#direcorresp').val(),
+                idciucorresp : $('#idciucorresp').val(),
+                idbarrio : $('#idbarrio').val(),
+                fax : $('#fax').val(),
+                idbarriocorresp : $('#idbarriocorresp').val(),
+                idzona : $('#idzona').val(),
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            if(response['flag']==true){
+                Messages.display(Array(response['msg']),'info');
+            }else{
+                Messages.display(Array(response['msg']),'warning');
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+
+}
+traerCiudad = function(){
+    if($('#coddep').val() == ""){
+        $('#coddep').focus();
+        Messages.display("Por favor seleccionar el departamento. ","warning");
+      }else{
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/traerCiudad"),
+            data: {
+                periodo: $('#coddep').val()
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            if(response != false){
+                $("#codci").html(response); 
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+      }
+}
+traerCiudadPri = function(){
+    if($('#deppri').val() == ""){
+        $('#deppri').focus();
+        Messages.display("Por favor seleccionar el departamento principal. ","warning");
+      }else{
+        var coddep = $('#deppri').val();
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/traerCiudad"),
+            data: {
+                periodo: $('#coddep').val()
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            if(response != false){
+                $("#ciupr").html(response); 
+                $('#ciupr').focus();
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+      }
+}
+
+igualPri = function(){
+   $('#ciupri').val() = $('#ciupr'); 
+}
+
+igualCiu = function(){
+   $('#codciu').val() = $('#codci'); 
+}
+validaemail = function(){
+    expr = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    var email = $('#email').val();
+    if(!expr.test(email)){
+        Messages.display("Email invalido","error");
+        $('#email').focus();
+    }
+}
+
+uneDireccion= function(){
+    $('#direccion_online').val( $('#prim').val()+" "+$('#segu').val()+" "+$('#ter').val()+" "+$('#cuar').val()+" "+$('#quin').val()+" # "+$('#seis').val()+" "+$('#siete').val()+" "+$('#ocho').val()+" - "+$('#nue').val()+" "+$('#diez').val()+" "+$("#once").val());
+}
+
+confirmarDireccion = function(campo_direccion){
+    if($('#segu').val()==""){
+        $('#segu').focus();
+        Messages.display("Por favor digitar el campo. ","warning");
+        return;
+    }
+    if($('#seis').val()==""){
+        $('#seis').focus();
+        Messages.display("Por favor digitar el campo. ","warning");
+        return;
+    }
+    if($('#diez').val()==""){
+        $('#diez').focus();
+        Messages.display("Por favor digitar el campo. ","warning");
+        return;
+    }
+    $("#"+campo_direccion).val($('#prim').val()+" "+$('#segu').val()+" "+$('#ter').val()+" "+$('#cuar').val()+" "+$('#quin').val()+" # "+$('#seis').val()+" "+$('#siete').val()+" "+$('#ocho').val()+" - "+$('#nue').val()+" "+$('#diez').val()+" "+$("#once").val());
+    $('#modalDirecc').modal("toggle");
+}
+
+
+cambiarDireccion = function(campo_direccion){
+    var request  = $.ajax({
+        type: "POST",
+        url:Utils.getKumbiaURL("subsidio/cambiarDireccion"),
+        data: {
+            campo: campo_direccion, 
+        }
+    });
+    request.done(function( transport ) {
+        var response = jQuery.parseJSON(transport);
+        if(response != false){
+            $("#direcc").html(response); 
+            $('#modalDirecc').modal(); 
+        }
+    });
+    request.fail(function( jqXHR, textStatus ) {
+        Messages.display(response['msg'],"error");
+    });
+}
+
+traerCiudad = function(){
+    if($('#coddep').val() == ""){
+        $('#coddep').focus();
+        Messages.display("Por favor seleccionar el departamento. ","warning");
+      }else{
+        var coddep = $('#coddep');
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/traerCiudad"),
+            data: {
+                coddep: $('#coddep').val(), 
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            if(response != false){
+                $("#codciu").attr("disabled",false);
+                $('#codciu').html(response);
+                $('#codciu').trigger('chosen:updated');
+                $('#codciu').focus();
+                $('#idzona').html("<option value='@'>Seleccione...</option>");
+                $('#idzona').trigger('chosen:updated');
+                $('#idbarrio').html("<option value='@'>Seleccione...</option>");
+                $('#idbarrio').trigger('chosen:updated');
+             }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+      }
+}
+
+traerCiudad2 = function(){
+    if($('#iddepcorresp').val() == ""){
+        $('#iddepcorresp').focus();
+        Messages.display("Por favor seleccionar el departamento. ","warning");
+      }else{
+        var coddep = $('#iddepcorresp').val();
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/traerCiudad"),
+            data: {
+                coddep: coddep, 
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            if(response != false){
+                $('#idciucorresp').html(response);
+                $('#idciucorresp').trigger('chosen:updated');
+                $('#idciucorresp').focus();
+                $('#idbarriocorresp').html("<option value='@'>Seleccione...</option>");
+                $('#idbarriocorresp').trigger('chosen:updated');
+             }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+      }
+}
+    function traerBarrio(){
+        //alert($('#codciu').val());
+        if($('#codciu').val() == ""){
+            $('#codciu').focus();
+            Messages.display("Por favor seleccionar el Municipio. ","warning");
+        }else{
+            var codciu = $('#codciu').val();
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("particular/traerBarrio"),
+                data: {
+                    codciu :codciu,
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response != false){
+                    $("#idbarrio").attr("disabled",false)
+                    $('#idbarrio').html(response);
+                    $('#idbarrio').trigger("chosen:updated");
+                    $('#idbarrio').focus();
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+        traerZona();
+    }
+
+    function traerZona(){
+        if($('#codciu').val() == ""){
+            $('#codciu').focus();
+            Messages.display("Por favor seleccionar el Municipio. ","warning");
+        }else{
+            var ciures = $('#codciu').val();
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("subsidio/traerZona"),
+                data: {
+                    ciures :ciures,
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response != false){
+                    $("#idzona").attr("disabled",false)
+                    $('#idzona').html(response);
+                    $('#idzona').trigger("chosen:updated");
+                    $('#idzona').focus();
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+    }
+
+    function traerBarrio2(){
+        //alert($('#codciu').val());
+        if($('#idciucorresp').val() == ""){
+            $('#idciucorresp').focus();
+            Messages.display("Por favor seleccionar el Municipio. ","warning");
+        }else{
+            var codciu = $('#idciucorresp').val();
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("particular/traerBarrio"),
+                data: {
+                    codciu :codciu,
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response != false){
+                    $("#idbarriocorresp").attr("disabled",false)
+                    $('#idbarriocorresp').html(response);
+                    $('#idbarriocorresp').trigger("chosen:updated");
+                    $('#idbarriocorresp').focus();
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+
+    }
+
+
+
+</script>
+
+<br>
+<?php echo Tag::form(Router::getController()."/actdat","id: form","autocomplete: off","enctype: multipart/form-data"); ?>
+    <div>
+        <table cellpadding="10" align="center">
+             <tr>
+                <?php echo $html ?>  
+            </tr>
+            <tr>
+                <td colspan="4"><?php echo Tag::Button("Actualizar Datos",'class: btn btn-primary','style: text-align: center; margin-top: 3%; margin-bottom: 1%;',"onclick: Guardar();") ?></td>
+            </tr>
+        </table>
+    </div>
+<?php echo Tag::endForm(); ?>
+
+    <div class="modal fade" id="modalDirecc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style=" width: 60%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title barra barra-center" id="myModalLabel">Cambio de Direccion</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="direcc"> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

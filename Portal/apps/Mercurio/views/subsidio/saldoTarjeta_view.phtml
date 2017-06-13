@@ -1,0 +1,71 @@
+<?php View::getContent(); ?>
+<script>
+$(document).ready(function(){   
+    $('[data-toggle="tooltip"]').tooltip();
+    calendars();
+});
+buscar = function(){
+    if($('#fecini').val() == ""){
+        $('#fecini').focus();
+        Messages.display("Por favor digite la fecha de inicio por el cual se quiere buscar","warning");
+        return;
+    }if($('#fecfin').val()== ""){
+        $('#fecfin').focus();
+        Messages.display("Por favor digite la fecha final por el cual se quiere buscar","warning");
+        return;
+    }
+    if($('#fecini').val() > $('#fecfin').val()){
+        $('#fecfin').focus();
+        Messages.display("Verifique que la fecha final sea mayor al feciodo inicial","warning");
+        return;
+    }else{
+        var fecini = $('#fecini').val();
+        var fecfin = $('#fecfin').val();
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/saldoTarjeta"),
+            data: {
+                fecini: fecini,
+                fecfin: fecfin,
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            if(response == false){
+                Messages.display("El año ingresado no existe, digite un año valido","warning");
+            }
+            $("#respuesta").html(response); 
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+}
+</script>
+<?php echo Tag::form(Router::getController()."/aportes","id: form","autocomplete: off","enctype: multipart/form-data"); ?>
+<div class="col-sm-12">
+    <table class="contenedor" style="margin: auto; border-collapse: separate; border-spacing: 5px;" width="95%">
+        <div class="col-sm-12" > 
+            <div class="col-sm-2"><label>Fecha de Inicio:</label></div>
+            <div class="col-sm-3">
+                <div class="input-group" >
+                    <div class="input-group-addon"  ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"  data-toggle="tooltip" title="Aqui ingresa la fecha de inicio desde la cual quiere realizar la consulta"  ></span></div>
+                    <?php echo TagUser::calendar("fecini","class: form-control col-sm-10","style: margin-left: -3%; "); ?> 
+                </div>
+            </div>
+            <div class="col-sm-2"><label>Fecha de Final:</label></div>
+            <div class="col-sm-3">
+                <div class="input-group" >
+                    <div class="input-group-addon"  ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"  data-toggle="tooltip" title="Aqui ingresa la fecha final desde la cual quiere realizar la consulta"  ></span></div>
+                    <?php echo TagUser::calendar("fecfin","class: form-control col-sm-10","style: margin-left: -3%; "); ?>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div><?php echo Tag::Button("Buscar",'class: btn btn-success',"onclick: buscar();") ?></div>
+            </div>
+        </div>
+    </table>
+</div>
+<?php echo Tag::endForm(); ?>
+<div id='respuesta'> </div>  
+

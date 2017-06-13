@@ -1,0 +1,122 @@
+<?php echo View::getContent(); ?>
+<script type="text/javascript">
+    var val = new Validator();
+    Event.observe(document, 'dom:loaded', function(){
+      val.addField("tipo","text",null,{'alias': 'Tipo','isNull': false,'doToUpperCase': false});
+      val.addField("documento","text",null,{'alias': 'Documento','isNull': false,'doToUpperCase': false});
+    });
+    Guardar = function(){
+        if(!val.valide()){
+            Messages.valide(val);
+            return;
+        }
+        new Ajax.Request(Utils.getKumbiaURL("opciones/preguntas"), {
+            asynchronous : false,
+            parameters: {
+                tipo: $F('tipo'),
+                documento: $F('documento')
+            },
+            onSuccess: function(transport){
+                response = transport.responseText.evalJSON();
+                if(response['flag']==true){
+                    Messages.display(Array(response['msg']),"info");
+                    $('tipo').disable();
+                    $('documento').disable();
+                    $('pregunta1').value = response['pregunta1_cod'];
+                    $('pregunta2').value = response['pregunta2_cod'];
+                    $('preg1').innerHTML = response['pregunta1_det'];
+                    $('preg2').innerHTML = response['pregunta2_det'];
+                    $$('.preguntas').each(function(elem){
+                      elem.show();
+                    });
+                    $('respuesta1').focus();
+                }else{
+                    Messages.display(Array(response['msg']),"warning");
+                }
+            },
+            onFailure: function(transport){
+                alert(transport.responseText);
+            }
+        });
+    }
+    function cancelar(){
+      $('tipo').enable();
+      $('documento').enable();
+      $$('.preguntas').each(function(elem){
+        elem.hide();
+      });
+    }
+    function contestar(){
+        if(!val.valide()){
+            Messages.valide(val);
+            return;
+        }
+        if($F('respuesta1')=="" || $F('respuesta2')==""){
+          Messages.display(Array("Debe de Contestar las Preguntas"),"warning");
+          return;
+        }
+        var contes = false;
+        var msg = '';
+        new Ajax.Request(Utils.getKumbiaURL("opciones/contestar"), {
+            asynchronous : false,
+            parameters: {
+                tipo: $F('tipo'),
+                documento: $F('documento'),
+                pregunta1: $F('pregunta1'),
+                respuesta1: $F('respuesta1'),
+                pregunta2: $F('pregunta2'),
+                respuesta2: $F('respuesta2')
+            },
+            onSuccess: function(transport){
+                response = transport.responseText.evalJSON();
+                if(response['flag']==true){
+                    Messages.display(Array(response['msg']),"info");
+                    contes = true;
+                    msg = response['msg'];
+                    cancelar();
+                }else{
+                    Messages.display(Array(response['msg']),"warning");
+                }
+            },
+            onFailure: function(transport){
+                alert(transport.responseText);
+            }
+        });
+        if(contes){
+            return window.location=(Utils.getKumbiaURL("login/index/"+msg));
+        }
+    }   
+    
+ </script>
+
+<?php echo Tag::form("","autocomplete: off"); ?>
+<div align='center'>
+    <table align='center'>
+        <tr>
+            <td align="right"><label>Tipo:</label></td>
+            <td align="left"><?php echo Tag::select("tipo",$Mercurio06->find(),"using: tipo,detalle","use_dummy: true") ?></td>
+        </tr>
+        <tr>
+            <td align="right"><label>Documento:</label></td>
+            <td align="left"><?php echo Tag::numericField("documento") ?></td>
+        </tr>
+        <tr class='preguntas' style='display: none;'>
+          <td align="right" id='preg1'></td>
+          <td align="left"><?php echo Tag::hiddenField("pregunta1"); ?><?php echo Tag::textField("respuesta1") ?></td>
+        </tr>
+        <tr class='preguntas' style='display: none;'>
+          <td align="right" id='preg2'></td>
+          <td align="left"><?php echo Tag::hiddenField("pregunta2"); ?><?php echo Tag::textField("respuesta2") ?></td>
+        </tr> 
+    </table>
+</div>
+<div align='center'>
+  <table width='100%'>
+    <tr>
+      <td align="right"><?php echo Tag::button("Verificar","class: submit","onclick: Guardar();") ?></td>
+      <td align="left"><?php echo Tag::button("Cancelar","class: submit","onclick: cancelar();") ?></td>
+      <td align="center" class='preguntas' style='display: none;'><?php echo Tag::button("Contestar y enviar correo","class: submit","onclick: contestar();") ?></td>
+    </tr>
+  </table>
+</div>
+<?php echo Tag::endForm(); ?>

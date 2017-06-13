@@ -1,0 +1,151 @@
+<section id="user-bg">
+    <header id="content-head">
+        <div class="task-bar">
+            <div id="content-off"><?php echo Tag::image("opciones/cerrar_sesion1.png","id: img-off","title: Cerrar Session") ?></div>
+            <div id="content-user"><span id="welcome">Bienvenido, <?php echo Session::getDATA('nombre'); ?></span>
+                 <article class="" id="basica02">
+                    <div class="title-utility">Datos Del Usuario</div>
+                    <div class="utility">
+                        <div id="capt-basica02"></div>
+                    </div>
+                </article>
+            </div>
+            <span id="no_cerrar">
+            <div id="content-calendar">
+                <?php echo Tag::image("opciones/calendar.png","width: 25px","height: 25px","id: img-cal") ?>
+                <article class="utility-content" id="calendar">
+                    <div class="title-utility">Calendario</div>
+                    <div class="utility">
+                        <div id="content-calen">
+                        </div><!-- #content-notas-listas -->
+                    </div> <!-- .utility -->
+                </article> <!-- .utility-content -->
+            </div> <!-- #content-calendar -->
+            <div id="content-chat">
+                <?php echo Tag::image("opciones/chat.png","width: 30px","height: 30px","id: img-chat") ?>
+                <article class="utility-content" id="chat">
+                    <div class="title-utility">Chat / Mensajes</div>
+                    <div class="utility">
+                        <div id="content-chat-listas">
+                        </div><!-- #content-notas-listas -->
+                        <div id="content-chat-info">
+                            <div id="content-conversation"></div>
+                            <div>
+                                <?php echo Tag::textField("msg_chat","style: width: 80%;"); ?>
+                               <span id='btn_snd_msg' onclick='saveChat()'>Enviar</span> 
+                            </div>
+                        </div>
+                    </div> 
+                </article> <!-- .utility-content -->
+            </div> <!-- #content-chat -->
+            <div id="content-contact">
+                <?php echo Tag::image("opciones/contactos.png","width: 25px","height: 25px","id: img-con") ?>
+                <article class="utility-content" id="contact">
+                    <div class="title-utility">Contactos</div>
+                    <div class="utility">
+                        <div id="content-contact-listas">
+                        </div><!-- #content-notas-listas -->
+                        <div id="content-contact-info">
+                        </div>
+                    </div> 
+                </article> <!-- .utility-content -->
+            </div> <!-- #content-contact -->
+            <div id="content-notas">
+                <?php echo Tag::image("opciones/notas.png","width: 25px","height: 25px","id: img-not") ?>
+                <article class="utility-content" id="notas">
+                    <div class="title-utility">Notas</div>
+                    <div class="utility">
+                        <div id="content-notas-listas">
+                        </div><!-- #content-notas-listas -->
+                        <div id="content-notas-mensaje">
+                            <?php echo Tag::textArea('nota_nota'); ?>
+                        </div>
+                        <div id="content-footer-notas">
+                            <?php echo Tag::image("opciones/new.gif","width: 25px","height: 25px","id: add-nota") ?>
+                            <span>&nbsp;</span>
+                            <span>&nbsp;</span>
+                            <span>&nbsp;</span>
+                            <span>&nbsp;</span>
+                            <span>&nbsp;</span>
+                            <span>&nbsp;</span>
+                            <?php echo Tag::image("opciones/eliminar.png","width: 25px","height: 25px","id: del-nota") ?>
+                        </div>
+                    </div> 
+                </article> <!-- .utility-content -->
+            </div> <!-- #content-notas -->
+            <div id="content-help"><!-- content-help -->
+                <?php echo Tag::image("opciones/help.png","width: 25px","height: 25px","id: img-help") ?>
+                <article class="utility-content" id="help">
+                    <div class="title-utility">Ayudas</div>
+                    <div class="utility">
+                        <div id="content-help-listas">
+                        </div><!-- #content-help-listas -->
+                        <div id="content-help-info">
+                        </div>
+                    </div> 
+                </article> <!-- .utility-content -->
+            </div> <!-- #content-help -->
+            <div id="content-time"><?php echo date("Y-m-d")."<br> ".date("h:i")." ".date("A");?></div>
+            </span>
+        </div> <!-- .task-bar -->
+    </header><!-- #content-head-->
+<div id="menu">
+</div>
+<div id="captura">
+    <div class="title">
+        <?php
+            if(!isset($titulo)) $titulo="";
+        ?>
+        <div class="titulo" style="vertical-align: middle;"><b><?php echo $titulo; ?></b></div>
+        <?php SESSION::setDATA("title",$titulo); ?>
+    </div>
+    <div id="vista" align="center">
+        <?php echo View::getContent(); ?>
+    </div>
+</div>
+<div class="dock">
+    <ul>
+        <li>
+            <span onclick="traerMenu('1');" id='1'>
+                <em><span>Datos Basicos</span></em>
+                <?php echo Tag::image("dock/settings-icon.png","alt: datosBasicos") ?>
+            </span>
+        </li>
+        <li>
+            <span onclick="traerMenu('2')" id='2'>
+                <em><span>Configuracion</span></em>
+                <?php echo Tag::image("dock/configuration.png","alt: Configuracion") ?>
+            </span>
+        </li>
+		<li>
+            <span onclick="traerMenu('3')" id='3'>
+                <em><span>Publicidad</span></em>
+                <?php echo Tag::image("dock/procesos.gif","alt: publicidad") ?>
+            </span>
+        </li>
+		<li>
+            <span onclick="traerMenu('4')" id='4'>
+                <em><span>Email</span></em>
+                <?php echo Tag::image("dock/icon-mail.png","alt: email") ?>
+            </span>
+        </li>
+        <li>
+            <span onclick="traerMenu('5')" id='5'>
+                <em><span>Reportes</span></em>
+                <?php echo Tag::image("dock/pdf.png","alt: reportes") ?>
+            </span>
+        </li>
+        <li>
+            <span onclick="traerMenu('6')" id='6'>
+                <em><span>Ajustes</span></em>
+                <?php echo Tag::image("dock/ajustes-ios1.png","alt: Ajustes") ?>
+            </span>
+        </li>
+    </ul>
+</div>
+<script>
+    Event.observe(document, 'dom:loaded', function(){
+        <?php echo Tag::addJavascript('mercurio/mercurio');?>
+        traerMenu("<?php echo Session::getDATA('menu')?>",1);
+    });
+</script>

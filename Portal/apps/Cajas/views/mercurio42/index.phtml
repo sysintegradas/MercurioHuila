@@ -1,0 +1,36 @@
+<?php View::getContent(); ?>
+
+<?php echo Tag::form(Router::getController()."/uploadimg","id: form","autocomplete: off","enctype: multipart/form-data"); ?>
+<table style="width: 90%; margin-top: 20px;">
+<tbody>
+<tr><td colspan="2" align="justify"><p style="font-family: Arial 2em;">Por favor seleccione la imagen que desea publicar, esta imagen aparecerá en el banner principla ubicado en el ingreso. La imagen que desee publicar se recomienda que tenga un ancho de 1100px y un alto de 345px como m&iacute;nimo, además debe tener la extenis&oacute;n .png que garantiza la calidad del archivo.</p></td></tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr>
+    <td width="71%" valign="top">
+        <table style="width: 100%;" align="left">
+            <tr align="right">
+                <td align="right">
+                    <p>Seleccione el archivo:</p>
+                </td>
+                <td align="left">
+                    <?php echo Tag::fileField("inputimg","style: width: 80%")?>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+                <td align="center" colspan="2"><?php echo Tag::submitButton("Subir","style: width:100px; height: 25px; margin-right: 20px;"); ?> <input type="reset" style="width: 100px; height: 25px;" value="Cancelar"></td>
+            </tr>
+        </table>
+    </td>
+</tr>
+<tr>
+    <td>&nbsp;</td>
+</tr>
+<tr>
+    <td align="center"><?php echo Tag::image("portal/bannersample.png","style: width: 60%; height: 45%;"); ?></td>
+</tr>
+</tbody>
+</table>
+<?php echo Tag::endForm(); ?>

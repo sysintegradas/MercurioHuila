@@ -1,0 +1,60 @@
+<?php echo View::getContent(); ?>
+<script type="text/javascript">
+    $("#form").validate({
+        rules: {
+            claveant: { required:true},
+            clavenue: { required:true},
+            clavecon: { required:true},
+        },
+    });
+
+    Guardar = function(){
+        if(!$("#form").valid()){
+            Messages.display("Faltan Campos por Digitar","error");
+            return;
+        }
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("opciones/claveVencida"),
+            data: {
+                claveant: $('#claveant').val(),
+                clavenue: $('#clavenue').val(),
+                clavecon: $('#clavecon').val(),
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            if(response['flag']==true){
+                Messages.display(Array(response['msg']),"success");
+                window.location = Utils.getKumbiaURL("principal/index");
+            }else{
+                Messages.display(Array(response['msg']),"warning");
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+ </script>
+
+<?php echo Tag::form("","autocomplete: off","id: form"); ?>
+<div align='center'>
+    <table align='center'>
+        <tr>
+            <td align="right"><b style='margin-top: 10%'>Clave Anterior:</b></td>
+            <td align="left"><?php echo Tag::passwordField("claveant","class: form-control","style: margin-top: 10%; margin-left: 3%") ?></td>
+        </tr>
+        <tr>
+            <td align="right"><b style='margin-top: 10%'>Clave Nueva:</b></td>
+            <td align="left"><?php echo Tag::passwordField("clavenue","class: form-control","style: margin-top: 10%; margin-left: 3%") ?></td>
+        </tr>
+        <tr>
+            <td align="right"><b style='margin-top: 10%'>Confirmar Clave:</b></td>
+            <td align="left"><?php echo Tag::passwordField("clavecon","class: form-control","style: margin-top: 10%; margin-left: 3%;") ?></td>
+        </tr>
+        <tr>
+          <td colspan="2" align="center"><?php echo Tag::button("Guardar","class: btn btn-success","style: margin-top: 2%;","onclick: Guardar();") ?></td>
+        </tr>
+    </table>
+</div>
+<?php echo Tag::endForm(); ?>

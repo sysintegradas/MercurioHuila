@@ -1,0 +1,133 @@
+<?php echo View::getContent(); ?>
+<script type="text/javascript">
+    var val = new Validator();
+    Event.observe(document, 'dom:loaded', function(){
+      val.addField("email","email",null,{'alias': 'Email','isNull': false,'doToUpperCase': false});
+      val.addField("clavenue","text",null,{'alias': 'Clave Nueva','isNull': false,'doToUpperCase': false});
+      val.addField("clavecon","text",null,{'alias': 'Clave Confirmacion','isNull': false,'doToUpperCase': false});
+      val.addField("pregunta1","select",null,{'alias': 'Pregunta 1','isNull': false,'doToUpperCase': false});
+      val.addField("pregunta2","select",null,{'alias': 'Pregunta 2','isNull': false,'doToUpperCase': false});
+      val.addField("respuesta1","text",null,{'alias': 'Respuesta 1','isNull': false,'doToUpperCase': false});
+      val.addField("respuesta2","text",null,{'alias': 'Respuesta 2','isNull': false,'doToUpperCase': false});
+      val.addField("registra","select",null,{'alias': 'Registro','isNull': false,'doToUpperCase': false});
+      $('email').focus();
+
+    });
+    
+    cancelar = function(res){
+	var ban = confirm("Si no acepta los términos y condiciones el programa no permitirá el ingreso al sistema");
+	if(ban)location.href="../login";
+    }
+
+    Guardar = function(){
+        if(!val.valide()){
+            Messages.valide(val);
+            return;
+        }
+        if($F('pregunta1')==$F('pregunta2')){
+          Messages.display(Array("Las Preguntas no pueden ser las mismas"),"warning");
+          return;
+        }
+        if($F('respuesta1')==$F('clavenue') || $F('respuesta2')==$F('clavenue')){
+          Messages.display(Array("Las Preguntas no pueden ser la misma que la clave"),"warning");
+          return;
+        }
+        new Ajax.Request(Utils.getKumbiaURL("opciones/cambiarClavePri"), {
+            asynchronous : false,
+            parameters: {
+                autoriza: "S",
+                email: $F('email'),
+                pregunta1: $F('pregunta1'),
+                respuesta1: $F('respuesta1'),
+                pregunta2: $F('pregunta2'),
+                respuesta2: $F('respuesta2'),
+                clavenue: $F('clavenue'),
+                clavecon: $F('clavecon'),
+                registra: $F('registra')
+            },
+            onSuccess: function(transport){
+                response = transport.responseText.evalJSON();
+                if(response['flag']==true){
+                    Messages.display(Array(response['msg']),"success");
+                    window.location = Utils.getKumbiaURL("principal/index");
+                }else{
+                    Messages.display(Array(response['msg']),"warning");
+                }
+            },
+            onFailure: function(transport){
+                alert(transport.responseText);
+            }
+        });
+    }
+    verificacorreo = function(){
+        var email = $F('email');
+        new Ajax.Request(Utils.getKumbiaURL("opciones/consultaEmail"), {
+          parameters: {
+            email: email
+          },
+          onSuccess: function(transport){
+            response = transport.responseText.evalJSON();
+            if(response != false){
+              $('email').value = "";
+              $('email').focus();
+              Messages.display("El email digitado ya esta registrado","warning");
+            }
+          },
+          onFailure: function(transport){
+            alert(transport.responseText);
+          }
+        });
+ 
+    }
+
+ </script>
+
+<?php echo Tag::form("","autocomplete: off"); ?>
+<div align='center'>
+    <table align='center'>
+        <tr>
+            <td align="left" style="visibility: hidden;"><?php echo Tag::selectStatic("autoriza",array("N"=>"NO","S"=>"SI"),"use_dummy: true") ?></td>
+        </tr>
+        <tr>
+            <td align="right"><b>Email:</b></td>
+            <td align="left"><?php echo Tag::textField("email","size: 30") ?></td>
+<!--
+            <td align="left"><?php //echo Tag::textField("email","size: 30","onchange: verificacorreo()") ?></td>
+-->
+        </tr>
+        <tr>
+            <td align="right"><b>Clave Nueva:</b></td>
+            <td align="left"><?php echo Tag::passwordField("clavenue") ?></td>
+        </tr>
+        <tr>
+            <td align="right"><b>Confirmar Clave:</b></td>
+            <td align="left"><?php echo Tag::passwordField("clavecon") ?></td>
+        </tr>
+        <tr>
+          <td align="right"><?php echo Tag::select("pregunta1",$Mercurio18->find(),"using: codigo,detalle","use_dummy: true","dummyText: Pregunta 1"); ?> ?</td>
+          <td align="left"><?php echo Tag::textField("respuesta1","placeholder: Respuesta 1") ?></td>
+        </tr>
+        <tr>
+          <td align="right"><?php echo Tag::select("pregunta2",$Mercurio18->find(),"using: codigo,detalle","use_dummy: true","dummyText: Pregunta 2"); ?> ?</td>
+          <td align="left"><?php echo Tag::textField("respuesta2","placeholder: Respuesta 2") ?></td>
+        </tr>
+        <tr>
+            <td align="right"><b>Registra Ip?</b></td>
+            <td align="left"><?php echo Tag::selectStatic("registra",array("N"=>"NO","S"=>"SI"),"value: N","style: width: 80px") ?></td>
+        </tr>
+        <tr>
+<!--
+          <td colspan="2" align="center"><?php //echo Tag::button("Registrarse al Portal","class: submit","onclick: Guardar();") ?></td>
+-->
+            <td colspan="2" width="100px" style=" background-color: gainsboro;" >
+                <h4 align="center">T&eacute;rminos y Condiciones</h4>
+                    <p style="text-align: justify;">Acorde con lo estipulado en la ley 1581 del 2012, decreto 1377 de 2013 y demás disposiciones relativas a la protección de los datos personales, manifiesto que con relación a mis datos personales (privados o semiprivados) en mi calidad de titular de la información, autorizo a la Caja de Compensación Familiar del Huila –“Comfamiliar” para dar tratamiento a mis datos personales que el desarrollo de su objeto social y en especial para la administración de los servicios prestados a través de Aportes y Subsidio Comfamiliar. Igualmente manifiesto bajo gravedad de juramento que todos los datos aquí consignados son ciertos e igualmente me obligo a informar cualquier cambio en el mismo dentro de los ocho días siguientes a la ocurrencia. Así mismo informaré a Aportes y Subsidio cuando no requiera más de sus servicios. </p>
+            </td>
+        </tr>
+        <tr>
+            <td align="center"> <input type="button" class="submit" style="width: 130px; background: #354b9c;" value="Si, Acepto" id="aceptoHabeas" onclick="Guardar();"> </td>
+            <td align="center"><input type="button" class="submit" style="width: 130px; background: #FF0000;" value="No, Acepto" id="noaceptoHabeas" onclick="cancelar()"></td>
+        </tr>
+    </table>
+</div>
+<?php echo Tag::endForm(); ?>

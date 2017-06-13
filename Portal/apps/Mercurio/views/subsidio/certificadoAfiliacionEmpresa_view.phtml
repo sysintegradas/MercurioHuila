@@ -1,0 +1,177 @@
+<?php View::getContent(); ?>
+<script>
+$(document).ready(function(){   
+    $('[data-toggle="tooltip"]').tooltip();
+});
+    generar = function(){
+        var request  = $.ajax({
+            tipe: "POST",
+            url:Utils.getKumbiaURL("subsidio/generarCertificadosEmpresa"),
+            data:{
+            }
+
+        });
+        request.done(function( transport ) {
+            //var response = transport;
+            var response = jQuery.parseJSON(transport);
+            if(response['flag'] == true){
+                win = window.open(Utils.getKumbiaURL("../"+response['data']),"Descarga", 'width=800, height=750, toolbar=no, statusbar=no, scrollbars=yes, Menubar=yes');
+            }
+            else{
+            Messages.display(response['msg'],"error");
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+
+    generarCertificado = function(){
+    var fecha = new Date();
+    var ano = fecha.getFullYear();
+    var mes = fecha.getMonth()+1;
+    var peract =ano+"0"+mes;
+
+        if($('#perini').val()=="" || $('#perfin').val()=="" ){
+            Messages.display("Por Favor digite los Periodos ","warning");
+            return;
+        }
+        if(parseInt($('#perini').val()) > parseInt($('#perfin').val()) ){
+            Messages.display("El periodo inicial no puede ser menor al periodo final","warning");
+            return;
+        }
+        if($('#perini').val().substring(4,6) == 00 ||$('#perfin').val().substring(4,6) == 00 ){
+            if($('#perini').val().substring(4,6) == 00){
+                $('#perini').focus();
+                Messages.display("Verifique que el periodo inicial el mes sea diferente a 00","warning");
+                return;
+            }else{
+                $('#perfin').focus();
+                Messages.display("Verifique que el periodo final el mes sea diferente a 00","warning");
+                return;
+            }
+         }//nuevo
+        if($('#perini').val().substring(0,4) <= 1920 ||$('#perfin').val().substring(0,4) <= 1920){
+            if($('#perini').val().substring(0,4) <= 1920){
+                $('#perini').focus();
+                Messages.display("El año no puede ser menor a 1920","warning");
+                return;
+            }else{
+                $('#perfin').focus();
+                Messages.display("El año no puede ser menor a 1920","warning")
+                return;
+            
+            }
+         
+         } if($('#perfin').val() > peract){
+            $('#perfin').focus();
+            Messages.display("El periodo final no puede sobrepasar la fecha actual","warning");
+            return;
+         }else{
+        //
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/certificadoAfiliacionEmpresa"),
+            data: {
+                perini: $('#perini').val(),
+                perfin: $('#perfin').val(),
+            }
+        });
+        request.done(function( transport ) {
+            //var response = transport;
+            var response = jQuery.parseJSON(transport);
+            if(response['flag'] == true){
+                win = window.open(Utils.getKumbiaURL("../"+response['data']),"Descarga", 'width=800, height=750, toolbar=no, statusbar=no, scrollbars=yes, Menubar=yes');
+            }else{
+                Messages.display(response['msg'],"warning");
+            }
+
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+}
+
+    valperini = function(){
+        if($('#perini').val().length != 6){
+            Messages.display("El periodo inicial no es valido, digite un periodo valido","warning");
+            $('#perini').val("");
+            $('#perini').focus();
+        }if($('#perini').val().substring(4,6) == 00){
+            $('#perini').focus();
+            Messages.display("Verifique que el periodo inicial el mes sea diferente a 00","warning");
+            return;
+        }if($('#perini').val().substring(0,4) <= 1920){
+            $('#perini').focus();
+            Messages.display("El año no puede ser menor a 1920","warning");
+            return;
+        }
+    }
+
+    valperfin = function(){
+        if($('#perfin').val().length != 6 ){
+            Messages.display("El periodo final  no es valido, digite un periodo valido","error");
+            $('#perfin').val("");
+            $('#perfin').focus();
+        }if($('#perfin').val().substring(4,6) == 00){
+            $('#perfin').focus();
+            Messages.display("Verifique que el periodo final el mes sea diferente a 00","warning");
+            return;
+        }if($('#perfin').val().substring(0,4) <= 1920){
+            $('#perfin').focus();
+            Messages.display("El año no puede ser menor a 1920","warning");
+            return;
+        }
+    }
+    function separador(elem){
+        var id = $(elem).attr('id');
+        if($('#'+id).val().length == 4){
+            $('#'+id).val($('#'+id).val()+"-");
+        }
+    }
+
+</script>
+<?php echo Tag::form(Router::getController()."/generarCertificadosEmpresa","autocomplete: off") ?>
+<div>
+    <div class="jumbotron" style="padding-top: 1%; padding-bottom: 4%; margin-top: 2%;">
+        <div>
+            <div align='center'>
+                <h4> Descargar certificado de Afiliación</h4>
+            </div>
+            <div align='center'>
+                <?php echo Tag::Button("Generar Certificado de Afiliación ",'class: btn btn-success','style: margin-top: 19px;',"onclick: generar();") ?>
+            </div>
+        </div>    
+    </div>    
+    <div class="jumbotron" style="padding-top: 1%; padding-bottom: 7%; margin-top: 2%;">
+        <div align='center'>
+            <h4> Descargar Certificado de Pago de aportes</h4>
+        </div>
+        <div align='center'>
+            <?php echo Tag::Button("Generar Certificado de Pago de aportes",'class: btn btn-success',"onclick: generarCertificado();") ?>
+        </div>
+        <div style="margin-top: 2%; text-align: center" class="col-sm-9 col-sm-offset-2">
+            <div class="col-sm-2">
+                <label style='margin-top: 10%'>Periodo</label>
+            </div>
+            <div class="col-sm-4">
+                <div class="input-group" >
+                    <div class="input-group-addon"  ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"  data-toggle="tooltip" title="El periodo inicial se utiliza con la union de a&ntilde;omes(201612) para generar el Certificado de Pago de aportes"  ></span></div>
+                    <?php echo Tag::numericField("perini","size: 7","maxlength: 6","class: form-control","onchange: valperini()") ?>
+                </div>
+            </div>
+            <div class="col-sm-1"> 
+                <label style='margin-top: 42%'>A</label>
+            </div>
+            <div class="col-sm-4">
+                <div class="input-group" >
+                    <div class="input-group-addon"  ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"  data-toggle="tooltip" title="El periodo final se utiliza con la union de a&ntilde;omes(201612) para generar el Certificado de Pago de aportes"  ></span></div>
+                    <?php echo Tag::numericField("perfin","size: 7","maxlength: 6","class: form-control","onchange: valperfin()") ?>
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>
+<?php echo Tag::endForm(); ?>
+

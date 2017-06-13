@@ -1,0 +1,422 @@
+html, body{
+    background: #F9F9F9; 
+    margin: 0;
+    overflow-x: hidden;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    height: 100%;
+    width: 100%;
+    font-size: 97%;
+
+}
+
+a{
+	text-decoration: none;
+}
+
+a:visited{
+	text-decoration: none;
+}
+
+#barra_mercurio_port{
+	height: 6%;
+	width: 100%;
+}
+
+#pub-port{
+	/*background: #C8FF86;*/
+	float: left;
+	height: 94%;
+	position: relative;
+	width: 17%;
+}
+
+#cabecera{
+	background: #000;
+	height: 35px;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	position: absolute;
+	box-shadow: 1px 1px 5px #000;
+	z-index: 1;
+}
+
+.mercuriolog{
+	float: left;
+	width: 20%;
+	position: relative;
+	height: 100%;
+}
+
+.mercuriolog img{
+	height: 98%;
+	left: 5px;
+	margin-left: 75px;
+}
+
+.busqueda{
+	/*background: #2e4d72;*/
+	border-left: 30px solid transparent; 
+	border-right: 0px solid transparent;
+	border-top: 25px solid #2e4d72; 
+	top: 0;
+	margin: 0;
+	float: right;
+	position: relative;
+	width: 76%;
+	z-index: 2;
+}
+
+.textBusqueda{
+	margin-top: 2px;
+	right: 30px;
+	position: absolute;
+	z-index: 3;
+}
+
+#banner-port{
+	height: 100%;
+	width: 100%;
+}
+
+#banner-port img{
+	width: 75%;
+	border: 11px solid #fff;
+	height: 300px;
+	margin-left: 12%;
+}
+
+#dos{
+	width: 80%;
+	float: right;
+	height: 100%;
+}
+
+#dos2{
+	width: 95%;
+	float: right;
+	height: 100%;
+}
+
+.ban-uno{
+	height: 60%;
+	border: 1px solid #D7D7D7;
+	border-radius: 7px;
+	background: #FFFFFF;
+	margin-bottom: 5px;
+}
+
+.ban-dos{
+	height: 38%;
+	border: 1px solid #D7D7D7;
+	border-radius: 7px;
+	background: #FFFFFF;
+}
+
+#controls-ban-port{
+	position: relative;
+	margin-right: 15%;
+	top: 310px;
+	float: right;
+}
+
+.puntoImg{
+	height: 10px;
+	width: 10px;
+	background: #DCDCDC;
+	position: relative;
+	float: left;
+	margin: 5px;
+	border-radius: 30px;
+	cursor: pointer;
+}
+.puntoImgSelected{
+	background: #A3A3A3;
+}
+
+
+.banner-port{
+	width: 100%;
+}
+
+.principal{
+	border-radius: 10px;
+	box-shadow: 1px 1px 2px #6D6D6D;
+	width: 100%;
+	height: 300px;
+	display: block;
+}
+
+.barCajas{
+	background-color: #fff;
+	border-radius: 10px;
+	box-shadow: 1px 1px 2px #6D6D6D;
+	height: 97%;
+	margin: auto;
+	overflow: auto;
+	width: 90%;
+}
+
+.principal_td{
+	/*box-shadow: 3px 5px 1px #464646;
+	-webkit-border-radius: 7px;*/
+	border: 1px solid #114F9C;
+	cursor: pointer;
+	padding: 10px;
+	text-align: center;
+	width: 100px;
+	height: 100px;
+	margin: 10px;
+	position: relative;
+	float: left;
+}
+
+.informacion{
+  width: 100%;
+  background-color: white;
+}
+
+._selected{
+  transform: scale(1.1);
+  transition: all 0.3s ease-out;
+}
+
+.principal_td:hover{
+	transform: scale(1.1);
+	transition: all 0.3s ease-out;
+    opacity: 1;
+}
+
+.col{
+	margin: 5px 5px 5px 5px;
+	width: 28%;
+	float: left;
+	position: relative;
+}
+
+.submit_cajas{
+	background: -webkit-radial-gradient(circle,#DBD6D6, #A7A7A7, #4F4F4F);
+	border: 4px #504E4E double;
+	border-radius: 100px;
+	color: #fff;
+	cursor: pointer;
+	font-size: 1em;
+	font-weight: bold;
+	display: block;
+	width: 80px;
+	height: 80px;
+	margin-top: 40px;
+	margin-left: 150px;
+	text-align: center;
+	position: relative;
+	vertical-align: middle;
+}
+
+.submit_cajas:focus{
+  padding: 3px 1px 1px 4px;
+}
+
+.submit_cajas:hover{
+	transform: scale(0.9);
+  	transition: all 0.1s ease-out;
+}
+
+/*--- Nuevo Formulario de Contacto ---*/
+
+/*--- estilos para los ul y li del formulario ---*/
+
+.contact_form ul{
+	width: 100%;
+	list-style: none;
+	margin: 0px;
+	padding: 0px;
+}
+
+.contact_form li{
+	padding: 5px;
+	position: relative;
+}
+
+.contact_form label{
+	color: #FFFFFF;
+	display: inline-block;
+	float: left;
+	font-family: sans-serif;
+	font-size: 13px;
+	font-weight: bold;
+	margin-top: 3px;
+	padding: 3px;
+	width: 50px;
+}
+
+.contact_form input{
+	height: 10px;
+	width: 150px;
+	padding: 5px 3px;
+	margin-left: 5px;
+}
+
+.contact_form textarea{
+	padding: 8px;
+	width: 146px;
+	margin-left: 5px;
+}
+
+.contact_form button{
+	margin-left: 1px;
+}
+
+/*--- estilos visuales de los elementos ---*/
+
+.contact_form input, .contact_form textarea{
+	border: 1px solid #aaa;
+	box-shadow: 0px 0px 3px #ccc, 0 10px 15px #eee inset;
+	border-radius: 2px;
+	color: #444242;
+	font-size: 1em;
+	padding-right: 5px;
+	-moz-transition: padding .25s;
+	-webkit-transition: padding .25s;
+	-o-transition: padding .25s;
+	-ms-transition: padding .25s;
+	transition: padding .25s;
+}
+
+.contact_form input:focus, .contact_form textarea:focus{
+	background: #fff;
+	border: 1px solid #555;
+	box-shadow: 0 0 3px #aaa;
+	padding-right: 10px;
+}
+
+/*=== Estilos de validacion ===*/
+
+.contact_form input:required:valid, .contact_form textarea:required:valid{
+	box-shadow: 0 0 5px #5cd053;
+	border-color: #28921f; 
+}
+
+.contact_form input:focus:invalid, .contact_form textarea:focus:invalid{
+	box-shadow: 0 0 5px #131533;
+	border-color: #b03535;
+}
+
+button.submit{
+	padding: 9px 17px;
+	font-family: Helvetica, Arial, sans-serif;
+	font-weight: bold;
+	line-height: 1;
+	color: #444;
+	border: none;
+	text-shadow: 0 1px 1px rgba(255,255,255,0.85);
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F6E416), to(#F5C647));
+	background-image: -moz-linear-gradient(0% 100% 90deg, #BBBBBB, #FFFFFF);
+	background-color: #FFF;
+	border: 1px solid #F1F1F1;
+	border-radius: 2px;
+	box-shadow: 0 1px 2px rgba(0,0,0, 0.5);
+	width: 80px;
+	height: 30px;
+}
+
+button.submit:hover{
+	opacity: .55;
+	cursor: pointer;
+	color: #fff;
+}
+
+button.submit:active{
+	border: 1px solid #222;
+	box-shadow: 0 0 10px 5px #444 inset;
+}
+/*--- Fin Formulario ---*/
+#contenedor_portada{
+	width: 100%;
+	height: 94%;
+	position: relative;
+	float: left;
+}
+
+#pub-port2{
+	float: right;
+	right: 10px;
+	height: 89%;
+	position: absolute;
+	width: 15%;
+}
+
+
+#seccion1{
+	float: left;
+	height: 56.3%;
+	position: relative;
+	width: 80%;
+}
+
+#seccion2{
+	float: left;
+	height: 33.3%;
+	position: relative;
+	width: 80%;
+}
+
+#seccion3{
+	background: #000;
+	bottom: 0px;
+	float: left;
+	height: 10.3%;
+	width: 100%;
+}
+
+.titles-form{
+	font-size: 1.2em; 
+	font-weight: bold;
+}
+
+.footPortada{
+	position: relative;
+}
+
+.social-port{
+	position: relative;
+	float: right;
+	margin-top: 15px;
+}
+
+
+.tr-res:nth-child(even){
+  background: #B4D1D9;/*#B4D1D9 #AAD4EE*/
+}
+
+.tr-res:nth-child(odd){
+  background: #FFFFFF;
+}
+
+.tr-res:hover{
+	background: #FDFDA8;
+	cursor: pointer;
+}
+
+#marc_habeas{
+    background: rgba(0,0,0,0.7);
+    border: 1px solid #000;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+}
+
+#habeas{
+    border: 1px solid #000;
+    border-radius: 10px;
+    background: #FFF;
+    font-size: 1.1em;
+    min-height: 30%;
+    height: auto;
+    padding: 30px;
+    position: absolute;
+    width: 40%;
+    margin-left: 30%;
+    margin-top: 5%;
+    z-index: 200;
+}

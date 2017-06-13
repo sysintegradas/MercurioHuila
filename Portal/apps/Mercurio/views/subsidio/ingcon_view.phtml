@@ -1,0 +1,841 @@
+<?php View::getContent(); ?>
+<script type="text/javascript">
+$(document).ready(function(){ 
+        $('#modalInfo').modal('show')
+    calendars();
+    $("#ciunac").attr('disabled',true);
+    $("#ciures").attr('disabled',true);
+    $("#barrio").attr('disabled',true);
+    $("#codzon").attr('disabled',true);
+    $("#cedcon").attr("readonly",true);
+    $("#form").validate({
+        rules: {
+           cedtra: { required:true},
+           nombre: { required:true},
+           cedcon: { required:true},
+           coddoc: { required:true},
+           priape: { required:true},
+           prinom: { required:true},
+           direccion: { required:true},
+           fecnac: { required:true},
+           telefono: { required:true},
+           email: { required:true},
+           salario: { required:true},
+           sexo: { required:true},
+           estciv: { required:true},
+           ciunac: { required:true},
+           codocu: { required:true},
+           nivedu: { required:true},
+           captra: { required:true},
+           departn: { required:true},
+           comper: { required:true},
+        },
+    });
+});
+
+
+
+    adjuntar = function(){
+        if(!$("#form").valid()){
+            Messages.display("Faltan Campos por Digitar","error");
+            return;
+        }else{
+            if($("#coddoc").val() == "@"){
+                $("#coddoc").focus();
+                Messages.display("El tipo de documento no puede ser vacio","warning");
+            return;
+            }if($("#sexo").val() == "@"){
+                $("#sexo").focus();
+                Messages.display("El sexo no puede ser vacio","warning");
+            return;
+            }if($("#departn").val() == "@"){
+                $("#departn").focus();
+                Messages.display("El departamento de nacimiento","warning");
+            return;
+            }if($("#departn").val() == "@"){
+                $("#departn").focus();
+                Messages.display("El departamento de nacimiento","warning");
+            return;
+            }if($("#nivedu").val() == "@"){
+                $("#nivedu").focus();
+                Messages.display("El nivel de educacion no puede ser vacio","warning");
+            return;
+            }if($("#comper").val() == "@"){
+                $("#comper").focus();
+                Messages.display("La convivencia  no puede ser vacio","warning");
+            return;
+            }if($("#estciv").val() == "@"){
+                $("#estciv").focus();
+                Messages.display("El estado civil no puede ser vacio","warning");
+            return;
+            }
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("subsidio/adjuntocon"),
+                data: $("#form").serialize(),
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response != false){
+                    $('.ocl_tr').show();
+                    $('#adjuntos').html(response);
+                }else{
+                    $('#adjuntos').html('');
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+    }
+     
+    function comprobarCedcon (){
+      if($('#cedcon').val() == ""){
+        $('#cedcon').focus();
+        Messages.display("Por favor digite el documento al que quiere vincular","warning");
+      }else{
+        var cedcon = $('#cedcon').val();
+
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/comprobarCedcon"), 
+            data: {
+                cedcon: cedcon
+            }
+          });
+          request.done(function(transport){
+            var response = jQuery.parseJSON(transport);
+            if(response == false){
+              $('#cedcon').val("");
+              $('#cedcon').focus();
+              Messages.display("el documento ya existe, digite un documento valido para registrarse","warning");
+            }
+          });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+      }
+    }
+
+    valida = function(){
+        var flag = true;
+        $("input[type = 'file']").each(function(elem){
+            if($(elem).val() == ""){
+                $(elem).focus();
+                Messages.display("Por favor adjunte los archivos solicitados ","warning");
+                flag = false;
+            }
+        });
+        return flag;
+    }
+
+/*
+    function addFormulario(){
+        if(!$("#form").valid()){
+            Messages.display("Faltan Campos por Digitar","error");
+            return;
+        }if($("#comper").val() == 'S'){
+            if($("#archivo_2").val()=="" || $("#archivo_16").val()==""){
+                Messages.display("Faltan Anexar los Certificados","error");
+            }
+        }else{
+            var fecnac =new Date($('#fecnac').val());
+            var fecha = new Date();
+            if(fecnac > fecha){
+                $("#fecnac").val("");
+                $("#fecnac").focus();
+                Messages.display("La fecha de nacimiento no puede ser mayor a la actual","warning");
+                return;
+            }else{
+                //$('form').writeAttribute("action",Utils.getKumbiaURL("subsidio/ingben"));
+                $('form').submit();
+            }
+        }
+    }
+ */
+    function addFormulario(){
+        if(!$("#form").valid()){
+            Messages.display("Faltan Campos por Digitar","error");
+            return;
+        }if($("#comper").val() == 'S'){
+            if($("#archivo_2").val()=="" || $("#archivo_16").val()==""){
+                Messages.display("Faltan Anexar los Certificados","error");
+                return;
+            }
+        }
+        var fecnac =new Date($('#fecnac').val());
+        var fecha = new Date();
+        if(fecnac > fecha){
+            $("#fecnac").val("");
+            $("#fecnac").focus();
+            Messages.display("La fecha de nacimiento no puede ser mayor a la actual","warning");
+            return;
+        }else{
+            //$('form').writeAttribute("action",Utils.getKumbiaURL("subsidio/ingben"));
+            $('#ciunac').attr('disabled',false);
+            $('#ciures').attr('disabled',false);
+            $('#barrio').attr('disabled',false);
+            $('#codzon').attr('disabled',false);
+            $('#form').submit();
+            /*
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("subsidio/ingcon"),
+                data: $("#form").serialize(),
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response['flag'] == true){
+                    Messages.display(response['msg'],"success");
+                }else{
+                    Messages.display(response['msg'],"error");
+                }
+                window.location = Utils.getKumbiaURL("principal/index");
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+            */
+        }
+    }
+ 
+    
+    function traerCiudad2(){
+        if($('#departn').val() == ""){
+            $('#departn').focus();
+            Messages.display("Por favor seleccionar el departamento de nacimiento. ","warning");
+        }else{
+            var coddep = $('#departn').val();
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("particular/traerCiudad"),
+                data: {
+                    coddep : coddep 
+                    }
+                });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response != false){
+                    $("#ciunac").val("@");
+                    $("#ciunac").attr("disabled",false);
+                    $('#ciunac').html(response);
+                    $('#ciunac').trigger('chosen:updated');
+                    $('#ciunac').focus();
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+    }
+    function traerCiudad3(){
+        if($('#depres').val() == ""){
+            $('#depres').focus();
+            Messages.display("Por favor seleccionar el departamento de Residencia. ","warning");
+        }else{
+            var coddep = $('#depres').val();
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("particular/traerCiudad"),
+                data: {
+                    coddep : coddep 
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response != false){
+                    $("#ciures").val("@");
+                    $("#ciures").attr("disabled",false)
+                    $('#ciures').html(response);
+                    $('#ciures').trigger('chosen:updated');
+                    $('#ciures').focus();
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+    }
+
+
+    function discapa(){
+    if($('#captra').val() == 'I'){
+        $('#tipdis').enable();
+        $('#tipdis').val('01');
+       
+    } 
+    else{
+       $('#tipdis').attr('disable',true);
+       $('#tipdis').val('00');
+    }
+ }
+    function tipdispo(){
+    if($('#tipdis').val('00')){
+       Messages.display("El tipo de discapacidad no concuerda con la capasidad de trabajo","warning");
+        $('#tipdis').val('01');
+    }
+}
+    
+    function validadoc(){
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/valcon"),
+            data: {
+                cedtra: $('#cedtra').val(), 
+                cedcon: $('#cedcon').val(), 
+                coddoc: $('#coddoc').val(), 
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            console.log(response);
+            if(response['flag'] == true){
+                dattra();
+            }else{
+            $('#prinom').val('');
+            $('#segnom').val('');
+            $('#priape').val('');
+            $('#segape').val('');
+            $('#direccion').val('');
+            $('#fecnac').val('');
+            $('#telefono').val('');
+            $('#sexo').val('@');
+            $('#depart').val('@');
+            $('#departn').val('@');
+            $('#ciunac').val('@');
+            $('#codciu').val('@');
+            $('#barrio').val('@');
+            $('#codzon').val('@');
+            $('#estciv').val('@');
+            $('#zona').val('');
+            $('#email').val('');
+            $('#celular').val('');
+            Messages.display(response['msg'],"error");
+            $('#cedcon').val('');
+            return;
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+                });
+    }
+function uneDireccion(){
+    $('#direccion_online').val( $('#prim').val()+" "+$('#segu').val()+" "+$('#ter').val()+" "+$('#cuar').val()+" "+$('#quin').val()+" # "+$('#seis').val()+" "+$('#siete').val()+" "+$('#ocho').val()+" - "+$('#nue').val()+" "+$('#diez').val()+" "+$("#once").val());
+}
+
+confirmarDireccion = function(campo_direccion){
+    if($('#segu').val()==""){
+        $('#segu').focus();
+        Messages.display("Por favor digitar el campo. ","warning");
+        return;
+    }
+    if($('#seis').val()==""){
+        $('#seis').focus();
+        Messages.display("Por favor digitar el campo. ","warning");
+        return;
+    }
+    if($('#diez').val()==""){
+        $('#diez').focus();
+        Messages.display("Por favor digitar el campo. ","warning");
+        return;
+    }
+    $("#"+campo_direccion).val($('#prim').val()+" "+$('#segu').val()+" "+$('#ter').val()+" "+$('#cuar').val()+" "+$('#quin').val()+" # "+$('#seis').val()+" "+$('#siete').val()+" "+$('#ocho').val()+" - "+$('#nue').val()+" "+$('#diez').val()+" "+$("#once").val());
+    $('#modalDirecc').modal("toggle");
+}
+
+
+function  cambiarDireccion (campo_direccion){
+    var request  = $.ajax({
+        type: "POST",
+        url:Utils.getKumbiaURL("subsidio/cambiarDireccion"),
+        data: {
+            campo: campo_direccion, 
+        }
+    });
+    request.done(function( transport ) {
+        var response = jQuery.parseJSON(transport);
+        if(response != false){
+            $("#direcc").html(response); 
+            $('#modalDirecc').modal(); 
+        }
+    });
+    request.fail(function( jqXHR, textStatus ) {
+        Messages.display(response['msg'],"error");
+    });
+}
+function validarCaracteres(caract){
+    var expr = /[0-9`~!@#$%^&*()_°¬|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
+    var carac = $('#'+caract).val();
+    if(expr.test(carac) ){
+        Messages.display("Este campo no debe llevar caracteres especiales","warning");
+        $('#'+caract).focus();
+        $('#'+caract).val("");
+    }
+}
+
+validaemail = function(){
+    expr = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    var email = $('#email').val();
+    console.log(email);
+    if(email==""){
+        Messages.display("El email no puede ser vacio","error");
+        $('#email').focus();
+    }
+    if(!expr.test(email) || $("#email").val()==""){
+        Messages.display("Email invalido","error");
+        $('#email').focus();
+        $('#email').val("");
+    }
+}
+    
+    function verfiComper(){
+        if($('#comper').val() == 'S'){
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("subsidio/verfiComper")
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response != false){
+                    Messages.display("El usuario ya tiene una conyuge permanente registrada.","error");
+                    $('#comper').focus();
+                    $('#comper').val("@");
+                    console.log("dd");
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+    }
+function traerBarrio(){
+        //alert($('#codciu').val());
+        if($('#ciures').val() == ""){
+            $('#ciures').focus();
+            Messages.display("Por favor seleccionar el Municipio. ","warning");
+        }else{
+            var ciures = $('#ciures').val();
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("subsidio/traerBarrio"),
+                data: {
+                    ciures :ciures,
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response != false){
+                    $("#barrio").attr("disabled",false)
+                    $('#barrio').html(response);
+                    $('#barrio').trigger("chosen:updated");
+                    $('#barrio').focus();
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+        traerZona();
+    }
+function traerZona(){
+        if($('#ciures').val() == ""){
+            $('#ciures').focus();
+            Messages.display("Por favor seleccionar el Municipio. ","warning");
+        }else{
+            var ciures = $('#ciures').val();
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("subsidio/traerZona"),
+                data: {
+                    ciures :ciures,
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response != false){
+                    $("#codzon").attr("disabled",false)
+                    $('#codzon').html(response);
+                    $('#codzon').trigger("chosen:updated");
+                    $('#codzon').focus();
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+
+    }
+
+    function fecnacc(){
+        var fecnac =new Date($('#fecnac').val());
+        var fecha = new Date();
+        if(fecnac > fecha){
+            $("#fecnac").val("");
+            $("#fecnac").focus();
+            Messages.display("La fecha de nacimiento no puede ser mayor a la actual","warning");
+            return;
+        }
+    }
+
+    function dattra(){
+        if($('#cedcon').val() != ''){
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("subsidio/dattra"),
+                data: {
+                    cedtra: $('#cedcon').val(), 
+                    coddoc: $('#coddoc').val(), 
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                console.log(response);
+                if(response['flag'] == true){
+                    if(response['data'] != ''){
+                        $('#prinom').val(response['data']['prinom']);
+                        $('#segnom').val(response['data']['segnom']);
+                        $('#priape').val(response['data']['priape']);
+                        $('#segape').val(response['data']['segape']);
+                        $('#direccion').val(response['data']['direccion']);
+                        $('#fecing').val(response['data']['fecafi']);
+                        $('#fecnac').val(response['data']['fecnac']);
+                        $('#telefono').val(response['data']['telefono']);
+                        $('#salario').val(response['data']['salario']);
+                        $('#celular').val(response['data']['celular']);
+                        $('#sexo').val(response['data']['sexo']);
+                        if(response['data']['depart'] != '')
+                            $('#depres').val(response['data']['depart']);
+                        if(response['data']['departn'] != '')
+                            $('#departn').val(response['data']['departn']);
+                        if(response['data']['ciunac'] != ''){
+                            $('#ciunac').val(response['data']['ciunac']);
+                            $('#ciunac').attr("disabled",false);
+                        }
+                        if(response['data']['codciu'] != ''){
+                            $('#ciures').val(response['data']['codciu']);
+                            $('#ciures').attr("disabled",false);
+                        }
+                        if(response['data']['barrio'] != ''){
+                            $('#barrio').val(response['data']['barrio']);
+                            $('#barrio').attr("disabled",false);
+                        }
+                        if(response['data']['codzon'] != ''){
+                            $('#codzon').val(response['data']['zona']);
+                            $('#codzon').attr("disabled",false);
+                        }
+                        if(response['data']['estciv'] != '')
+                            $('#estciv').val(response['data']['estciv']);
+                        $('#zona').val(response['data']['zona']);
+                        $('#profesion').val(response['data']['profesion']);
+                        $('#email').val(response['data']['email']);
+                        $('#tipviv').val(response['data']['ubiviv']);
+                    }else{
+                        $('#prinom').val('');
+                        $('#segnom').val('');
+                        $('#priape').val('');
+                        $('#segape').val('');
+                        $('#direccion').val('');
+                        $('#fecing').val('');
+                        $('#fecnac').val('');
+                        $('#telefono').val('');
+                        $('#salario').val('');
+                        $('#sexo').val('@');
+                        $('#depart').val('@');
+                        $('#departn').val('@');
+                        $('#ciunac').val('@');
+                        $('#codciu').val('@');
+                        $('#barrio').val('@');
+                        $('#codzon').val('@');
+                        $('#estciv').val('@');
+                        $('#zona').val('');
+                        $('#profesion').val('@');
+                        $('#email').val('');
+                        $('#celular').val('');
+                    }
+                }else{
+                    $('#cedcon').val('');
+                    $('#prinom').val('');
+                    $('#segnom').val('');
+                    $('#priape').val('');
+                    $('#segape').val('');
+                    $('#direccion').val('');
+                    $('#fecing').val('');
+                    $('#fecnac').val('');
+                    $('#telefono').val('');
+                    $('#salario').val('');
+                    $('#sexo').val('@');
+                    $('#depart').val('@');
+                    $('#departn').val('@');
+                    $('#ciunac').val('@');
+                    $('#codciu').val('@');
+                    $('#barrio').val('@');
+                    $('#codzon').val('@');
+                    $('#estciv').val('@');
+                    $('#zona').val('');
+                    $('#profesion').val('@');
+                    $('#email').val('');
+                    $('#celular').val('');
+                    Messages.display(response['msg'],"warning");
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }else{
+            $('#cedcon').val('');
+            $('#prinom').val('');
+            $('#segnom').val('');
+            $('#priape').val('');
+            $('#segape').val('');
+            $('#direccion').val('');
+            $('#fecing').val('');
+            $('#fecnac').val('');
+            $('#telefono').val('');
+            $('#salario').val('');
+            $('#sexo').val('@');
+            $('#depart').val('@');
+            $('#departn').val('@');
+            $('#ciunac').val('@');
+            $('#codciu').val('@');
+            $('#barrio').val('@');
+            $('#codzon').val('@');
+            $('#estciv').val('@');
+            $('#zona').val('');
+            $('#profesion').val('@');
+            $('#email').val('');
+            $('#celular').val('');
+        }
+    }
+function doc(){
+    if($('#coddoc').val() != '@'){
+        $("#cedcon").attr("readonly",false);
+        dattra();
+    }else{
+        $("#cedcon").attr("readonly",true);
+        dattra();
+    }
+}
+    function valcon(){
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/valcon"),
+            data: {
+                cedtra: $('#cedtra').val(), 
+                cedcon: $('#cedcon').val(), 
+                coddoc: $('#coddoc').val(), 
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            console.log(response);
+            if(response['flag'] == true){
+                dattra();
+            }else{
+            $('#prinom').val('');
+            $('#segnom').val('');
+            $('#priape').val('');
+            $('#segape').val('');
+            $('#direccion').val('');
+            $('#fecnac').val('');
+            $('#telefono').val('');
+            $('#sexo').val('@');
+            $('#depart').val('@');
+            $('#departn').val('@');
+            $('#ciunac').val('@');
+            $('#codciu').val('@');
+            $('#barrio').val('@');
+            $('#codzon').val('@');
+            $('#estciv').val('@');
+            $('#zona').val('');
+            $('#email').val('');
+            $('#celular').val('');
+            Messages.display(response['msg'],"error");
+            return;
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+                });
+    }
+</script>
+<br>
+<?php echo Tag::form(Router::getController()."/ingcon","id: form","autocomplete: off","enctype: multipart/form-data"); ?>
+<div>
+<table class='table table-bordered'>
+<tr>
+<td><p>Los Campos marcados con un asterico(*) son obligatorios</p></td>
+</tr>
+</table">
+<table style="margin: auto; border-collapse: separate; border-spacing: 6px;">
+<tr>
+<td colspan="4" style="font-size: 1.2em;"><strong>Datos del Trabajador</strong></td>
+</tr>
+<tr>
+<td colspan="4">&nbsp;</td>
+</tr>
+<tr>
+<td style='text-align:right;'><label>Cédula:</label></td>
+<td><?php echo Tag::numericField("cedtra","readonly: true","class: form-control"); ?></td>
+<td style='text-align:right;'><label>Nombre:</label></td>
+<td><?php echo Tag::textField("nombre","size: 30","onkeydown: validOnlyLetter();","readonly: true","class: form-control"); ?></td>
+</tr>
+<tr>
+<td colspan="4">&nbsp;</td>
+</tr>
+<tr>
+<td colspan="4" style="font-size: 1.2em;"><strong>Datos del Conyuge</strong></td>
+</tr>
+<tr>
+<td colspan="4">&nbsp;</td>
+</tr>
+<tr>
+<td style='text-align:right;'><label>*Convivien:</label></td>
+<td><?php echo Tag::selectStatic("comper",array("S"=>"SI","N"=>"NO"),"useDummy: yes","style: width: 188px","class: form-control","onchange: verfiComper()","dummyValue: "); ?></td>
+</tr>
+<tr>
+<td style='text-align:right;'><label>*Tipo Documento:</label></td>
+<td><?php echo Tag::selectStatic("coddoc",$coddoc,"useDummy: yes","style: width: 188px","class: form-control","onchange: doc();","dummyValue: "); ?></td>
+<td style='text-align:right;'><label>*C&eacute;dula:</label></td>
+<td><?php echo Tag::numericField("cedcon","onchange: validadoc()","style: width: 182px","class: form-control"); ?></td>
+</tr>
+<tr>
+<td style='text-align:right;'><label>*Primer Apellido:</label></td>
+<td><?php echo Tag::textUpperField("priape","size: 20","onkeydown: validOnlyLetter(event);","style: width: 182px","class: form-control"); ?></td>
+<td style='text-align:right;'><label>Segundo Apellido:</label></td>
+<td><?php echo Tag::textUpperField("segape","size: 20","onkeydown: validOnlyLetter(event);","style: width: 182px","class: form-control"); ?></td>
+</tr>
+<tr>
+<td style='text-align:right;'><label>*Primer Nombre:</label></td>
+<td><?php echo Tag::textUpperField("prinom","size: 20","onkeydown: validOnlyLetter(event);","style: width: 182px","class: form-control"); ?></td>
+<td style='text-align:right;'><label>Segundo Nombre:</label></td>
+<td><?php echo Tag::textUpperField("segnom","size: 20","onkeydown: validOnlyLetter(event);","style: width: 182px","class: form-control"); ?></td>
+</tr>
+<tr>
+<td style='text-align:right;'><label>*Genero:</label></td>
+<td><?php echo Tag::selectStatic("sexo",array("M"=>"Masculino","F"=>"Femenino"),"useDummy: yes","style: width: 188px","class: form-control","dummyValue: "); ?></td>
+<td style='text-align:right;'><label>*Fecha Nacimiento:</label></td>
+<td><?php echo TagUser::Calendar("fecnac","style: width: 162px","class: form-control","readonly: readonly"); ?></td>
+</tr>
+<tr>
+<td style='text-align:right;'><label>*Departamento Nacimiento:</label></td>
+<td><?php echo Tag::selectStatic("departn",$coddep,"style: width: 174px","useDummy: yes","onchange: traerCiudad2()","style: width: 188px","class: form-control","dummyValue: "); ?></td>
+<td style='text-align:right;'><label>*Ciudad Nacimiento:</label></td>
+<td><?php echo Tag::selectStatic("ciunac",$codciu,"useDummy: yes","style: width: 188px","class: form-control","dummyValue: ");?></td>
+</tr>
+<tr>
+<td style='text-align:right;'><label>*Dirección:</label></td>
+<td colspan="2"> <?php echo Tag::numericField("direccion","readonly: true","style: width: 325px; margin-left: 0px;","class: form-control") ?> </td>
+<td><?php echo Tag::Button("Cambiar",'class: btn btn-primary  submit',"onclick: cambiarDireccion('direccion');"); ?></td>
+</tr>
+<tr>
+<td style='text-align:right;'><label>*Departamento Residencia:</label></td>
+<td><?php echo Tag::selectStatic("depres",$coddep,"style: width: 174px","useDummy: yes","onchange: traerCiudad3()","style: width: 188px","class: form-control","dummyValue: "); ?></td>
+<td style='text-align:right;'><label>*Ciudad Residencia:</label></td>
+<td><?php echo Tag::selectStatic("ciures",$codciu,"useDummy: yes","style: width: 188px","class: form-control","onchange: traerBarrio()","dummyValue: ");?></td>
+</tr>
+<tr>
+<td style='text-align:right;'><label>*Corregimiento:</label></td>
+<td><?php echo Tag::select("codzon",$Migra089->find(),"using: codzon,detzon","style: width: 174px","useDummy: yes","class: form-control","dummyValue: "); ?></td>
+<td style='text-align:right;'><label>Barrio :</label></td>
+<td><?php echo Tag::select("barrio",$Migra087->find(),"using: codbar,detalle","style: width: 174px","useDummy: yes","class: form-control","dummyValue: "); ?></td>
+</tr>
+<tr>
+<td style='text-align:right;'><label>*Tipo de Vivienda:</label></td>
+<td><?php echo Tag::selectStatic("tipviv",array("R"=>"Rural","U"=>"Urbano"),"style: width: 174px;","use_dummy: true","class: form-control","dummyValue: "); ?></td>
+<td style='text-align:right;'><label>*Email:</label></td>
+<td><?php echo Tag::textField("email","onkeypress: return valideOnlyEmail(event);","onblur: validaemail();","style: width: 182px;","class: form-control"); ?></td>
+</tr>
+<tr>
+<td style='text-align:right;'><label>*Teléfono:</label></td>
+<td><?php echo Tag::numericField("telefono","maxlength: 10","style: width: 182px","class: form-control"); ?></td>
+<td style='text-align:right;'><label>Celular:</label></td>
+<td><?php echo Tag::numericField("celular","maxlength: 10","style: width: 182px","class: form-control"); ?></td>
+</tr>
+<tr>
+<td style='text-align:right;'><label>*Nivel Educativo:</label></td>
+<td><?php echo Tag::selectStatic("nivedu",$nivedu,"useDummy: yes","style: width: 188px","class: form-control","dummyValue: "); ?></td>
+<td style='text-align:right;'><label>*Estado Civíl:</label></td>
+<td><?php echo Tag::selectStatic("estciv",$estciv,"useDummy: yes","style: width: 188px","class: form-control","dummyValue: "); ?></td>
+</tr>
+<!--
+<tr>
+<td style='text-align:right;'><label>*Salario:</label></td>
+<td><?php //echo Tag::numericField("salario","style: width: 182px","class: form-control"); ?></td>
+<td style='text-align:right;'><label>Capacidad de Trabajo:</label></td>
+<td><?php //echo Tag::selectStatic("captra",array("N"=>"Normal","I"=>"Incapacitado"),"useDummy: yes","style: width: 188px","class: form-control"); ?></td>
+</tr>
+-->
+<tr>
+<td colspan="4">&nbsp;</td>
+</tr>
+<tr>
+<td colspan="4" align="center"> 
+<?php echo Tag::hiddenField("codare","value: $codare");?>
+<?php echo Tag::hiddenField("codope","value: $codope");?>
+<?php echo Tag::button("Adjuntar Documentos","class: btn btn-success","onclick: adjuntar();"); ?>
+</td>
+</tr>
+<tr class="ocl_tr">
+<td colspan="6">
+<table id="adjuntos" style="width: 100%;">
+</table>
+</td>
+</tr>
+<tr class="ocl_tr" style="display: none;">
+<td colspan='4' align="center">
+<?php
+echo Tag::button("Enviar","class: btn btn-success","onclick: addFormulario();");
+?>
+</td>
+</tr>
+</table>
+</div>
+<?php echo Tag::endForm(); ?>
+
+    <div class="modal fade" id="modalDirecc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style=" width: 60%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title barra barra-center" id="myModalLabel">Cambio de Direccion</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="direcc"> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="modalInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog  modal-lg" role="document" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">    
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title barra barra-center" id="myModalLabel" style='text-align:center;'>Informaci&oacute;n</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="width: 90%; margin-left: auto; margin-right: auto;";>
+                        <form class="form-horizontal" >
+                            <div class="form-group">
+                                <p style="text-align: justify;">Señor afiliado para afiliar a su cónyuge deberá anexar la siguiente documentación junto con el formato de convivencia completamente diligenciado para cada caso:</p>
+                                <h4 style='margin: 15px;'>UNI&Oacute;N LIBRE</h4>
+                                <ul style='margin-left:20px;'>
+                                    <li type="disc" style="text-align: justify;">Fotocopia de la cédula de ciudadanía del cónyuge..</li>
+                                </ul>
+                                <br>
+                                <h4 style='margin: 15px;'>CASADO</h4>
+                                <ul style='margin-left:20px;'>
+                                    <li type="disc" style="text-align: justify;">Registro civil de matrimonio</li>
+                                    <li type="disc" style="text-align: justify;">Fotocopia de la cédula de ciudadanía del cónyuge. </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div >
+                </div>
+            </div>
+        </div>
+    </div>

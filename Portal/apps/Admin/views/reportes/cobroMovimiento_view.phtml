@@ -1,0 +1,43 @@
+<?php echo View::getContent(); ?>
+<script type="text/javascript">
+var val = new Validator();
+Event.observe(window,'load',function(){
+    val.addField("fecini","date",null,{'alias': 'Fecha Inicial','isNull': false});
+    val.addField("fecfin","date",null,{'alias': 'Fecha Final','isNull': false});
+});
+
+function reporte(){
+    if(!val.valide()){
+        Messages.valide(val);
+    } else {       
+       $('form').submit();
+    }
+}
+
+</script>
+
+<div id="botones" align="right">
+    <table>
+        <tr>
+            <td><?php echo Tag::image("reporte.png","title: Reporte","class: boton","onclick: reporte();") ?></td>
+            <td><?php echo Tag::linkTo(Router::getController()."/index",Tag::image("exit.png","title: Cancelar","class: boton")) ?></td>
+        </tr>
+    </table>
+</div>
+
+<?php echo Tag::form(Router::getController()."/cobroMovimiento", "id: form"); ?>
+
+<div>
+  <table>
+    <tr>
+      <td><label>Fecha Inicial</label></td>
+      <td><?php echo TagUser::calendar("fecini") ?></td>
+    </tr>
+    <tr>
+      <td><label>Fecha Final</label></td>
+      <td><?php echo TagUser::calendar("fecfin") ?></td>
+    </tr>
+  </table>
+</div>
+   
+<?php echo Tag::endForm() ?>

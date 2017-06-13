@@ -1,0 +1,45 @@
+<?php if($botones){ ?>
+<div id="botones" align="right">
+    <table>
+        <tr>
+            <td><?php echo Tag::image("reporte.png","title: Reporte","class: boton","onclick: reporte()") ?></td>
+            <td><?php echo Tag::linkTo(Router::getController()."/index",Tag::image("exit.png","title: Salir","class: boton")) ?></td>
+        </tr>
+    </table>
+</div>
+<?php }
+
+$field = 4;
+
+if(count($mercurio->items)>0){ ?>
+<div id="consulta" align="center" style="width: 650px;">
+    <table align="center" width="100%" cellpadding='0' cellspacing='1'>
+        <thead>
+            <tr>
+                <th width="25px">Area</th>
+                <th width="25px">Codigo</th>
+                <th width="25px">Detalle</th>
+            </tr>
+        </thead>
+        <?php $i=0; foreach($mercurio->items as $mmercurio){ ?>
+            <tr class="td<?php echo $i%2+1 ?>" ondblclick="window.location='<?php echo Core::getInstancePath()."/".Router::getActiveApplication()."/".Router::getController()."/editar/{$mmercurio->getCodare()}/{$mmercurio->getCodope()}"?>'"height="25px" title="DobleClick para editar">
+                <td align="center" width="20px"><?php echo $mmercurio->getCodare(); ?></td>
+                <td align="center" width="200px"><?php echo $mmercurio->getCodope(); ?></td>
+                <td align="center" width="200px"><?php echo $mmercurio->getDetalle(); ?></td>
+                <td align="center" width="5px"><?php echo Tag::image("minus.png","title: Click para Borrar","onclick: borrar('{$mmercurio->getCodare()}/{$mmercurio->getCodope()}')") ?></td>
+            </tr>
+        <?php $i++; } for($i=10-count($mercurio->items);$i>0;$i--){
+            echo "<tr class='td".($i%2+1)."' height='25px'>";
+            for($j=0;$j<$field;$j++) echo "<td></td>";
+            echo "</tr>";
+        } ?>
+        <tr>
+            <td colspan="<?php echo $field ?>" align="right" style="border: none;">
+                <?php echo $html; ?>
+            </td>
+        </tr>
+    </table>
+</div>
+<?php } else { ?>
+    No hay Resultados para la b&uacute;squeda.
+<?php } ?>

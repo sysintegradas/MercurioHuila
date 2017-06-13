@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<empresas>
+  <empresa>
+    <nombre>carlos</nombre>
+    <apellido>campos</apellido>
+  </empresa>
+  <empresa>
+    <nombre>jose</nombre>
+    <apellido>sanchez</apellido>
+  </empresa>
+</empresas>

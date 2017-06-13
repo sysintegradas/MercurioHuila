@@ -1,0 +1,168 @@
+<?php echo View::getContent(); ?>
+<script>
+
+function completar(id_,elem_){
+  
+    UI.Window.addMethods({
+        CloseWinEmpresa: function(){
+        this.destroy();
+        }
+    });
+
+   manager = new UI.WindowManager({
+      container: 'captura'
+   });
+
+
+    var ventana = new UI.Window({
+            id: 'empresaWin',
+            theme: 'leopard',
+            //minimize: false,
+            //maximize: false,
+            ////resizable: false,
+            close: 'CloseWinEmpresa',
+            width: 500,
+            height: 300, 
+    });
+
+
+    ventana.center().setHeader("Certificado de Retiro").show();
+    ventana.activate();
+    manager.register(ventana);
+    
+    new Ajax.Request(Utils.getKumbiaURL("mercurio35/formulario"), {
+        parameters: {
+            id: id_
+        },
+        asyncronous: false,
+        onSuccess: function(transport){
+            formu = transport.responseText.evalJSON();
+            ventana.setContent(formu).show();
+
+            val = new Validator();
+            //val.addField('fecret','date',null,{'alias': 'fecha de Retiro','isNull': false});
+
+        },
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }
+    });
+
+  //  $$('.chosen-container').invoke('remove');
+    //$$('select').invoke('show');
+
+    id = id_;
+    elem = elem_;
+    //aprobar(id,elem);
+return;
+
+}
+
+function rechazar(id,elem){
+    var com = confirm("Seguro de Rechazar este retiro de Trabajador ?");
+    if(com==false)return;
+    var motivo = prompt("Motivo de Rechazo?","");
+    if(motivo=="" || motivo==null){
+        alert("Debe digitar un Motivo");
+        return;
+    }
+    elem = elem.up();
+    new Ajax.Request(Utils.getKumbiaURL("mercurio35/rechazar"), {
+      parameters: {
+        id: id,
+        motivo: motivo
+      },
+      onSuccess: function(transport){
+        var response = transport.responseText.evalJSON();
+        if(response['flag']==true){
+          elem.remove();
+          Messagespro.display(Array(response['msg']),"success");
+        }else{
+          Messagespro.display(Array(response['msg']),"warning");
+        }
+      },
+      onFailure: function(transport){
+        alert(transport.responseText);
+      }
+    });
+}
+
+function aprobarF(id,elem){
+    /*
+    if(!val.valide()){
+        Messages.valide(val);    
+        return;
+    } 
+    */
+    var com = confirm("Seguro de Aprobar este retiro de Trabajador ?");
+    if(com==false)return;
+    elem = elem.up();
+
+   new Ajax.Request(Utils.getKumbiaURL("mercurio35/aprobar"), {
+      parameters: {
+        id: id
+        //fecret: $F('fecret'),
+        //observacion: $F('observacion')
+      },
+
+      onSuccess: function(transport){
+        response = transport.responseText.evalJSON();
+        if(response['flag']==true){
+            //$("empresaWin").remove();  //im//////
+            //elem = elem.up();
+            elem.remove();
+            Messagespro.display(Array(response['msg']),"success");
+        }else{
+            Messagespro.display(Array(response['msg']),"warning");
+        }
+      },
+
+      onFailure: function(transport){
+        alert(transport.responseText);
+      }
+    });
+  }
+
+function verdoc(trab){
+    UI.Window.addMethods({
+        CloseWinEmpresa: function(){
+            this.destroy();
+        }
+    });
+   manager = new UI.WindowManager({
+      container: 'captura'
+   });
+    var ventana = new UI.Window({
+            id: 'empresaWin',
+            theme: 'leopard',
+            //minimize: false,
+            //maximize: false,
+            ////resizable: false,
+            close: 'CloseWinEmpresa',
+            width: 400,
+            height: 470, 
+    });
+    ventana.center().setHeader("Documentación Trabajador No."+ trab).show();
+    ventana.activate();
+    manager.register(ventana);
+    new Ajax.Request(Utils.getKumbiaURL("mercurio35/verdocumentos"),{
+        parameters: {
+           trabajador : trab,
+        },
+        
+        onSuccess: function(transport){
+            lista = transport.responseText.evalJSON();
+            ventana.setContent(lista).show();
+        },
+
+        onFailure: function(transport){
+            alert(transport.responseText);
+        }    
+    });
+}
+</script>
+
+
+<?php
+  echo $html;
+?>

@@ -1,0 +1,34 @@
+/* Estilo para las tablas de buscar */
+#consulta {
+    margin-bottom: 10px;
+}
+#consulta tbody tr {
+    cursor: pointer;
+}
+#consulta .td1{
+    border:  1px solid #FFFFFF;
+    background: #FFFFFF;
+}
+#consulta .td2{
+    border:  1px solid #EAEAEA;
+    background: #EAEAEA;
+}
+#consulta .td3{
+    border:  1px solid #CCCCCC;
+    background: #CCCCCC;
+    color: #666666;
+}
+#consulta .td1:hover,#consulta .td2:hover, #consulta .td3:hover{
+    border:  1px solid #CEE7F4;
+    background: #CEE7F4;
+}
+#consulta th{
+    padding: 2px;
+}
+#consulta td{
+    border: 1px solid #2E94CB;
+    padding-left: 3px;
+}
+#navegacion td{
+    border: none;
+}

@@ -1,0 +1,38 @@
+<?php echo View::getContent(); ?>
+<script>
+  var val = new Validator();
+  val.addField("asunto","text",null,{'alias': 'Asunto','isNull': false,'doToUpperCase': false});
+  val.addField("mensaje","text",null,{'alias': 'Mensaje','isNull': false,'doToUpperCase': false});
+
+  Enviar = function(){
+      if(!val.valide()){
+          Messages.valide(val);
+          return;
+      }
+      $('form').submit();
+  }
+</script>
+ <?php echo Tag::form(Router::getController()."/envioCarta","id: form","autocomplete: off","enctype: multipart/form-data"); ?>
+<div style="margin-top: 2%;">
+  <table align="center">
+    <tr>
+      <td><label>Asunto:</label></td>
+      <td><?php echo Tag::textField("asunto","style: width: 98%;");?></td>
+    </tr>
+    <tr>
+      <td><label>Archivo(pdf):</label></td>
+      <td><?php echo Tag::fileField("archivo","style: width: 98%;");?></td>
+    </tr>
+    <tr>
+      <td><label>Mensaje:</label></td>
+      <td><?php echo Tag::textArea("mensaje","cols: 40","rows: 15");?></td>
+    </tr>
+    <tr>
+      <td colspan="2">&nbsp;</td>
+    </tr>
+    <tr>
+      <td colspan="2" align='center'><?php echo Tag::button("Enviar","class: submit","onclick: Enviar();");?></td>
+    </tr>
+  </table>
+</div>
+<?php echo Tag::endForm(); ?>

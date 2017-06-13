@@ -1,0 +1,249 @@
+
+Tue, 15 Dec 15 16:04:07 -0500 > subsidio/ingben > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'i ORDER BY 1 LIMIT 1' at line 1"  al ejecutar "SELECT controlador, accion, detalle, valor FROM mercurio25 WHERE controlador = 'subsidio' and accion = 'ingben' i ORDER BY 1 LIMIT 1" en la conexión "Resource id #105"
+Tue, 15 Dec 15 16:08:26 -0500 > subsidio/ingben > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'i ORDER BY 1 LIMIT 1' at line 1"  al ejecutar "SELECT controlador, accion, detalle, valor FROM mercurio25 WHERE controlador = 'subsidio' and accion = 'ingben' i ORDER BY 1 LIMIT 1" en la conexión "Resource id #105"
+Tue, 15 Dec 15 16:10:54 -0500 > subsidio/ingben > Message => El campo tiphij no puede ser nulo ''
+Tue, 15 Dec 15 16:10:54 -0500 > subsidio/ingben > Message => El campo captra no puede ser nulo ''
+Tue, 15 Dec 15 16:10:54 -0500 > subsidio/ingben > Message => El campo tipdis no puede ser nulo ''
+Thu, 17 Dec 15 18:58:03 -0500 > subsidio/actdat > Message => "Cannot add or update a child row: a foreign key constraint fails (`mercurio_comfahuila`.`mercurio33`, CONSTRAINT `fk_mercurio36_mercurio201` FOREIGN KEY (`tipo`, `campo`) REFERENCES `mercurio28` (`tipo`, `campo`) ON DELETE NO ACTION ON UPDATE NO ACTION)"  al ejecutar "INSERT INTO mercurio33 (log, codcaj, tipo, documento, campo, valor, estado, motivo, fecest, usuario) VALUES (88, 'CCF032', 'E', '891180008', 'idciucorresp', '52687', 'P', NULL, NULL, NULL)" en la conexión "Resource id #112"
+Fri, 18 Dec 15 10:29:04 -0500 > subsidio/retirar > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'SELECT * FORM mercurio35 where cedtra='40670788' and estado= 'P'' at line 1"  al ejecutar "SELECT COUNT(*) AS rowcount FROM mercurio35  WHERE SELECT * FORM mercurio35 where cedtra='40670788' and estado= 'P'" en la conexión "Resource id #118"
+Sun, 24 Jan 16 11:16:42 -0500 > opciones/verificarIp > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'WHERE  codcaj = 'CCF032' AND  tipo = 'E' AND  documento = '891180008' AND  ip = ' at line 1"  al ejecutar "UPDATE mercurio22 SET  WHERE  codcaj = 'CCF032' AND  tipo = 'E' AND  documento = '891180008' AND  ip = '190.24.183.5'" en la conexión "Resource id #118"
+Sun, 24 Jan 16 11:17:09 -0500 > opciones/verificarIp > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'WHERE  codcaj = 'CCF032' AND  tipo = 'E' AND  documento = '891180008' AND  ip = ' at line 1"  al ejecutar "UPDATE mercurio22 SET  WHERE  codcaj = 'CCF032' AND  tipo = 'E' AND  documento = '891180008' AND  ip = '190.24.183.5'" en la conexión "Resource id #118"
+Wed, 27 Jan 16 08:28:15 -0500 > opciones/cambiarClavePri > Message => El campo respuesta no puede ser nulo ''
+Thu, 28 Jan 16 11:43:43 -0500 > opciones/cambiarClavePri > Message => El campo clave no puede ser nulo ''
+Thu, 28 Jan 16 11:59:35 -0500 > opciones/cambiarClavePri > Message => El campo clave no puede ser nulo ''
+Thu, 28 Jan 16 12:02:32 -0500 > opciones/cambiarClavePri > Message => El campo clave no puede ser nulo ''
+Thu, 28 Jan 16 16:49:06 -0500 > opciones/cambiarClavePri > Message => El campo clave no puede ser nulo ''
+Thu, 28 Jan 16 17:23:17 -0500 > opciones/cambiarClavePri > Message => El campo documento no puede ser nulo ''
+Thu, 28 Jan 16 17:23:17 -0500 > opciones/cambiarClavePri > Message => El campo clave no puede ser nulo ''
+Thu, 28 Jan 16 17:23:31 -0500 > opciones/cambiarClavePri > Message => El campo documento no puede ser nulo ''
+Thu, 28 Jan 16 17:23:31 -0500 > opciones/cambiarClavePri > Message => El campo clave no puede ser nulo ''
+Thu, 28 Jan 16 17:24:35 -0500 > opciones/cambiarClavePri > Message => El campo documento no puede ser nulo ''
+Thu, 28 Jan 16 17:24:35 -0500 > opciones/cambiarClavePri > Message => El campo clave no puede ser nulo ''
+Thu, 28 Jan 16 17:24:39 -0500 > opciones/cambiarClavePri > Message => El campo documento no puede ser nulo ''
+Thu, 28 Jan 16 17:24:39 -0500 > opciones/cambiarClavePri > Message => El campo clave no puede ser nulo ''
+Fri, 29 Jan 16 08:21:13 -0500 > opciones/cambiarClavePri > Message => El campo clave no puede ser nulo ''
+Fri, 29 Jan 16 09:04:53 -0500 > opciones/cambiarClavePri > Message => El campo respuesta no puede ser nulo ''
+Fri, 29 Jan 16 09:05:38 -0500 > opciones/cambiarClavePri > Message => El campo respuesta no puede ser nulo ''
+Thu, 11 Feb 16 16:24:43 -0500 > opciones/cambiarClavePri > Message => El campo tipo no puede ser nulo ''
+Thu, 11 Feb 16 16:24:45 -0500 > opciones/cambiarClavePri > Message => El campo tipo no puede ser nulo ''
+Thu, 11 Feb 16 16:24:57 -0500 > opciones/cambiarClavePri > Message => El campo tipo no puede ser nulo ''
+Thu, 11 Feb 16 16:25:18 -0500 > opciones/cambiarClavePri > Message => El campo tipo no puede ser nulo ''
+Thu, 11 Feb 16 16:25:38 -0500 > opciones/cambiarClavePri > Message => El campo tipo no puede ser nulo ''
+Thu, 11 Feb 16 17:19:35 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Fri, 12 Feb 16 15:08:04 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Fri, 12 Feb 16 15:09:03 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Fri, 12 Feb 16 15:15:20 -0500 > subsidio/ingben > Message => El campo priape no puede ser nulo ''
+Fri, 12 Feb 16 15:15:20 -0500 > subsidio/ingben > Message => El campo prinom no puede ser nulo ''
+Fri, 12 Feb 16 16:25:40 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Tue, 16 Feb 16 09:49:05 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Tue, 16 Feb 16 09:50:18 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Tue, 16 Feb 16 09:50:28 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Wed, 17 Feb 16 09:22:38 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Wed, 17 Feb 16 10:04:22 -0500 > subsidio/ingcon > Message => El campo comper no puede ser nulo ''
+Wed, 17 Feb 16 12:01:17 -0500 > subsidio/ingcon > Message => El campo comper no puede ser nulo ''
+Wed, 17 Feb 16 12:03:26 -0500 > subsidio/ingcon > Message => El campo comper no puede ser nulo ''
+Thu, 18 Feb 16 08:44:05 -0500 > subsidio/ingcon > Message => El campo comper no puede ser nulo ''
+Thu, 18 Feb 16 09:14:58 -0500 > subsidio/ingcon > Message => El campo ciunac no puede ser nulo ''
+Thu, 18 Feb 16 09:14:58 -0500 > subsidio/ingcon > Message => El campo sexo no puede ser nulo ''
+Thu, 18 Feb 16 09:14:58 -0500 > subsidio/ingcon > Message => El campo estciv no puede ser nulo ''
+Thu, 18 Feb 16 09:14:58 -0500 > subsidio/ingcon > Message => El campo comper no puede ser nulo ''
+Thu, 18 Feb 16 09:14:58 -0500 > subsidio/ingcon > Message => El campo nivedu no puede ser nulo ''
+Thu, 18 Feb 16 09:49:52 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Thu, 18 Feb 16 10:01:17 -0500 > opciones/cambiarClavePri > Message => "Duplicate entry 'CCF032-P-21839483948934' for key 'PRIMARY'"  al ejecutar "INSERT INTO mercurio07 (codcaj, tipo, documento, email, clave, feccla, autoriza) VALUES ('CCF032', 'P', '2183948394893483', 'elkin108@gmail.com', 'n{2', 2016-05-18, 'S')" en la conexión "Resource id #118"
+Thu, 18 Feb 16 10:01:19 -0500 > opciones/cambiarClavePri > Message => "Duplicate entry 'CCF032-P-21839483948934' for key 'PRIMARY'"  al ejecutar "INSERT INTO mercurio07 (codcaj, tipo, documento, email, clave, feccla, autoriza) VALUES ('CCF032', 'P', '2183948394893483', 'elkin108@gmail.com', 'n{2', 2016-05-18, 'S')" en la conexión "Resource id #118"
+Thu, 18 Feb 16 10:01:20 -0500 > opciones/cambiarClavePri > Message => "Duplicate entry 'CCF032-P-21839483948934' for key 'PRIMARY'"  al ejecutar "INSERT INTO mercurio07 (codcaj, tipo, documento, email, clave, feccla, autoriza) VALUES ('CCF032', 'P', '2183948394893483', 'elkin108@gmail.com', 'n{2', 2016-05-18, 'S')" en la conexión "Resource id #118"
+Thu, 18 Feb 16 10:01:30 -0500 > opciones/cambiarClavePri > Message => "Duplicate entry 'CCF032-P-21839483948934' for key 'PRIMARY'"  al ejecutar "INSERT INTO mercurio07 (codcaj, tipo, documento, email, clave, feccla, autoriza) VALUES ('CCF032', 'P', '2183948394893483', 'elkin108@gmail.com', '2=4', 2016-05-18, 'S')" en la conexión "Resource id #118"
+Thu, 18 Feb 16 10:01:31 -0500 > opciones/cambiarClavePri > Message => "Duplicate entry 'CCF032-P-21839483948934' for key 'PRIMARY'"  al ejecutar "INSERT INTO mercurio07 (codcaj, tipo, documento, email, clave, feccla, autoriza) VALUES ('CCF032', 'P', '2183948394893483', 'elkin108@gmail.com', '2=4', 2016-05-18, 'S')" en la conexión "Resource id #118"
+Thu, 18 Feb 16 10:01:42 -0500 > opciones/cambiarClavePri > Message => "Duplicate entry 'CCF032-P-21839483948934' for key 'PRIMARY'"  al ejecutar "INSERT INTO mercurio07 (codcaj, tipo, documento, email, clave, feccla, autoriza) VALUES ('CCF032', 'P', '2183948394893483', 'elkin108@hotmail.es', '2=4', 2016-05-18, 'S')" en la conexión "Resource id #118"
+Thu, 18 Feb 16 10:01:43 -0500 > opciones/cambiarClavePri > Message => "Duplicate entry 'CCF032-P-21839483948934' for key 'PRIMARY'"  al ejecutar "INSERT INTO mercurio07 (codcaj, tipo, documento, email, clave, feccla, autoriza) VALUES ('CCF032', 'P', '2183948394893483', 'elkin108@hotmail.es', '2=4', 2016-05-18, 'S')" en la conexión "Resource id #118"
+Thu, 18 Feb 16 10:01:45 -0500 > opciones/cambiarClavePri > Message => "Duplicate entry 'CCF032-P-21839483948934' for key 'PRIMARY'"  al ejecutar "INSERT INTO mercurio07 (codcaj, tipo, documento, email, clave, feccla, autoriza) VALUES ('CCF032', 'P', '2183948394893483', 'elkin108@hotmail.es', '2=4', 2016-05-18, 'S')" en la conexión "Resource id #118"
+Fri, 26 Feb 16 15:22:55 -0500 > subsidio/ingcon > Message => El campo coddoc no puede ser nulo ''
+Fri, 26 Feb 16 15:22:55 -0500 > subsidio/ingcon > Message => El campo ciunac no puede ser nulo ''
+Fri, 26 Feb 16 15:22:55 -0500 > subsidio/ingcon > Message => El campo sexo no puede ser nulo ''
+Fri, 26 Feb 16 15:22:55 -0500 > subsidio/ingcon > Message => El campo estciv no puede ser nulo ''
+Fri, 26 Feb 16 15:22:55 -0500 > subsidio/ingcon > Message => El campo comper no puede ser nulo ''
+Fri, 26 Feb 16 15:22:55 -0500 > subsidio/ingcon > Message => El campo nivedu no puede ser nulo ''
+Tue, 01 Mar 16 12:20:14 -0500 > subsidio/ingben > Message => El campo coddoc no puede ser nulo ''
+Tue, 01 Mar 16 12:20:14 -0500 > subsidio/ingben > Message => El campo priape no puede ser nulo ''
+Tue, 01 Mar 16 12:23:01 -0500 > subsidio/ingben > Message => El campo priape no puede ser nulo ''
+Tue, 01 Mar 16 12:23:01 -0500 > subsidio/ingben > Message => El campo huerfano no puede ser nulo ''
+Tue, 01 Mar 16 14:24:35 -0500 > subsidio/ingben > Message => El campo coddoc no puede ser nulo ''
+Tue, 01 Mar 16 14:24:35 -0500 > subsidio/ingben > Message => El campo priape no puede ser nulo ''
+Tue, 01 Mar 16 14:24:35 -0500 > subsidio/ingben > Message => El campo ciunac no puede ser nulo ''
+Tue, 01 Mar 16 14:24:35 -0500 > subsidio/ingben > Message => El campo sexo no puede ser nulo ''
+Tue, 01 Mar 16 14:24:35 -0500 > subsidio/ingben > Message => El campo huerfano no puede ser nulo ''
+Tue, 01 Mar 16 14:24:35 -0500 > subsidio/ingben > Message => El campo nivedu no puede ser nulo ''
+Tue, 01 Mar 16 14:24:35 -0500 > subsidio/ingben > Message => El campo calendario no puede ser nulo ''
+Tue, 01 Mar 16 14:30:39 -0500 > subsidio/ingben > Message => El campo coddoc no puede ser nulo ''
+Tue, 01 Mar 16 14:30:39 -0500 > subsidio/ingben > Message => El campo priape no puede ser nulo ''
+Tue, 01 Mar 16 14:30:39 -0500 > subsidio/ingben > Message => El campo ciunac no puede ser nulo ''
+Tue, 01 Mar 16 14:30:39 -0500 > subsidio/ingben > Message => El campo sexo no puede ser nulo ''
+Tue, 01 Mar 16 14:30:39 -0500 > subsidio/ingben > Message => El campo huerfano no puede ser nulo ''
+Tue, 01 Mar 16 14:30:39 -0500 > subsidio/ingben > Message => El campo nivedu no puede ser nulo ''
+Tue, 01 Mar 16 14:30:39 -0500 > subsidio/ingben > Message => El campo calendario no puede ser nulo ''
+Tue, 01 Mar 16 14:32:40 -0500 > subsidio/ingben > Message => El campo coddoc no puede ser nulo ''
+Tue, 01 Mar 16 14:32:40 -0500 > subsidio/ingben > Message => El campo priape no puede ser nulo ''
+Tue, 01 Mar 16 14:32:40 -0500 > subsidio/ingben > Message => El campo prinom no puede ser nulo ''
+Tue, 01 Mar 16 14:32:40 -0500 > subsidio/ingben > Message => El campo ciunac no puede ser nulo ''
+Tue, 01 Mar 16 14:32:40 -0500 > subsidio/ingben > Message => El campo sexo no puede ser nulo ''
+Tue, 01 Mar 16 14:32:40 -0500 > subsidio/ingben > Message => El campo parent no puede ser nulo ''
+Tue, 01 Mar 16 14:32:40 -0500 > subsidio/ingben > Message => El campo huerfano no puede ser nulo ''
+Tue, 01 Mar 16 14:32:40 -0500 > subsidio/ingben > Message => El campo nivedu no puede ser nulo ''
+Tue, 01 Mar 16 14:32:40 -0500 > subsidio/ingben > Message => El campo calendario no puede ser nulo ''
+Tue, 01 Mar 16 15:25:37 -0500 > subsidio/ingben > Message => El campo coddoc no puede ser nulo ''
+Tue, 01 Mar 16 15:25:37 -0500 > subsidio/ingben > Message => El campo priape no puede ser nulo ''
+Tue, 01 Mar 16 15:25:37 -0500 > subsidio/ingben > Message => El campo prinom no puede ser nulo ''
+Tue, 01 Mar 16 15:25:37 -0500 > subsidio/ingben > Message => El campo ciunac no puede ser nulo ''
+Tue, 01 Mar 16 15:25:37 -0500 > subsidio/ingben > Message => El campo sexo no puede ser nulo ''
+Tue, 01 Mar 16 15:25:37 -0500 > subsidio/ingben > Message => El campo parent no puede ser nulo ''
+Tue, 01 Mar 16 15:25:37 -0500 > subsidio/ingben > Message => El campo huerfano no puede ser nulo ''
+Tue, 01 Mar 16 15:25:37 -0500 > subsidio/ingben > Message => El campo nivedu no puede ser nulo ''
+Tue, 01 Mar 16 15:25:37 -0500 > subsidio/ingben > Message => El campo calendario no puede ser nulo ''
+Tue, 01 Mar 16 16:44:53 -0500 > subsidio/ingcon > Message => El campo priape no puede ser nulo ''
+Tue, 01 Mar 16 16:44:53 -0500 > subsidio/ingcon > Message => El campo estciv no puede ser nulo ''
+Tue, 01 Mar 16 16:44:53 -0500 > subsidio/ingcon > Message => El campo comper no puede ser nulo ''
+Tue, 01 Mar 16 16:44:53 -0500 > subsidio/ingcon > Message => El campo direccion no puede ser nulo ''
+Tue, 01 Mar 16 16:44:53 -0500 > subsidio/ingcon > Message => El campo telefono no puede ser nulo ''
+Tue, 01 Mar 16 16:44:53 -0500 > subsidio/ingcon > Message => El campo email no puede ser nulo ''
+Tue, 01 Mar 16 16:44:53 -0500 > subsidio/ingcon > Message => El campo salario no puede ser nulo ''
+Tue, 01 Mar 16 16:47:21 -0500 > subsidio/ingcon > Message => El campo priape no puede ser nulo ''
+Tue, 01 Mar 16 16:47:21 -0500 > subsidio/ingcon > Message => El campo estciv no puede ser nulo ''
+Tue, 01 Mar 16 16:47:21 -0500 > subsidio/ingcon > Message => El campo comper no puede ser nulo ''
+Tue, 01 Mar 16 16:47:21 -0500 > subsidio/ingcon > Message => El campo direccion no puede ser nulo ''
+Tue, 01 Mar 16 16:47:21 -0500 > subsidio/ingcon > Message => El campo telefono no puede ser nulo ''
+Tue, 01 Mar 16 16:47:21 -0500 > subsidio/ingcon > Message => El campo email no puede ser nulo ''
+Tue, 01 Mar 16 16:47:21 -0500 > subsidio/ingcon > Message => El campo salario no puede ser nulo ''
+Tue, 01 Mar 16 16:49:28 -0500 > subsidio/ingben > Message => El campo priape no puede ser nulo ''
+Mon, 04 Apr 16 15:43:11 -0500 > subsidio/ingben > Message => El campo ciunac no puede ser nulo ''
+Mon, 04 Apr 16 15:43:11 -0500 > subsidio/ingben > Message => El campo sexo no puede ser nulo ''
+Mon, 04 Apr 16 15:43:11 -0500 > subsidio/ingben > Message => El campo huerfano no puede ser nulo ''
+Mon, 04 Apr 16 15:43:11 -0500 > subsidio/ingben > Message => El campo nivedu no puede ser nulo ''
+Mon, 04 Apr 16 15:43:11 -0500 > subsidio/ingben > Message => El campo calendario no puede ser nulo ''
+Mon, 11 Apr 16 16:43:17 -0500 > opciones/verificarIp > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'WHERE  codcaj = 'CCF032' AND  tipo = 'T' AND  documento = '7729356' AND  ip = '1' at line 1"  al ejecutar "UPDATE mercurio22 SET  WHERE  codcaj = 'CCF032' AND  tipo = 'T' AND  documento = '7729356' AND  ip = '181.49.157.163'" en la conexión "Resource id #120"
+Thu, 12 May 16 17:26:11 -0500 > particular/addtrabajador > Message => El valor del campo 'tipcon' debe ser parte del rango F, I
+Mon, 18 Jul 16 11:08:29 -0500 > particular/addtrabajador > Message => El valor del campo 'tipcon' debe ser parte del rango F, I
+Thu, 04 Aug 16 08:56:24 -0500 > subsidio/ingcon > Message => El valor del campo 'captra' debe ser parte del rango I, N
+Thu, 04 Aug 16 08:59:06 -0500 > subsidio/ingcon > Message => El valor del campo 'captra' debe ser parte del rango I, N
+Thu, 04 Aug 16 09:02:23 -0500 > subsidio/ingcon > Message => El valor del campo 'captra' debe ser parte del rango I, N
+Thu, 04 Aug 16 09:12:43 -0500 > subsidio/ingcon > Message => El valor del campo 'captra' debe ser parte del rango I, N
+Thu, 04 Aug 16 09:19:06 -0500 > subsidio/ingcon > Message => El valor del campo 'captra' debe ser parte del rango I, N
+Thu, 04 Aug 16 09:23:26 -0500 > subsidio/ingcon > Message => El valor del campo 'captra' debe ser parte del rango I, N
+Fri, 05 Aug 16 09:00:17 -0500 > particular/addempresa > Message => El valor del campo 'tipemp' debe ser parte del rango O, P, M
+Fri, 05 Aug 16 09:00:17 -0500 > particular/addempresa > Message => El valor del campo 'autoriza' debe ser parte del rango S, N
+Fri, 05 Aug 16 09:16:23 -0500 > particular/addempresa > Message => El valor del campo 'tipemp' debe ser parte del rango O, P, M
+Fri, 05 Aug 16 14:28:54 -0500 > subsidio/actdat > Message => "Cannot add or update a child row: a foreign key constraint fails (`mercurio_comfahuila`.`mercurio33`, CONSTRAINT `fk_mercurio36_mercurio201` FOREIGN KEY (`tipo`, `campo`) REFERENCES `mercurio28` (`tipo`, `campo`) ON DELETE NO ACTION ON UPDATE NO ACTION)"  al ejecutar "INSERT INTO mercurio33 (log, codcaj, tipo, documento, campo, valor, estado, motivo, fecest, usuario) VALUES (393, 'CCF032', 'E', '891180008', 'idciudad', '41016', 'P', NULL, NULL, 1)" en la conexión "Resource id #115"
+Fri, 05 Aug 16 14:51:12 -0500 > subsidio/actdat > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'i' at line 1"  al ejecutar "SELECT tipo, campo, detalle, orden FROM mercurio28 WHERE tipo = 'T' AND campo <> 'idciuresidencia' i" en la conexión "Resource id #109"
+Mon, 08 Aug 16 10:03:24 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Mon, 08 Aug 16 10:03:38 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Mon, 08 Aug 16 10:04:06 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Mon, 08 Aug 16 10:04:41 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Mon, 08 Aug 16 10:09:31 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Mon, 08 Aug 16 10:10:33 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Mon, 08 Aug 16 10:13:51 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Mon, 08 Aug 16 10:14:27 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Mon, 08 Aug 16 10:23:05 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Tue, 09 Aug 16 15:27:27 -0500 > opciones/respuestas > Message => "Unknown column 'uno' in 'where clause'"  al ejecutar "SELECT codcaj, tipo, documento, codigo, respuesta FROM mercurio19 WHERE codcaj = 'CCF032' AND tipo = 'P' AND documento = '1070618746' AND uno<>xx ORDER BY 1 LIMIT 1" en la conexión "Resource id #108"
+Tue, 09 Aug 16 15:27:42 -0500 > opciones/respuestas > Message => "Unknown column 'uno' in 'where clause'"  al ejecutar "SELECT codcaj, tipo, documento, codigo, respuesta FROM mercurio19 WHERE codcaj = 'CCF032' AND tipo = 'P' AND documento = '1070618746' AND uno<>xx ORDER BY 1 LIMIT 1" en la conexión "Resource id #108"
+Tue, 09 Aug 16 15:37:02 -0500 > opciones/respuestas > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'i ORDER BY 1 LIMIT 1' at line 1"  al ejecutar "SELECT codcaj, tipo, documento, codigo, respuesta FROM mercurio19 WHERE codcaj = 'CCF032' AND 'respuesta' <> 'uno' AND tipo = 'P' AND documento = '1070618746' i ORDER BY 1 LIMIT 1" en la conexión "Resource id #108"
+Tue, 09 Aug 16 15:37:21 -0500 > opciones/respuestas > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''1070618746' ORDER BY 1 LIMIT 1' at line 1"  al ejecutar "SELECT codcaj, tipo, documento, codigo, respuesta FROM mercurio19 WHERE codcaj = 'CCF032' AND 'respuesta' <> 'uno' AND tipo = 'P' AND documento = i '1070618746' ORDER BY 1 LIMIT 1" en la conexión "Resource id #108"
+Wed, 17 Aug 16 15:42:37 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Wed, 17 Aug 16 15:46:32 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Fri, 19 Aug 16 15:53:25 -0500 > subsidio/cargueCertificados > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'WHERE codare='SU' AND codope='42'' at line 1"  al ejecutar "UPDATE mercurio11 SET orden=  WHERE codare='SU' AND codope='42'" en la conexión "Resource id #114"
+Mon, 22 Aug 16 09:06:17 -0500 > particular/addempresa > Message => El campo nit no puede ser nulo ''
+Mon, 22 Aug 16 09:06:17 -0500 > particular/addempresa > Message => El campo razsoc no puede ser nulo ''
+Mon, 22 Aug 16 09:06:17 -0500 > particular/addempresa > Message => El campo codciu no puede ser nulo ''
+Mon, 22 Aug 16 09:06:17 -0500 > particular/addempresa > Message => El campo direccion no puede ser nulo ''
+Mon, 22 Aug 16 09:06:17 -0500 > particular/addempresa > Message => El campo telefono no puede ser nulo ''
+Mon, 22 Aug 16 09:06:17 -0500 > particular/addempresa > Message => El campo email no puede ser nulo ''
+Mon, 22 Aug 16 09:06:17 -0500 > particular/addempresa > Message => El campo codact no puede ser nulo ''
+Mon, 22 Aug 16 09:06:17 -0500 > particular/addempresa > Message => El campo tottra no puede ser nulo ''
+Mon, 22 Aug 16 09:06:17 -0500 > particular/addempresa > Message => El campo totnom no puede ser nulo ''
+Mon, 22 Aug 16 09:06:17 -0500 > particular/addempresa > Message => El campo cedrep no puede ser nulo ''
+Mon, 22 Aug 16 09:06:17 -0500 > particular/addempresa > Message => El campo nomrep no puede ser nulo ''
+Mon, 22 Aug 16 09:06:17 -0500 > particular/addempresa > Message => El campo tipsoc no puede ser nulo ''
+Mon, 22 Aug 16 09:06:17 -0500 > particular/addempresa > Message => El campo calemp no puede ser nulo ''
+Mon, 22 Aug 16 10:16:55 -0500 > subsidio/cargueCertificados > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'WHERE codare='SU' AND codope='42'' at line 1"  al ejecutar "UPDATE mercurio11 SET orden=  WHERE codare='SU' AND codope='42'" en la conexión "Resource id #114"
+Mon, 22 Aug 16 10:27:08 -0500 > subsidio/cargueCertificados > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'WHERE codare='SU' AND codope='42'' at line 1"  al ejecutar "UPDATE mercurio11 SET orden=  WHERE codare='SU' AND codope='42'" en la conexión "Resource id #114"
+Mon, 22 Aug 16 10:39:24 -0500 > subsidio/cargueCertificados > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'WHERE codare='SU' AND codope='42'' at line 1"  al ejecutar "UPDATE mercurio11 SET orden=  WHERE codare='SU' AND codope='42'" en la conexión "Resource id #114"
+Mon, 22 Aug 16 15:10:31 -0500 > particular/addtrabajador > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'WHERE codare='SU' AND codope='28'' at line 1"  al ejecutar "UPDATE mercurio11 SET orden=  WHERE codare='SU' AND codope='28'" en la conexión "Resource id #115"
+Mon, 22 Aug 16 15:39:01 -0500 > subsidio/ingcon > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'WHERE codare='SU' AND codope='23'' at line 1"  al ejecutar "UPDATE mercurio11 SET orden=  WHERE codare='SU' AND codope='23'" en la conexión "Resource id #115"
+Mon, 22 Aug 16 16:02:47 -0500 > subsidio/ingcon > Message => El campo estciv no puede ser nulo ''
+Mon, 22 Aug 16 16:02:47 -0500 > subsidio/ingcon > Message => El campo comper no puede ser nulo ''
+Mon, 22 Aug 16 16:02:47 -0500 > subsidio/ingcon > Message => El campo direccion no puede ser nulo ''
+Mon, 22 Aug 16 16:02:47 -0500 > subsidio/ingcon > Message => El campo telefono no puede ser nulo ''
+Mon, 22 Aug 16 16:02:47 -0500 > subsidio/ingcon > Message => El campo email no puede ser nulo ''
+Wed, 24 Aug 16 14:35:09 -0500 > subsidio/ingcon > Message => El campo coddoc no puede ser nulo ''
+Wed, 24 Aug 16 14:35:09 -0500 > subsidio/ingcon > Message => El campo estciv no puede ser nulo ''
+Wed, 24 Aug 16 14:35:09 -0500 > subsidio/ingcon > Message => El campo comper no puede ser nulo ''
+Wed, 24 Aug 16 14:35:09 -0500 > subsidio/ingcon > Message => El campo direccion no puede ser nulo ''
+Wed, 24 Aug 16 14:35:09 -0500 > subsidio/ingcon > Message => El campo telefono no puede ser nulo ''
+Wed, 24 Aug 16 14:35:09 -0500 > subsidio/ingcon > Message => El campo email no puede ser nulo ''
+Wed, 24 Aug 16 14:35:09 -0500 > subsidio/ingcon > Message => El campo nivedu no puede ser nulo ''
+Wed, 24 Aug 16 14:39:50 -0500 > subsidio/ingcon > Message => El campo estciv no puede ser nulo ''
+Wed, 24 Aug 16 14:39:50 -0500 > subsidio/ingcon > Message => El campo comper no puede ser nulo ''
+Wed, 24 Aug 16 14:39:50 -0500 > subsidio/ingcon > Message => El campo direccion no puede ser nulo ''
+Wed, 24 Aug 16 14:39:50 -0500 > subsidio/ingcon > Message => El campo telefono no puede ser nulo ''
+Wed, 24 Aug 16 14:39:50 -0500 > subsidio/ingcon > Message => El campo email no puede ser nulo ''
+Wed, 24 Aug 16 14:39:50 -0500 > subsidio/ingcon > Message => El campo nivedu no puede ser nulo ''
+Thu, 25 Aug 16 09:22:47 -0500 > subsidio/retirar > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'WHERE codare='SU' AND codope='29'' at line 1"  al ejecutar "UPDATE mercurio11 SET orden=  WHERE codare='SU' AND codope='29'" en la conexión "Resource id #120"
+Fri, 26 Aug 16 16:38:31 -0500 > subsidio/ingcon > Message => El campo estciv no puede ser nulo ''
+Fri, 26 Aug 16 16:38:31 -0500 > subsidio/ingcon > Message => El campo comper no puede ser nulo ''
+Fri, 26 Aug 16 16:38:31 -0500 > subsidio/ingcon > Message => El campo direccion no puede ser nulo ''
+Fri, 26 Aug 16 16:38:31 -0500 > subsidio/ingcon > Message => El campo telefono no puede ser nulo ''
+Fri, 26 Aug 16 16:38:31 -0500 > subsidio/ingcon > Message => El campo email no puede ser nulo ''
+Fri, 26 Aug 16 16:41:06 -0500 > subsidio/ingcon > Message => El campo ciunac no puede ser nulo ''
+Fri, 26 Aug 16 16:50:28 -0500 > subsidio/ingcon > Message => El campo ciunac no puede ser nulo ''
+Fri, 26 Aug 16 16:59:34 -0500 > subsidio/ingcon > Message => El campo cedcon no puede ser nulo ''
+Fri, 26 Aug 16 16:59:34 -0500 > subsidio/ingcon > Message => El campo estciv no puede ser nulo ''
+Fri, 26 Aug 16 16:59:34 -0500 > subsidio/ingcon > Message => El campo comper no puede ser nulo ''
+Fri, 26 Aug 16 16:59:34 -0500 > subsidio/ingcon > Message => El campo direccion no puede ser nulo ''
+Fri, 26 Aug 16 16:59:34 -0500 > subsidio/ingcon > Message => El campo telefono no puede ser nulo ''
+Fri, 26 Aug 16 16:59:34 -0500 > subsidio/ingcon > Message => El campo email no puede ser nulo ''
+Fri, 26 Aug 16 17:01:36 -0500 > subsidio/ingben > Message => El campo ciunac no puede ser nulo ''
+Mon, 29 Aug 16 08:25:12 -0500 > subsidio/ingben > Message => El campo parent no puede ser nulo ''
+Fri, 02 Sep 16 11:26:04 -0500 > particular/addtrabajador > Message => El valor del campo 'vivienda' debe ser parte del rango N, F, P, A, H
+Fri, 02 Sep 16 11:32:49 -0500 > particular/addtrabajador > Message => El valor del campo 'vivienda' debe ser parte del rango N, F, P, A, H
+Fri, 09 Sep 16 16:47:26 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Mon, 12 Sep 16 11:05:00 -0500 > subsidio/cambioDatosPrincipales > Message => El campo nomarc no puede ser nulo ''
+Mon, 12 Sep 16 11:08:56 -0500 > subsidio/cambioDatosPrincipales > Message => El campo coddoc no puede ser nulo ''
+Mon, 12 Sep 16 11:11:22 -0500 > subsidio/cambioDatosPrincipales > Message => El campo coddoc no puede ser nulo ''
+Mon, 12 Sep 16 11:12:54 -0500 > subsidio/cambioDatosPrincipales > Message => El campo coddoc no puede ser nulo ''
+Tue, 20 Sep 16 09:22:50 -0500 > subsidio/ingben > Message => El campo coddoc no puede ser nulo ''
+Tue, 20 Sep 16 09:22:50 -0500 > subsidio/ingben > Message => El campo documento no puede ser nulo ''
+Tue, 20 Sep 16 09:22:50 -0500 > subsidio/ingben > Message => El campo priape no puede ser nulo ''
+Tue, 20 Sep 16 09:22:50 -0500 > subsidio/ingben > Message => El campo prinom no puede ser nulo ''
+Tue, 20 Sep 16 09:24:16 -0500 > subsidio/ingben > Message => El campo coddoc no puede ser nulo ''
+Tue, 20 Sep 16 09:24:16 -0500 > subsidio/ingben > Message => El campo documento no puede ser nulo ''
+Tue, 20 Sep 16 09:24:16 -0500 > subsidio/ingben > Message => El campo priape no puede ser nulo ''
+Tue, 20 Sep 16 09:24:16 -0500 > subsidio/ingben > Message => El campo prinom no puede ser nulo ''
+Tue, 20 Sep 16 09:30:44 -0500 > subsidio/ingben > Message => El campo coddoc no puede ser nulo ''
+Tue, 20 Sep 16 09:30:44 -0500 > subsidio/ingben > Message => El campo documento no puede ser nulo ''
+Tue, 20 Sep 16 09:30:44 -0500 > subsidio/ingben > Message => El campo priape no puede ser nulo ''
+Tue, 20 Sep 16 09:30:44 -0500 > subsidio/ingben > Message => El campo prinom no puede ser nulo ''
+Tue, 27 Sep 16 14:51:14 -0500 > subsidio/cargueCertificados > Message => "Unknown column 'tipfu' in 'where clause'"  al ejecutar "SELECT codare, codope, tipfun, orden FROM mercurio48 WHERE codare='SU' AND codope='42' and tipfu = '1' ORDER BY 1 LIMIT 1" en la conexión "Resource id #122"
+Tue, 27 Sep 16 14:55:35 -0500 > subsidio/cargueCertificados > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'i ORDER BY 1 LIMIT 1' at line 1"  al ejecutar "SELECT codare, codope, tipfun, orden FROM mercurio48 WHERE codare='SU' AND codope='42' and tipfun = '1' i ORDER BY 1 LIMIT 1" en la conexión "Resource id #122"
+Tue, 27 Sep 16 15:10:22 -0500 > subsidio/cargueCertificados > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'anf estado='A') ORDER BY 1 LIMIT 1' at line 1"  al ejecutar "SELECT usuario, codare, codope, orden, estado FROM mercurio44 WHERE codare='SU' AND codope='42' AND orden='2' and usuario in (select usuario from gener02 where tipfun='NIVA' anf estado='A') ORDER BY 1 LIMIT 1" en la conexión "Resource id #116"
+Tue, 27 Sep 16 15:12:32 -0500 > subsidio/cargueCertificados > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'WHERE codare='SU' AND codope='42' and tipfun='NIVA'' at line 1"  al ejecutar "UPDATE mercurio48 SET orden=  WHERE codare='SU' AND codope='42' and tipfun='NIVA'" en la conexión "Resource id #122"
+Thu, 06 Oct 16 08:02:48 -0500 > subsidio/ingben > Message => El campo coddoc no puede ser nulo ''
+Thu, 06 Oct 16 08:04:32 -0500 > subsidio/ingben > Message => El campo huerfano no puede ser nulo ''
+Wed, 07 Dec 16 08:32:41 -0500 > subsidio/retirar > Message => El campo coddoc no puede ser nulo ''
+Wed, 07 Dec 16 08:52:27 -0500 > subsidio/retirar > Message => El campo coddoc no puede ser nulo ''
+Wed, 07 Dec 16 08:55:45 -0500 > subsidio/retirar > Message => El campo coddoc no puede ser nulo ''
+Wed, 25 Jan 17 08:36:52 -0500 > particular/addtrabajador > Message => El campo sexo no puede ser nulo ''
+Tue, 31 Jan 17 11:02:00 -0500 > subsidio/cambioDatosPrincipales > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ' 'Vacio')' at line 1"  al ejecutar "INSERT INTO mercurio43 (log, codcaj, documento, campo, valor, estado, motivo, fecest, usuario, nomarc) VALUES (1016, 'CCF032', '900026345', 'razsoc', 'INVERCORSA EU INVERSIONES Y COMERCIALIZADORA SANCHEZ LI', 'P', NULL, NULL, , 'Vacio')" en la conexión "Resource id #122"
+Thu, 09 Feb 17 15:46:39 -0500 > subsidio/cambioDatosPrincipales > Message => El campo coddoc no puede ser nulo ''
+Wed, 15 Feb 17 11:46:01 -0500 > subsidio/cambioDatosPrincipales > Message => El campo coddoc no puede ser nulo ''
+Mon, 13 Mar 17 14:29:38 -0500 > subsidio/cambioDatosPrincipales > Message => El campo priape no puede ser nulo ''
+Mon, 13 Mar 17 14:29:38 -0500 > subsidio/cambioDatosPrincipales > Message => El campo prinom no puede ser nulo ''
+Thu, 20 Apr 17 10:43:37 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Fri, 05 May 17 14:16:26 -0500 > particular/addempresa > Message => El campo coddoc no puede ser nulo ''
+Fri, 05 May 17 14:16:26 -0500 > particular/addempresa > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ' 'CCF032', '900785412', 'MONICAJULIETH GARCIA RINCON', 'DIMOPA SAS', '4', '1', '' at line 1"  al ejecutar "INSERT INTO mercurio30 (log, codcaj, nit, razsoc, sigla, digver, coddoc, codciu, barrio, ciucor, barcor, direccion, telefono, fax, email, pagweb, feccon, codact, objemp, tottra, totnom, cedrep, docrep, nomrep, estado, motivo, fecest, tipsoc, calemp, codzon, zonsuc, dirsuc, emailsuc, telsuc, faxsuc, nomsub, usuario, agencia, docadm, cedadm) VALUES (, 'CCF032', '900785412', 'MONICAJULIETH GARCIA RINCON', 'DIMOPA SAS', '4', '1', '41001', '12', '41001', '12', 'CALLE 24 A SUR 29 40', '8742521', NULL, 'consultaenlinea@comfamiliarhuila.com', NULL, '20170501', 426, '5511', 4, 5000000, '1075209518', '1', 'MONICA JULIETH GARCIA RINCON', 'P', NULL, NULL, '102', 'E', '41001000', NULL, 'CALLE 24 SUR 29 40', NULL, '8742521', NULL, 'MONICA JULIETH GARCIA RINCON', 1, 1, '1', '1075209518')" en la conexión "Resource id #122"
+Mon, 22 May 17 16:00:49 -0500 > opciones/respuestas > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''comfamiliar' at line 1"  al ejecutar "SELECT COUNT(*) AS rowcount FROM mercurio19  WHERE codcaj = 'CCF032' AND tipo = 'E' AND documento = '800006150' AND respuesta = 'comfamiliar" en la conexión "Resource id #116"
+Mon, 22 May 17 16:01:01 -0500 > opciones/respuestas > Message => "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''comfamiliar' at line 1"  al ejecutar "SELECT COUNT(*) AS rowcount FROM mercurio19  WHERE codcaj = 'CCF032' AND tipo = 'E' AND documento = '800006150' AND respuesta = 'comfamiliar" en la conexión "Resource id #116"
+Fri, 26 May 17 08:37:34 -0500 > subsidio/ingcon > Message => El valor del campo 'email' debe ser un e-mail válido
+Tue, 06 Jun 17 17:04:40 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Wed, 07 Jun 17 16:55:54 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Wed, 07 Jun 17 16:56:13 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Wed, 07 Jun 17 16:56:27 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Thu, 08 Jun 17 08:53:39 -0500 > subsidio/actdat > Message => El campo valor no puede ser nulo ''
+Thu, 08 Jun 17 11:44:12 -0500 > subsidio/ingben > Message => "Unknown column 'documento' in 'where clause'"  al ejecutar "SELECT id, log, codcaj, nit, cedtra, coddoc, priape, segape, prinom, segnom, fecnac, ciunac, sexo, estciv, cabhog, codciu, codzon, direccion, barrio, telefono, celular, fax, email, fecing, salario, captra, tipdis, nivedu, rural, horas, tipcon, vivienda, autoriza, estado, motivo, fecest, usuario, tipafi, agencia, profesion, cargo FROM mercurio31 WHERE estado = 'P' AND cedtra='1070618746' AND coddoc='1' AND documento='1070618'" en la conexión "Resource id #116"

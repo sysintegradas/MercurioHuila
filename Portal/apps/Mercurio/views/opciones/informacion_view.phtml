@@ -1,0 +1,43 @@
+<?php echo View::getContent(); ?>
+<script type="text/javascript">
+    var val = new Validator();
+    val.addField("email","email",null,{'alias': 'Email','isNull': false,'doToUpperCase': false});
+
+    Guardar = function(){
+        if(!val.valide()){
+            Messages.valide(val);
+            return;
+        }
+        new Ajax.Request(Utils.getKumbiaURL("opciones/informacion"), {
+            asynchronous : false,
+            parameters: {
+                email: $F('email'),
+            },
+            onSuccess: function(transport){
+                response = transport.responseText.evalJSON();
+                if(response['flag']==true){
+                    Messages.display(Array(response['msg']),"success");
+                }else{
+                    Messages.display(Array(response['msg']),"warning");
+                }
+            },
+            onFailure: function(transport){
+                alert(transport.responseText);
+            }
+        });
+    }
+ </script>
+
+<?php echo Tag::form("","autocomplete: off"); ?>
+<div align='center'>
+    <table align='center'>
+        <tr>
+            <td align="right"><label>Email:</label></td>
+            <td align="left"><?php echo Tag::textField("email","size: 30") ?></td>
+        </tr>
+        <tr>
+          <td colspan="2" align="center"><?php echo Tag::button("Guardar","class: submit","onclick: Guardar();") ?></td>
+        </tr>
+    </table>
+</div>
+<?php echo Tag::endForm(); ?>

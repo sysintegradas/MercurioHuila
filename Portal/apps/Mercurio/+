@@ -1,0 +1,335 @@
+<?php
+
+class Mercurio31Controller extends ApplicationController {
+
+    private $estado = 100;
+    private $title = "Afiliacion Trabajador";
+
+    public function initialize(){
+        $this->setTemplateAfter('escritorio');
+        $this->setPersistance(true);
+    }
+
+    public function indexAction(){
+      $this->setParamToview('titulo',$this->title);
+      $html = "";
+      $html .= "<table class='resultado-consul' border=1>";
+      $html .= "<thead>";
+      $html .= "<th>Nit</th>";
+      $html .= "<th>Cedula</th>";
+      $html .= "<th>Nombre</th>";
+      $html .= "<th>Ciudad</th>";
+      $html .= "<th>Direccion</th>";
+      $html .= "<th>Telefono</th>";
+      $html .= "<th>Salario</th>";
+      $html .= "<th>Aprobar</th>";
+      $html .= "<th>Rechazar</th>";
+      $html .= "<th>Documentos</th>";
+      $html .= "</thead>";
+      $html .= "<tbody>";
+      $mercurio31 = $this->Mercurio31->find("estado='P'");
+      foreach($mercurio31 as $mmercurio31){
+          $gener08 = $this->Gener08->findFirst("codciu = '{$mmercurio31->getCodciu()}'");
+          if($gener08 == false)$gener08 = new Gener08();
+          $html .= "<tr>";
+          $html .= "<td>{$mmercurio31->getNit()}</td>";
+          $html .= "<td>{$mmercurio31->getCedtra()}</td>";
+          $html .= "<td>{$mmercurio31->getPriape()} {$mmercurio31->getSegape()} {$mmercurio31->getPrinom()} {$mmercurio31->getSegnom()}</td>";
+          $html .= "<td>".$gener08->getDetciu()."</td>";
+          $html .= "<td>{$mmercurio31->getDireccion()}</td>";
+          $html .= "<td>{$mmercurio31->getTelefono()}</td>";
+          $html .= "<td>".number_format($mmercurio31->getSalario(),0,".",".")."</td>";
+          $html .= "<td onclick=\"completar('{$mmercurio31->getNit()}|{$mmercurio31->getCedtra()}',this);\">".Tag::image("desktop/security-high.png", "width: 25px", "height: 25px", "style: cursor: pointer;")."</td>";
+          $html .= "<td onclick=\"rechazar('{$mmercurio31->getId()}|{$mmercurio31->getNit()}|{$mmercurio31->getCedtra()}',this);\">".Tag::image("desktop/security-low.png", "width: 25px", "height: 25px", "style: cursor: pointer;")."</td>";
+          $html .= "<td onclick=\"verdoc('{$mmercurio31->getId()}');\">".Tag::image("desktop/search.png","width: 25px", "height: 25px", "style: cursor: pointer;")."</td>";
+          $html .= "</tr>";
+      }
+      $html .= "</tbody>";
+      $html .= "</table>";
+      $this->setParamToView("html", $html);
+    }
+
+    public function formularioAction(){
+        $this->setResponse("ajax");
+        $id = $this->getPostParam("id");
+        $datos = preg_split("/\|/",$id);
+        $mercurio31 = $this->Mercurio31->findFirst("nit = '{$datos[0]}' AND cedtra='{$datos[1]}'");
+        $nit = $mercurio31->getNit();
+        $mercurio30 = $this->Mercurio30->find("nit = '$nit'");
+        $gir = $mercurio31->getRural();
+        $ciu = $mercurio31->getCodciu();
+        $salario = $mercurio31->getSalario();
+        if($salario<"1288700")$codcat="A"; 
+        if($salario>"1288700" && $salario<"2577400")$codcat="B"; 
+        if($salario>"2577400")$codcat="C"; 
+        $zonas = parent::webService('servidor','codigozona','');
+        foreach($zonas as $mcodzon) 
+            $codzon[$mcodzon['codzon']] = $mcodzon['detzon'];
+        $lis= parent::webService('servidor','listas',array("nit"=>$nit));
+        foreach($lis as $mlista) 
+            $lista[$mlista['codlis']] = $mlista['detalle'];
+        $sucur= parent::webService('servidor','sucursal',array("nit"=>$nit));
+        foreach($sucur as $msucur) 
+            $sucursal[$msucur['codsuc']] = $msucur['detalle'];
+        //$grupos = parent::webService('servidor','codgruMercurio32','');
+        //foreach($grupos as $mcodgru)
+            //$codgru[$mcodgru['codgru']] = $mcodgru['nombre'];
+        //$bancos = parent::webService('servidor','codbanMercurio32','');
+        //foreach($bancos as $mcodban) 
+            //$codban[$mcodban['codban']] = $mcodban['detalle'];
+        $catego = parent::webService('servidor','codigoCategoria',array("codcat"=>$codcat));
+        foreach($catego as $mcatego) 
+            $categoria[$mcatego['codcat']] = $mcatego['detalle'];
+        $cuentas = parent::webService('servidor','codcueMercurio32','');
+        foreach($cuentas as $mcodcue) 
+            $codcue[$mcodcue['codcue']] = $mcodcue['detalle'];
+        $cotiza = parent::webService('servidor','cotizante','');
+        foreach($cotiza as $mcotiza) 
+            $tipcot[$mcotiza['tipcot']] = $mcotiza['detalle'];
+        $today = new Date();
+        $formu ="";
+        $formu .="<div id='TrabajadoresCampos' style='margin: auto;'>";
+        $formu .= Tag::form("id: form-completar","autocomplete: off","enctype: multipart/form-data");
+        $formu .= "<table cellpadding='5'style='width:90%; margin: 5px '> ";
+        $formu .= "<tr>";   
+        $formu .= "<td style='width: 150px;'><label>Código de Sucursal :<label></td>";  
+        $formu .= "<td>".Tag::selectStatic("codsuc",$sucursal,"style: width: 175px","use_dummy: true")."</td>";   
+        $formu .= "<td style='width: 150px'><label>Codigo de Lista :<label></td>";  
+        $formu .= "<td>".Tag::selectStatic("codlis",$lista,"style: width: 175px","use_dummy: true")."</td>";   
+        $formu .="</tr>";
+        $formu .= "<tr>";   
+        $formu .= "<td><label>Codigo Zona :<label></td>";  
+        $formu .= "<td>".Tag::selectStatic("codzon",$codzon,"style: width: 175px","use_dummy: true")."</td>";   
+        $formu .= "<td><label>Sitio :<label></td>";  
+        $formu .= "<td>".Tag::selectStatic("sitio",array("M"=>"Mina","Q"=>"Barranquilla","P"=>"Puerto","B"=>"Bogota"),"style: width: 175px","use_dummy: true")."</td>";   
+        $formu .= "</tr>";    
+        $formu .= "<tr>";   
+        $formu .= "<td><label style='width: 175px;'>Agro :<label></td>";  
+        if($gir=="S"){
+           $arreglo= array("S"=>"SI");
+        }else{
+           $arreglo= array("N"=>"NO");
+        } 
+        $formu .= "<td>".Tag::selectStatic("agro",$arreglo,"style: width: 175px" )."</td>";   
+        $formu .= "<td><label>Giro:<label></td>";   
+        $formu .= "<td>".Tag::selectStatic("giro",array("S"=>"SI","N"=>"NO"),"style: width: 175px","use_dummy: true")."</td>";   
+        $formu .= "</tr>";    
+        $formu .= "<tr>";   
+        $formu .= "<td><label>Tipo de Pago<label></td>";  
+        $formu .= "<td>".Tag::selectStatic("tippag",array("B"=>"Banco","C"=>"Corporacion","G"=>"Grupo","E"=>"Efectivo","T"=>"Tarjeta"),"style: width: 175px","use_dummy: true" )."</td>";   
+        $formu .= "<td><label>Tipo de Cuenta :<label></td>";  
+        $formu .= "<td>".Tag::selectStatic("tipcue",array("A"=>"AHORROS","C"=>"CORRIENTE","E"=>"EFECTIVO"),"style: width: 175px","use_dummy: true" )."</td>";   
+        $formu .= "</tr>";    
+        $formu .= "<tr>";    
+        $formu .= "<td><label>Numero de Cuenta :<label></td>";   
+        $formu .= "<td>".Tag::textField("numcue","style: width: 175px","size: 17")."</td>";   
+        $formu .= "<td><label>Codigo de Cuenta :<label></td>";   
+        $formu .= "<td>".Tag::selectStatic("codcue",$codcue,"style: width: 175px","use_dummy: true")."</td>";   
+        $formu .= "</tr>";    
+        $formu .= "<tr>";   
+        $formu .= "<td><label>Tipo Cotizante :<label></td>";  
+        $formu .= "<td>".Tag::selectStatic("tipcot",$tipcot,"style: width: 175px","use_dummy: true")."</td>";   
+        $formu .= "<td><label>Codigo Categoria :<label></td>";   
+        $formu .= "<td>".Tag::selectStatic("codcat",$categoria,"style: width: 175px","readonly: true")."</td>";   
+        $formu .= "</tr>";    
+        $formu .= "<tr>";   
+        $formu .= "<td><label>Cuadrilla :<label></td>";  
+        $formu .= "<td>".Tag::textField("cuadri","size: 8")."</td>";   
+        //$formu .= "<td><label>Fecha de Aprobacion<label></td>";   
+        //$formu .= "<td>".Tag::textField("fecapr","value: {$today->getUsingFormatDefault()}","size: 11","readonly: true")."</td>";  
+        $formu .= "<td><label>Fecha Salario:<label></td>";  
+        $formu .= "<td>".TagUser::calendar("fecsal","size: 15")."</td>";   
+        $formu .= "</tr>";   
+        $formu .= "<tr>";   
+        $formu .= "<td><label>Fecha de Afiliacion<label></td>";   
+        $formu .= "<td>".TagUser::calendar("fecafi","size: 15")."</td>";   
+        $formu .= "</tr>";   
+        $formu .= "<tr>";  
+        $formu .= "<td><label>Observacion <label></td>";   
+        $formu .= "<td colspan= '5' >".Tag::textArea("observa","cols: 53","rows: 5","size: 18")."</td>";
+        $formu .= "</tr>";  
+        $formu .= "</table>";
+        $formu .= Tag::endForm();
+        $formu .="<table width='85%' >";
+        $formu .= "<tr>";   
+        $formu .= "<td>".Tag::button("Aprobar","class: submit","style: width: 300px; margin-left: 40%","onclick: aprobarF()")."</td>";   
+        $formu .= "</tr>";   
+        $formu .= "</table>";
+        $formu .="</div>";
+        return $this->renderText(json_encode($formu));
+    }
+
+    public function rechazarAction(){
+        try{
+            try{
+                $this->setResponse("ajax");
+                $response = parent::startFunc();
+                $modelos = array("mercurio31");
+                $Transaccion = parent::startTrans($modelos);
+                $mer31 = explode("|",$this->getPostParam("id"));
+                $id = $mer31[0];
+                $nit = $mer31[1];
+                $cedtra = $mer31[2];
+                $datos = preg_split("/\|/",$id);
+                $motivo = $this->getPostParam("motivo");
+                $today = new Date();
+                $funcionario = parent::getActUser('usuario');
+                $this->Mercurio31->updateAll("estado='X',fecest='$today',motivo='$motivo',usuario='$funcionario'","conditions: nit = '{$nit}' AND cedtra = '{$cedtra}' ");
+                $mercurio31 = $this->Mercurio31->findBySql("SELECT * FROM mercurio33 WHERE id='$id'");
+
+                $documento= $mercurio31->getCedtra();
+                $result = parent::webService('autenticar',array("tipo"=>"T","documento"=>$nit));
+                $nombre = $result[0]['nombre'];
+                $mercurio07 = $this->Mercurio07->findBySql("SELECT * FROM mercurio07 WHERE documento='{$nit}'");
+                $email = $mercurio07->getEmail();
+                $asunto = "Rechazo de Actualizacion de Datos";
+                $msg = " Gracias por utilizar el Servicio en L&iacute;nea de Comfamiliar Huila, ha sido validada la Afiliaci&oacute;n , as&iacute;:<br/><br/>
+                    ".$nombre." - Documento: ".$documento."- Estado: Rechazado - por:".$motivo." - el ".$fecha->getUsingFormatDefault()."<br/><br/>         
+                    Por favor complete la informaci&oacute;n que este inconsistente y realice nuevamente el proceso de afiliaci&oacute;n.<br/><br/>
+                    Cualquier inquietud con gusto ser&aacute; atendida por uno de nuestros funcionarios.<br/><br/>
+                    Comfamiliar, m&aacute;s felicidad!!
+                    ";
+                $file = "";
+                parent::enviarCorreo("Rechazo Actualizacion de Datos ", $id, $email, $asunto, $msg, $file);
+                parent::finishTrans();
+                $response = parent::successFunc("Rechazo con exito",null);
+                return $this->renderText(json_encode($response));
+            }catch (DbException $e){
+                parent::setLogger($e->getMessage());
+                parent::ErrorTrans();
+            }
+        }catch (TransactionFailed $e){
+            $response = parent::errorFunc("Error al Rechazar Empresa");
+            return $this->renderText(json_encode($response));
+        }
+    }
+
+    public function aprobarAction(){
+        try{
+            try{
+                $this->setResponse("ajax");
+                $response = parent::startFunc();
+                $modelos = array("mercurio31");
+                $Transaccion = parent::startTrans($modelos);
+                $id = $this->getPostParam("id");
+                $datos = preg_split("/\|/",$id);
+
+                $mercurio31 = $this->Mercurio31->findFirst("nit = '{$datos[0]}' and cedtra = '{$datos[1]}'");
+                $nuevoTra = $mercurio31->getArray();
+                $nuevoTra['codsuc'] = $this->getPostParam("codsuc");
+                $nuevoTra['codlis'] = $this->getPostParam("codlis");
+                $nuevoTra['sitio'] = $this->getPostParam("sitio");
+                $nuevoTra['codzon'] = $this->getPostParam("codzon");
+                $nuevoTra['agro'] = $this->getPostParam("agro");
+                $nuevoTra['giro'] = $this->getPostParam("giro");
+                $nuevoTra['trasin'] = $this->getPostParam("trasin");
+                $nuevoTra['tipcue'] = $this->getPostParam("tipcue");
+                $nuevoTra['vendedor'] = "N"; 
+                $nuevoTra['empleador'] = "N";
+                $nuevoTra['tippag'] = $this->getPostParam("tippag");
+                $nuevoTra['codcat'] = $this->getPostParam("codcat");
+                $nuevoTra['codcue'] = $this->getPostParam("codcue");
+                $nuevoTra['tipcot'] = $this->getPostParam("tipcot");
+                $nuevoTra['numcue'] = $this->getPostParam("numcue");
+                $nuevoTra['autoriza'] = $this->getPostParam("autoriza");
+                $nuevoTra['hora'] = $this->getPostParam("hora");
+                $nuevoTra['cuadri'] = $this->getPostParam("cuadri");
+                $nuevoTra['fecafi'] = $this->getPostParam("fecafi");
+                $nuevoTra['fecsal'] = $this->getPostParam("fecsal");
+                $nuevoTra['nota'] = $this->getPostParam("observa");
+                $result= parent::webservice('insert_serv','ingresarTrabajador',array("nuevoTra"=>$nuevoTra));
+                if($result[0]['res'] == 'false'){
+                    $response = parent::errorFunc("El trabajador ya se encuentra registrado en Subsidio",null);
+                }else{
+                    $user=Auth::getActiveIdentity();
+                    $Log = new Logger("File","{$user['usuario']}.log");
+                    $Log->setFormat("[%date%] %controller%/%action% on %application% Error: %message%");
+                    $file = $this->carta_aprobacionAction($nuevoTra);
+                    $msg = "Buenas tardes {$user['usuario']},<br><br><br><br>Apreciado afiliado:<br>Su afiliaci&oacute;n ha sido aceptada a la Caja de Compensaci&oacute;n Familiar de la Guajira,  Bienvenido a la familia COMFAGUAJIRA, familias felices.<br><br>Adjunto encontrara la carta de aceptaci&oacute;n como afiliado.<br><br>Atentamente,<br><br>Director Administrativo Comfaguajira";
+                    $asunto = "RV: Afiliación de Trabajador";
+
+                    parent::enviarCorreo("Confirmación Trabajador", $datos[1], $mercurio31->getEmail(), "Afiliación de Trabajador", $msg, $file);
+                    $today = new Date();
+                    $this->Mercurio31->updateAll("estado='A',fecest='{$today->getUsingFormatDefault()}'","conditions: nit='{$datos[0]}' and cedtra = '{$datos[1]}'");
+                    parent::finishTrans();
+                    $response = parent::successFunc("Envío de Información Exitosa",null);
+                }
+
+                return $this->renderText(json_encode($response));
+            }catch (DbException $e){
+                parent::setLogger($e->getMessage());
+                parent::ErrorTrans();
+            }
+        }catch (TransactionFailed $e){
+            $response = parent::errorFunc("Error confirmar afiliacion");
+            return $this->renderText(json_encode($response));
+        }
+    }
+
+    public function carta_aprobacionAction($nuevoTra){
+      $today = new Date();
+      $title = "Afiliacion Trabajador";
+      $report = new FPDF("P","mm","A4");
+      $report->AddPage();
+      $report->setX(15);
+      $report->SetFont('Arial','',11);
+      $report->SetTextColor(0);
+      $carta = ""; 
+      $carta .= "\n\n, {$today->getDay()} de {$today->getMonthName()} de {$today->getYear()}.
+          \n\n\n\nSenor:\n{$nuevoTra['priape']} {$nuevoTra['segape']} {$nuevoTra['prinom']} {$nuevoTra['segnom']}\n{$nuevoTra['direccion']}\n{$nuevoTra['codciu']} - COLOMBIA
+          \n\n\nRespetado(a) Señor(a):
+          \n\nEs grato informarles que su solicitud de afiliacion como empleador aportante, cumple con lo dispuesto en la Ley 21 de 1982 y el Decreto Reglamentario 341 de 1988, por lo cual este despecho la aprueba por delegacion expresa del Consejo Directivo de esta Entidad, otorgado al tenor de la normas existentes, en acto celebrado el 12 de mayo de 1988, registrado en Acta 116.
+          \n\nPor lo anterior, pueden Ustedes comenzar a pagar sus aportes a partir de {$nuevoTra['fecafi']},tomando como base la determinado en el Articulo 127 del Codigo Sustantivo de Trabajo, el cual reza:
+          \n\n\"Constituye salario no solo la remuneracion ordinaria, fija o variable, sino todo lo que recibe el trabajador en dinero o en especie como contraprestacion directa del servicio, sea cualquiera la dorma o denominacion que se adopte, como primas, sobresueldos, bonificaciones habituales, valor del trabajo suplementario de las horas extras, valor del trabajo en dias de descanso obligatorio, porcentajes sobre ventas y comisiones\"
+          \n\nLos Empleadores tienen la obligacion de informar oportunamente todo hecho que modifique la calidad de afiliado al regimen del subsidio familiar, respecto de los trabajadores a su servicio. Le adjuntamos los formularios para la afiliacion inmediata de los trabajadores que relaciono debido a que el subsidio familiar monetario se cancela a partir de la afiliacion del trabajador a la Caja y la ley no permite retroactividad.-Decreto 784 de 1989 articulo 2.\n\n";
+      $carta .= "Una vez el trabajador se afilie debe acercarse a retirar la tarjeta donde se le consignara la cuota monetaria.
+          \n\nLa Ley 789 de 2002 establece sanciones con multa sucesivas hasta de mil (1000) salarios minimos mensuales a favor del subsidio al desempleo a los empleadores que incurran en cualquiera de estas conductas: no inscribir en una caja de compensacion familiar a todas las persons con las que tenga vinculacion laboral, siempre que exista obligacion; no pagar cumplidamente los aportes de las cajas y no informar las novedades laborales de sus trabajadores frente a las cajas. Asi mismo debe informar de inmediato los cambios que presente su empresa, tales como direccion, telefono, representante legal etc.
+          \n\nCancele oportunamente los aportes parafiscales a traves de planilla unica o asistida dentro del plazo estipulado por la ley de acuerdo al ultimo digito del NIT -Decreto 1464 de 2005-. Evitese el cobro de intereses por mora -Ley 1066 de 2006- y las sanciones previstas en la ley.
+          \n\nCuando un trabajador quede cesante, debe acercarse a retirar el formulario para aspirar al subsidio de desempleo.
+          \n\n\nCordialmente,
+          \n\n\n\n
+          \nDirector Administrativo
+          ";
+      
+      $report->MultiCell(0,4,UTF8_DECODE($carta),0,"J",0);
+      $report->Ln();
+      $report->Ln();
+      $report->setX(15);
+      $report->Cell(100,4,"Esta certificacion se expide en RIOHACHA a solicitud del interesado el dia {$today->getDay()} de {$today->getMonthName()} de {$today->getYear()}. ",0,0,"L",0,0);
+      $report->Ln();
+      $file = "public/temp/reportes/reporte_aprobacion_".$nuevoTra['cedtra'];
+      if(file_exists($file."pdf")) unlink($file.".pdf");
+      ob_end_clean();
+      echo $report->Output($file.".pdf","F");
+      $this->setResponse('view');
+      return $file.".pdf";
+    }
+
+public function verdocumentosAction(){
+        $this->setResponse("ajax");
+        $trabajador= $this->getPostParam("trabajador");
+        $mercurio38 = $this->Mercurio38->find("numero = '$trabajador'");
+        $mercurio31 = $this->Mercurio31->findFirst("id = '$trabajador'");
+        $lista = "";
+        $lista .= "<table class='resultado-consul' style='width: 100%; border: 1px double #000; border-collapse: separate; margin: auto;'>";
+        $nombre=$mercurio31->getPriape().$mercurio31->getSegape().$mercurio31->getPrinom().$mercurio31->getSegnom();
+        $lista .= "<thead><tr><th colspan='2' style='text-align: left; font-size: 1.2em; height: 20px;'>Trabajador:$nombre </th></tr></thead>";
+        $lista .= "<thead><tr style='background-color: #959595; font-size: 1.2em;'>";
+        $lista .= "<th style='height: 18px;'>Item</th><th>Archivo</th>";
+        $lista .= "<th>&nbsp;</th>";
+        $lista .= "</tr></thead>";
+        $item = 1;
+        foreach($mercurio38 as $mmercurio38){
+            $mercurio12 = $this->Mercurio12->findFirst("coddoc = '{$mmercurio38->getCoddoc()}'");
+            $lista .= "<tr>";
+            $lista .= "<td>{$item}</td>";
+            $lista .= "<td class='list-arc'>{$mercurio12->getDetalle()}</td>";
+            $lista .= "<td><a target='_blank' href='../{$mmercurio38->getNomarc()}'>".Tag::image("desktop/search.png","width: 25px", "height: 25px", "style: cursor: pointer;")."</a></td>";
+            $lista .= "</tr>";
+            $item++;
+        }
+        $lista .= "</table>";
+        return $this->renderText(json_encode($lista));
+    }
+}
+?>

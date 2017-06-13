@@ -1,0 +1,58 @@
+<?php View::getContent(); ?>
+<script>
+    buscar = function(){
+      if($F('ano') == ""){
+        $('ano').focus();
+        Messages.display("Por favor digite el a&ntilde;o por el cual se quiere buscar","warning");
+        return;
+      }else{
+        var ano = $F('ano');
+        new Ajax.Request(Utils.getKumbiaURL("subsidio/kitEscolarEmp"), {
+          parameters: {
+            ano: ano
+          },
+          onSuccess: function(transport){
+            response = transport.responseText.evalJSON();
+          $('consulta').innerHTML= response;  
+           if(response == false){
+                 Messages.display("El a&ntilde;o ingresado no existe, digite un a&ntilde;o valido","warning");
+            }
+          },
+          onFailure: function(transport){
+            alert(transport.responseText);
+          }
+        });
+       }
+    }
+valano = function(){
+    if($F('ano').length <='3'){
+        Messages.display("El a&ntilde;o ingresado no es valido, digite un a&ntilde;o valido","warning");
+        $('ano').value="";
+        $('ano').focus();
+    }
+}
+</script>
+<?php echo Tag::form(Router::getController()."/kitEscolarEmp","id: form","autocomplete: off","enctype: multipart/form-data"); ?>
+<div>
+<table style="border-collapse: separate; border-spacing: 5px;" width="95%">
+<tr>
+    <td align="center">
+        <table width="80%">
+            <tr>
+                <td align='right' width="31%"><label>A&ntilde;o:</label></td>
+                <td align='center' width="110px"><?php echo Tag::numericField("ano","style: width: 100px; ","onchange: valano()","maxlength: 4"); ?></td>
+                <td  width="200px"><?php echo Tag::Button("Consultar Subsidio Escolar",'class: submit','style: width: 200px; height: 24px;',"onclick: buscar();") ?></td>
+            </tr>
+            <tr>
+                <td colspan="4" align="center">
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>    
+    <tr>
+            <td id='consulta'> </td>  
+    </tr>
+</table>
+</div>
+<?php echo Tag::endForm(); ?>

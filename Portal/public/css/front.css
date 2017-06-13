@@ -1,0 +1,143 @@
+.link_table{
+    cursor: pointer;
+}
+
+.link_table:hover{
+    text-decoration: underline;
+}
+
+.header_table th{
+    background: #BCBCBC;
+}
+
+.table_resul th{
+    padding: 5px;
+}
+
+.table_resul td{
+    border: 1px solid #2E94CB;
+    padding: 5px;
+}
+
+.table_resul tr:nth-child(even){
+    background: #EAEAEA;
+}
+
+#tr_resul:hover{
+    background: #CEE7F4;
+}
+
+.header_oculta{
+    background: #D7D7D7;
+}
+
+.bt_seguimiento{
+    font-size: 1em;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.bt_seguimiento:hover{
+    cursor: pointer;
+}
+
+#tr_resul_asigna:hover{
+    background: #CEE7F4;
+}
+
+#tr_resul_empleabilidad:hover{
+    background: #CEE7F4;
+}
+
+#tr_resul_empleabilidad_v:hover{
+    background: #CEE7F4;
+}
+
+.bt_todos{
+    padding: 5px;
+    background: #FFF;
+    border-radius: 4px;
+}
+
+.bt_todos:hover{
+    cursor: pointer;
+}
+
+
+
+.front_principal{
+    background: red;
+    height: 100%;
+}
+
+.front_header{
+    border: 1px solid #4B7621;
+    border-radius: 5px 5px 0px 0px;
+    cursor: pointer;
+    float: left;
+    font-size: 1em;
+    height: 30px;
+    margin-left: 2px;
+    padding-top: 10px;
+    text-align: center;
+    width: 107px;
+}
+
+.front_body{
+    height: 90%;
+    margin: 10px auto;
+}
+
+.bt-back{
+    background: #FFF;
+    color: #4B7621;
+}
+
+.bt-back-sec{
+    background: #4B7621;
+    color: #FFF;
+
+}
+
+/* Estilo para las tablas de resultado*/
+
+#consulta {
+    margin-bottom: 10px;
+}
+#consulta thead{
+    background: silver;
+}
+#consulta tbody tr {
+    cursor: pointer;
+}
+#consulta tbody tr:nth-child(odd){
+    border:  1px solid #FFFFFF;
+    background: #FFFFFF;
+}
+#consulta tbody tr:nth-child(even){
+    border:  1px solid #EAEAEA;
+    background: #EAEAEA;
+}
+#consulta tbody tr:hover{
+    border:  1px solid #CEE7F4;
+    background: #CEE7F4;
+}
+#consulta th, #consulta td{
+    padding: 3px 4px;
+}
+#consulta td{
+    border: 1px solid #2E94CB;
+    padding-left: 3px;
+}
+
+
+/* Fin de estilo para tablas de resultado*/
+
+@media screen and (min-width:1400px){
+    .front_header{
+        font-size: 0.8em;
+    }
+}
+

@@ -1,0 +1,34 @@
+<?php echo View::getContent(); ?>
+<script>
+  desFormulario = function(){
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("vivienda/certLeg"),
+                data: {
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response['flag']==true){
+                    Messages.display(Array(response['msg']),"success");
+                win = window.open(Utils.getKumbiaURL("../"+response['data']),"Descarga", 'width=800, height=750, toolbar=no, statusbar=no, scrollbars=yes, Menubar=yes');
+                }else{
+                    Messages.display(Array(response['msg']),"warning");
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+  }
+</script>
+
+
+<!--<script>
+  desFormulario = function(){
+    win = window.open($Kumbia.path+"public/docs/vivienda/certLeg.pdf","Descarga_credito", 'width=800, height=750, toolbar=no, statusbar=no, scrollbars=yes, Menubar=yes');
+  }
+</script>-->
+<br>
+<div align="center">
+<?php echo Tag::button("Descargar Certificado de Legalizaci&oacute;n","class: btn btn-success","onclick: desFormulario();"); ?>
+</div>

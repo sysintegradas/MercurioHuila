@@ -1,0 +1,236 @@
+<?php View::getContent(); ?>
+<script>
+$(document).ready(function(){   
+        $('#modalInfo').modal('show')
+    calendars();
+    $('[data-toggle="tooltip"]').tooltip();
+});
+    $("#form").validate({
+        rules: {
+            cedtra: { required:true},
+            coddoc: { required:true},
+        },
+    });
+    buscar = function(){
+        if(!$("#form").valid()){
+            Messages.display("Faltan Campos por Digitar","error");
+            return;
+        }
+        if($("#codest").val()==""){
+            Messages.display("El codigo de estado no puede ser vacio","warning");
+        }else{
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("subsidio/novret"),
+                data: {
+                    cedtra: $('#cedtra').val(),
+                    coddoc: $('#coddoc').val(),
+                }
+            });
+            request.done(function( transport ) {
+                //var response = transport;
+                var response = jQuery.parseJSON(transport);
+                if(response['flag'] == true){
+                    $("#trabajador").html(response['data']['response']); 
+                    $("#nomtra").val(response['data']['nombre']); 
+                    $("#fecafi").val(response['data']['fecafi']); 
+                    //console.log(response['data']);
+                }else{
+                    Messages.display(response['msg'],"warning");
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+    }
+
+    retirar = function(){
+        $('#fecret').attr("disabled",false);
+      if($('#cedtra').val() == "" || $('#coddoc').val()=="" || $('#codest').val()=="@" || $('#fecret').val()=="" || $('#nota').val()==""){
+          $('#cedtra').focus();
+          Messages.display("Faltan campos por digitar","warning");
+      }else{
+          if($("#fecret").val() < $("#fecafi").val()){
+            Messages.display("La Fecha de retiro no puede ser menor a la Fecha de ingreso","warning");
+            return;
+          }
+        var cedtra = $('#cedtra').val();
+        var codest = $('#codest').val();
+        var fecret = $('#fecret').val();
+        var nota = $('#nota').val();
+        var codare = $('#codare').val();
+        var codope = $('#codope').val();
+        var nomtra = $('#nomtra').val();
+        var adjnov = $('#adjnov').val();
+        var fecreti =new Date($('#fecret').val());
+        var fecha = new Date();
+        fecha.setMonth(fecha.getMonth()+1);
+        if(fecreti > fecha){
+            $("#fecret").val("");
+            $("#fecret").focus();
+            Messages.display("La fecha de retiro no puede ser mayor a la actual","warning");
+            return
+        var fecafi =new Date($('#fecafi').val());
+        var fecreti =new Date($('#fecret').val());
+        }else if(fecreti < fecafi){
+            $("#fecret").val("");
+            $("#fecret").focus();
+            Messages.display("La fecha de retiro no puede ser menor a la fecha de ingreso","warning");
+            return
+        }else{
+            if($('#adjnov').val() == ''){
+                Messages.display("Se debe anexar el Documento","warning");
+                return;
+            }
+            $('#form').submit();
+            //traerOpcion('subsidio/novret_view',this,'SU','29');
+            /*
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("subsidio/retirar"),
+                data: {
+                    cedtra :cedtra,
+                    codest :codest,
+                    fecret :fecret,
+                    nota   :nota,
+                    codare :codare,
+                    codope :codope,
+                    nomtra :nomtra,
+                    adjnov :adjnov,
+                }
+            });
+            request.done(function( transport ) {
+                //var response = transport;
+                var response = jQuery.parseJSON(transport);
+                if(response['flag'] == true){
+                         Messages.display("La transacion fue exitosa ","success");
+                         $('#trabajador').html('');
+                         $('#cedtra').val("");
+                         $('#codest').val("@");
+                         $('#fecret').val("");
+                         $('#nota').val("");
+                         $('#nota').val("");
+                         $('#adjnov').val('');
+                   }else{
+                         Messages.display(response['msg'],"warning");
+                   }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        */
+        }
+    }
+}
+
+    function fecretiro(){
+        var fecret =new Date($('#fecret').val());
+        var fecha = new Date();
+        if(fecret > fecha){
+            $("#fecret").val("");
+            $("#fecret").focus();
+            Messages.display("La fecha de retiro no puede ser mayor a la actual","warning");
+        }
+    }
+
+function anuafi(){
+    if($("#codest").val() == "4532"){
+        $("#fecret").val($("#fecafi").val());
+        $("#fecret").attr("disabled",true);
+    }else{
+        $("#fecret").attr("disabled",false);
+    }
+}
+</script>
+
+<?php echo Tag::form(Router::getController()."/retirar","id: form","autocomplete: off","enctype: multipart/form-data"); ?>
+<div style='min-height: 310px'>
+    <table class='table table-bordered'>
+        <tr><td> Los Anexos o Archivos adjuntos se indicaran seleccionando el boton Informaci&oacute;n. </td></tr>
+    </table>
+    <table style="margin: auto; border-collapse: separate; border-spacing: 5px;">
+      <tr>
+
+    <td align='center'><label>Tipo Documento:</label></td>
+        <td>
+            <div class="input-group" >
+                <?php echo Tag::selectStatic("coddoc",$coddoc,"use_dummy: true","class: form-control","style: width: 90%;","dummyValue: "); ?>
+            </div>
+        </td>
+
+        <td align='center'><label>Cédula:</label></td>
+        <td>
+            <div class="input-group" >
+                <div class="input-group-addon"  ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"  data-toggle="tooltip" title="Debe ingresar el n&uacute;mero de cedula del trabajador"  ></span></div>
+                <?php echo Tag::numericField("cedtra","class: form-control col-sm-10","style: margin-left: -3%; ","maxlength: 11"); ?>
+            </div>
+        </td>
+        <td><?php echo Tag::Button("Buscar",'class: btn btn-success','style: margin-top:5%; margin-left:25%; ',"onclick: buscar();") ?></td>
+      </tr>
+    </table>
+    <table style="margin: auto; border-collapse: separate; border-spacing: 5px;">
+      <tr>
+         <td id='trabajador'> </td>  
+      </tr>
+    </table>
+    <table style="margin: auto; border-collapse: separate; border-spacing: 5px;">
+      <tr>
+        <td><label>Codigo de Estado:</label></td>
+        <!-- <td><?php echo Tag::selectStatic("codest",$codest,"style: width: 140px;","class: form-control","use_dummy: true"); ?></td> -->
+        <td><?php echo Tag::select("codest",$Migra091->find("iddefinicion = '47'"),"using: iddetalledef,detalledefinicion","style: width: 140px;","class: form-control","use_dummy: true","onchange: anuafi()"); ?></td>
+        <td><label>Fecha de Retiro:</label></td>
+        <td><?php echo TagUser::calendar("fecret","class: form-control","onchange: fecretiro()","readonly: readonly"); ?></td>
+      </tr>
+    </table>
+    <table style="margin: auto; border-collapse: separate; border-spacing: 5px;">
+      <tr colspan=4>
+        <td align='center'><label>Nota : </label></td>
+        <td><?php echo Tag::textArea("nota","cols: 50","rows: 5","class: form-control");?></td>
+      </tr>
+        <tr>
+            <td><label>Anexo</label></td>
+            <td colspan='2'><?php echo Tag::fileField("adjnov","accept: image/png, application/pdf"); ?></td>
+        </tr>
+    </table>
+    <table style="margin: auto; border-collapse: separate; border-spacing: 5px;">
+      <tr colspan=4>
+        <?php echo Tag::hiddenField("codare","value: $codare"); ?>
+        <?php echo Tag::hiddenField("codope","value: $codope"); ?>
+        <?php echo Tag::hiddenField("nomtra"); ?>
+        <?php echo Tag::hiddenField("fecafi"); ?>
+        <td><?php echo Tag::Button("Retirar",'style: margin-top:5%; margin-left:25%;',"class: btn btn-primary","onclick: retirar();") ?></td>
+        <td>
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modalInfo"  style='margin-top: 5%;  margin-left:25%;'>Informaci&oacute;n</button>
+        </td>
+      </tr>
+    </table>
+</div>
+<?php echo Tag::endForm(); ?>
+    <div class="modal fade" id="modalInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">    
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title barra barra-center" id="myModalLabel">Informaci&oacute;n</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="width: 80%; margin-left: auto; margin-right: auto;";>
+                        <form class="form-horizontal" >
+                            <div class="form-group">
+                            <p style="text-align: justify;">Se&ntilde;or empresario, con el fin de tramitar las novedades de retiro por sus trabajadores, deber&aacute; anexar la siguiente documentaci&oacute;n:
+                            <ul style='margin-left:15px;'><li type="disc" style="text-align: justify;">Novedad de retiro marcada en planilla &uacute;nica.</li></ul></p>
+                            <br>
+                            <p style="text-align: justify;">En caso de no haber marcado la respectiva novedad por medio de la planilla &uacute;nica anexar los siguientes soportes:
+                            <ul style='margin-left:15px;'><li type="disc" style="text-align: justify;">Terminaci&oacute;n de contrato y/o Liquidaci&oacute;n de prestaciones sociales.</li></ul></p>
+                            <br>
+                            <p style="text-align: justify;">Si el trabajador se traslada de ciudad de trabajo sin perder el v&iacute;nculo laboral con su empresa, debe informar a esta Caja de compensac&oacute;on familiar la fecha del traslado, junto con el certificado de afiliaci&oacute;n a la nueva Caja de Compensaci&oacute;n Familiar.</p>
+                            </div>
+                        </form>
+                    </div >
+                </div>
+            </div>
+        </div>
+    </div>

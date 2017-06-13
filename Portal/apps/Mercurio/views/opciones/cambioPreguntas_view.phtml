@@ -1,0 +1,81 @@
+<?php echo View::getContent(); ?>
+<script type="text/javascript">
+    changeSelect();
+    var val = new Validator();
+    val.addField("clave","text",null,{'alias': 'Clave','isNull': false,'doToUpperCase': false});
+    val.addField("pregunta1","select",null,{'alias': 'Pregunta 1','isNull': false,'doToUpperCase': false});
+    val.addField("pregunta2","select",null,{'alias': 'Pregunta 2','isNull': false,'doToUpperCase': false});
+    val.addField("respuesta1","text",null,{'alias': 'Respuesta 1','isNull': false,'doToUpperCase': false});
+    val.addField("respuesta2","text",null,{'alias': 'Respuesta 2','isNull': false,'doToUpperCase': false});
+
+    Guardar = function(){
+        if(!val.valide()){
+            Messages.valide(val);
+            return;
+        }
+        if($F('pregunta1')==$F('pregunta2')){
+          Messages.display(Array("Las Preguntas no pueden ser las mismas"),"warning");
+          return;
+        }
+        if($F('respuesta1')==$F('clave') || $F('respuesta2')==$F('clave')){
+          Messages.display(Array("Las Preguntas no pueden ser la misma que la clave"),"warning");
+          return;
+        }
+        new Ajax.Request(Utils.getKumbiaURL("opciones/cambioPreguntas"), {
+            asynchronous : false,
+            parameters: {
+                clave: $F('clave'),
+                pregunta1: $F('pregunta1'),
+                respuesta1: $F('respuesta1'),
+                pregunta2: $F('pregunta2'),
+                respuesta2: $F('respuesta2')
+            },
+            onSuccess: function(transport){
+                response = transport.responseText.evalJSON();
+                if(response['flag']==true){
+                    Messages.display(Array(response['msg']),"success");
+                    $('clave').value ="";
+                    $('pregunta1').value ="@";
+                    $('pregunta2').value ="@";
+                    $('respuesta1').value ="";
+                    $('respuesta2').value ="";
+                    actualizar_select("pregunta1");
+                    actualizar_select("pregunta2");
+                }else{
+                    Messages.display(Array(response['msg']),"warning");
+                }
+            },
+            onFailure: function(transport){
+                alert(transport.responseText);
+            }
+        });
+    }
+ </script>
+
+<?php echo Tag::form("","autocomplete: off"); ?>
+<div align='center'>
+    <table align='center'>
+        <tr>
+            <td colspan="2">&nbsp;</td>
+        </tr>
+        <tr>
+            <td align="right"><b>Clave:</b></td>
+            <td align="left"><?php echo Tag::passwordField("clave") ?></td>
+        </tr>
+        <tr>
+          <td align="right"><?php echo Tag::select("pregunta1",$Mercurio18->find(),"using: codigo,detalle","use_dummy: true","dummyText: Pregunta 1"); ?> ?</td>
+          <td align="left"><?php echo Tag::textField("respuesta1","placeholder: Respuesta 1") ?></td>
+        </tr>
+        <tr>
+          <td align="right"><?php echo Tag::select("pregunta2",$Mercurio18->find(),"using: codigo,detalle","use_dummy: true","dummyText: Pregunta 2"); ?> ?</td>
+          <td align="left"><?php echo Tag::textField("respuesta2","placeholder: Respuesta 2") ?></td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td colspan="2" align="center"><?php echo Tag::button("Cambiar Preguntas","class: submit","onclick: Guardar();") ?></td>
+        </tr>
+    </table>
+</div>
+<?php echo Tag::endForm(); ?>

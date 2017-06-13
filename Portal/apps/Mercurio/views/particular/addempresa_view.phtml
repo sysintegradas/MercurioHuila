@@ -1,0 +1,1213 @@
+<?php echo View::getContent(); ?>
+
+<script type="text/javascript">
+$(document).ready(function(){   
+        $('#modalInfo').modal('show');
+        calendars();
+        digito();
+        $('.ocl_rep').hide();
+});
+    verHabeas = function(){
+        $('#marc_habeas').show();
+    }
+    oculHabeas = function(res){
+        $('#marc_habeas').hide();
+        $('#autoriza').val(res);
+        actualizar_select('autoriza');
+    }
+    $("#form").validate({
+        rules: {
+             nit: { required:true},
+             digver: { required:true},
+             razsoc: { required:true},
+             coddoc: { required:true},
+             codciu: { required:true},
+             direccion: { required:true},
+             telefono: { required:true},
+             //fax: { required:true},
+             email: { required:true},
+             codact : { required:true},
+             tottra : { required:true},
+             totnom : { required:true},
+             calemp : { required:true},
+             tipemp : { required:true},
+             cedrep : { required:true},
+             nomrep : { required:true},
+             autoriz: { required:true},
+             tipsoc : { required:true},
+             coddocr: { required:true},
+             codciu : { required:true},
+             soceco : { required:true},
+             codcius: { required:true},
+             valnomcau: { required:true},
+             cargo: { required:true},
+        },
+    });
+
+    Guardar = function(){
+        if(!$("#form").valid()){
+            Messages.display("Faltan Campos por Digitar","error");
+            return;
+        }
+    }
+    
+    Reporte = function(){
+        if(!$("#form").valid()){
+            Messages.display("Faltan Campos por Digitar","error");
+            return;
+        }
+        $('#form').submit();
+    }
+    
+    tipSoc = function(){
+        var tipo = $("#tipsoc").val();
+        if(tipo == 2){
+            $(".adjuntos_ex").show();
+        }else if(tipo == 1){
+            $(".adjuntos_ex").hide();
+        }
+    }
+    adjuntos = function(){
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("particular/adjunto"),
+            data: $("#form").serialize(),
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            if(response != false){
+                $('.ocl_tr').show();
+                $('#adjuntos').html(response);
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+
+modcod = function(){
+    $('#modalDocumentos').modal('show');
+}
+downloadFormulario = function(){
+    $('#modalDocumentos').modal('toggle');
+    if(!$("#form").valid()){
+        Messages.display("Faltan Campos por Digitar","error");
+        return;
+    }
+    var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("particular/addempresa_report"),
+            data: $("#form").serialize(),
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            if(response['flag']==true){
+                win = window.open(Utils.getKumbiaURL("../"+response['data']),"Descarga", 'width=800, height=750, toolbar=no, statusbar=no, scrollbars=yes, Menubar=yes');
+                    $('#formafi').val(response['data']);
+                adjuntos();    
+            }else{
+              $('.ocl_tr').hide();
+              Messages.display(Array(response['msg']),"warning");
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+    
+    addFormulario = function(){
+        if(!$("#form").valid()){
+            Messages.display("Faltan Campos por Digitar","error");
+            return;
+        }else{
+            if($('#tipsoc').val() == '102' && $('#coddoc').val() != '5'){
+                Messages.display("Una persona juridica no puede tener un documento diferente a nit","warning");
+                return;
+            }
+            var feccon =new Date($('#feccon').val());
+            var fecha = new Date();
+            if(feccon > fecha){
+                $("#feccon").val("");
+                $("#feccon").focus();
+                Messages.display("La fecha de constituci&oacute;n no puede ser mayor a la actual","warning");
+                return;
+            }
+            if($('#archivo_2') != undefined){
+                if($('#archivo_2').val() == ''){
+                    Messages.display("Se debe anexar el Documento de Identidad","warning");
+                    return;
+                }
+            }if($('#archivo_5') != undefined){
+                if($('#archivo_5').val() == ''){
+                    Messages.display("Se debe anexar el CARTA SUSTENTANDO AFILIACION DE LA EMPRESA","warning");
+                    return;
+                }
+            }
+            if($('#archivo_4') != undefined){
+                if($('#archivo_4').val() == ''){
+                    Messages.display("Se debe anexar el RELACION DE TRABAJADORES Y SALARIOS O NOMINA","warning");
+                    return;
+                }
+            }if($('#archivo_3') != undefined){
+                if($('#archivo_3').val() == ''){
+                    Messages.display("Se debe anexar el PAZ Y SALVO VINCULACION ANTERIOR A CCF","warning");
+                    return;
+                }
+            }if($('#archivo_6') != undefined){
+                if($('#archivo_6').val() == ''){
+                    Messages.display("Se debe anexar el FOTOCOPIA DEL RUT","warning");
+                    return;
+                }
+            }if($('#archivo_7') != undefined){
+                if($('#archivo_7').val() == ''){
+                    Messages.display("Se debe anexar el CERTIFICADO DE EXISTENCIA Y REPRESENTACION LEGAL","warning");
+                    return;
+                }
+            }if($('#archivo_8') != undefined){
+                if($('#archivo_8').val() == ''){
+                    Messages.display("Se debe anexar el FOTOCOPIA DE LA PERSONERIA JURIDICA","warning");
+                    return;
+                }
+            }if($('#archivo_9') != undefined){
+                if($('#archivo_9').val() == ''){
+                    Messages.display("Se debe anexar el CERTIFICADO DE LA SUPERINTENDENCIA DE LA ECONOMIA SOLIDARIA","warning");
+                    return;
+                }
+            }if($('#archivo_10') != undefined){
+                if($('#archivo_10').val() == ''){
+                    Messages.display("Se debe anexar el ACTA DE NOMBRAMIENTO DEL ADMINISTRADOR ACTUAL","warning");
+                    return;
+                }
+            }if($('#archivo_11') != undefined){
+                if($('#archivo_11').val() == ''){
+                    Messages.display("Se debe anexar el ACTA DE ACUERDO DE LA CONFORMACION DE LA ENTIDAD","warning");
+                    return;
+                }
+            }
+            $('#form').submit();
+        }
+    }
+
+    traerNit = function(){
+    if($('#nit').val() == ""){
+        $('#nit').focus();
+        Messages.display("Por favor digite el nit de la empresa a afiliar ","warning");
+      }else{
+        var nit = $('#nit').val();
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("particular/validaNit"),
+            data: {
+                nit: nit,
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            if(response == false){
+                $('#nit').val("");
+                $('#nit').focus();
+                Messages.display("El Nit digitado ya existe","warning");
+            }else{
+                traerDigver();
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+      }
+    }
+
+    traerDigver = function(){
+      if($('#nit').val() == ""){
+            $('#nit').focus();
+            Messages.display("Por favor digite el nit de la empresa a afiliar ","warning");
+      }else{
+        var nit = $('#nit').val();
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("particular/digver"),
+            data: {
+                nit :nit,
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            $('digver').value = response;
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+      }
+    }
+    //traerDigver();
+
+    valida= function(){
+        var flag = true;
+        $("input[type='file']").each(function(elem){
+                if($(elem)==""){
+                    $(elem).focus();
+                    Messages.display("Por favor adjunte los archivos solicitados ","warning");
+                    flag=false;
+                }
+        });
+        return flag;
+    }
+
+    validaCalemp = function(){
+        if($('#calemp').val()=="E"){
+            if($('#coddoc').val()=="2"||$('#coddoc').val()=="5"||$('#coddoc').val()=="6"||$('#coddoc').val()=="7"){
+            Messages.display("El tipo de documento no concuerda con el tipo de afiliacion.","warning");
+            //$('#coddoc').val('@');
+            //$('#coddoc').focus();
+        } 
+    }if($('calemp').val()=="D"){
+        if($('#coddoc').val()=="2"||$('#coddoc').val()=="3"||$('#coddoc').val()=="5"||$('#coddoc').val()=="6"){
+            Messages.display("El tipo de documento no concuerda con el tipo de afiliacion.","warning");
+            //$('#coddoc').val('@');
+            //$('#coddoc').focus();
+        } 
+    } 
+    }
+/*validaPymes = function(){
+    if($F('tottra')==""){
+            Messages.display("Debe ingresar el total de trabajadores.","warning");
+            $('tottra').focus();
+        if($F('totnom')=="" ){
+            Messages.display("Debe ingresar el total de la nomina.","warning");
+            $('totnom').focus();
+        }
+    }
+    if($F('tottra')<"51"&&$F('totnom')<"3221750001"){
+        $('pymes').value='S';
+    }else{
+        $('pymes').value='N';
+    } 
+}*/
+
+    traerCiudad = function(){
+        if($('#depart').val() == ""){
+            $('#departn').focus();
+                Messages.display("Por favor seleccionar el departamento de nacimiento. ","warning");
+        }else{
+            var coddep = $('#depart').val();
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("particular/traerCiudad"),
+                data: {
+                    coddep :coddep,
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response != false){
+                    $('#codciu').html(response);
+                    $('#codciu').trigger("chosen:updated");
+                    $('#codciu').focus();
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+    }
+    
+    traerCiudad2 = function(){
+        if($('#departen').val() == ""){
+            $('#departen').focus();
+                Messages.display("Por favor seleccionar el departamento de nacimiento. ","warning");
+        }else{
+            var coddep = $('#departen').val();
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("particular/traerCiudad"),
+                data: {
+                    coddep :coddep,
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response != false){
+                    $('#codciuen').html(response);
+                    $('#codciuen').trigger("chosen:updated");
+                    $('#codciuen').focus();
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+    }
+    
+    traerCiudad2 = function(){
+        if($('#departen').val() == ""){
+            $('#departen').focus();
+                Messages.display("Por favor seleccionar el departamento de nacimiento. ","warning");
+        }else{
+            var coddep = $('#departen').val();
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("particular/traerCiudad"),
+                data: {
+                    coddep :coddep,
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response != false){
+                    $('#codciuen').html(response);
+                    $('#codciuen').trigger("chosen:updated");
+                    $('#codciuen').focus();
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+    }
+
+    traerCiudadSuc = function(){
+        if($('#departs').val() == ""){
+            $('#departs').focus();
+                Messages.display("Por favor seleccionar el departamento de nacimiento. ","warning");
+        }else{
+            var coddep = $('#departs').val();
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("particular/traerCiudad"),
+                data: {
+                    coddep :coddep,
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response != false){
+                    $('#codcius').html(response);
+                    $('#codcius').trigger("chosen:updated");
+                    $('#codcius').focus();
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+    }
+
+    validadoc = function(){
+        if($('#coddocr').val() == 'T'){
+            if($('#cedrep').val().length > 9 || $('#cedrep').val().length < 12){
+                $('#cedrep').val('');
+                $('#coddocr').val('@');
+                $('#cedrep').focus();
+                Messages.display("Los datos ingresados no concuerdan con los de la tarjeta de identidad.","warning");
+            }
+        }
+        if($('#coddocr').val() == 'C'){
+            if($('#cedrep').val().length < 3 || $('#cedrep').val().length > 10){
+                $('#cedrep').val('');
+                $('#coddocr').val('@');
+                $('#cedrep').focus();
+                Messages.display("Los datos ingresados no concuerdan con los de una cedula de ciudadania.","warning");
+            }
+        }
+        if($('#coddocr').val() == 'E'){
+            if($('#cedrep').val().length < 7){
+                $('#cedrep').val('');
+                $('#coddocr').val('@');
+                $('#cedrep').focus();
+                Messages.display("Los datos ingresados no concuerdan con los de una cedula extranjera.","warning");
+            }
+        }
+        if($('#coddocr').val() == 'P'){
+            if($('#cedrep').val().length < 17){
+                $('#cedrep').val('');
+                $('#coddocr').val('@');
+                $('#cedrep').focus();
+                Messages.display("Los datos ingresados no concuerdan con los de un pasaporte.","warning");
+            }
+        }
+    }
+/*
+valtipdoc = function(){
+    $('coddoc').select('option').each(function(e){$(e).writeAttribute('disabled');})
+    if($F('nit').length > 2 && $F('nit').length < 9 || $F('nit').length == 10 ){
+        $('coddoc').select('option').each(function(e){
+            if($(e).value=='1')$(e).removeAttribute('disabled');
+        })
+    }
+    if($F('nit').length == 8 || $F('nit').length == 10  || $F('nit').length == 11 ){
+        $('coddoc').select('option').each(function(e){
+            if($(e).value=='5')$(e).removeAttribute('disabled');
+        })
+    }
+    if($F('nit').length == 10 || $F('nit').length == 11){
+        $('coddoc').select('option').each(function(e){
+            if($(e).value=='2')$(e).removeAttribute('disabled');
+        })
+    }
+    if($F('nit').length < 18 && $F('nit').length > 0 ){
+        $('coddoc').select('option').each(function(e){
+            if($(e).value=='7')$(e).removeAttribute('disabled');
+        })
+    }
+    if($F('nit').length < 8 && $F('nit').length > 0){
+        $('coddoc').select('option').each(function(e){
+            if($(e).value=='4')$(e).removeAttribute('disabled');
+        })
+    }
+    if($F('nit').length == 9 ){
+        $('coddoc').select('option').each(function(e){
+            if($(e).value=='3')$(e).removeAttribute('disabled');
+        })
+    }
+}
+valtipdoc();
+*/
+/*
+    camtipaf = function(){
+        if( $('#codact').val()==9700){
+            $('#calemp').val('D');
+            $('#calemp').disable();
+        }
+    }
+    */
+
+    iguala = function(celular,telefono){
+        $('#celsub').val(celular);
+        $('#telsub').val(telefono);
+        $('#docadm').val($('#coddocr').val());
+        $('#cedadm').val($('#cedrep').val());
+        $('#nomsub').val($('#nomrep').val());
+        //$('#telsub').val($('#telefono').val());
+        $('#emailsub').val($('#email').val());
+        $('#priapea').val($('#priape').val());
+        $('#segapea').val($('#segape').val());
+        $('#prinoma').val($('#prinom').val());
+        $('#segnoma').val($('#segnom').val());
+        $('#sexoa').val($('#sexo').val());
+        $('#fecnaca').val($('#fecnac').val());
+    }
+
+    uneDireccion= function(){
+        $('#direccion_online').val( $('#prim').val()+" "+$('#segu').val()+" "+$('#ter').val()+" "+$('#cuar').val()+" "+$('#quin').val()+" # "+$('#seis').val()+" "+$('#siete').val()+" "+$('#ocho').val()+" - "+$('#nue').val()+" "+$('#diez').val()+" "+$("#once").val());
+    }
+
+    confirmarDireccion = function(campo_direccion){
+        if($('#segu').val()==""){
+            $('#segu').focus();
+            Messages.display("Por favor digitar el campo. ","warning");
+            return;
+        }
+        if($('#seis').val()==""){
+            $('#seis').focus();
+            Messages.display("Por favor digitar el campo. ","warning");
+            return;
+        }
+        if($('#diez').val()==""){
+            $('#diez').focus();
+            Messages.display("Por favor digitar el campo. ","warning");
+            return;
+        }
+        $("#"+campo_direccion).val($('#prim').val()+" "+$('#segu').val()+" "+$('#ter').val()+" "+$('#cuar').val()+" "+$('#quin').val()+" # "+$('#seis').val()+" "+$('#siete').val()+" "+$('#ocho').val()+" - "+$('#nue').val()+" "+$('#diez').val()+" "+$("#once").val());
+        $('#modalDirecc').modal("toggle");
+    }
+
+    cambiarDireccion = function(campo_direccion){
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/cambiarDireccion"),
+            data: {
+                campo: campo_direccion, 
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            if(response != false){
+                $("#direcc").html(response); 
+                $('#modalDirecc').modal(); 
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+}
+validaemail = function(){
+    expr = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    var email = $('#email').val();
+    console.log(email);
+    if(email==""){
+        Messages.display("El email no puede ser vacio","error");
+        $('#email').focus();
+    }
+    if(!expr.test(email) || $("#email").val()==""){
+        Messages.display("Email invalido","error");
+        $('#email').focus();
+        $('#email').val("");
+    }
+}
+    function fecha(){
+        var feccon =new Date($('#feccon').val());
+        var fecha = new Date();
+        if(feccon > fecha){
+            $("#feccon").val("");
+            $("#feccon").focus();
+            Messages.display("La fecha de constituci&oacute;n no puede ser mayor a la actual","warning");
+        }
+    }
+
+function traerBarrio(){
+        //alert($('#codciu').val());
+        if($('#codciu').val() == ""){
+            $('#codciu').focus();
+            Messages.display("Por favor seleccionar el Municipio. ","warning");
+        }else{
+            var codzon = $('#codzon').val();
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("subsidio/traerBarrioZon"),
+                data: {
+                    codzon :codzon,
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response != false){
+                    $("#barrio").attr("disabled",false)
+                    $('#barrio').html(response);
+                    $('#barrio').trigger("chosen:updated");
+                    $('#barrio').focus();
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+
+    }
+
+function traerBarrio2(){
+        //alert($('#codciu').val());
+        if($('#codciuen').val() == ""){
+            $('#codciuen').focus();
+            Messages.display("Por favor seleccionar el Municipio. ","warning");
+        }else{
+            var codciu = $('#codciuen').val();
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("subsidio/traerBarrio"),
+                data: {
+                    ciures :codciu,
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response != false){
+                    $("#barrioen").attr("disabled",false)
+                    $('#barrioen').html(response);
+                    $('#barrioen').trigger("chosen:updated");
+                    $('#barrioen').focus();
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+
+    }
+    function dattra(){
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/dattra"),
+            data: {
+                cedtra: $('#cedrep').val(), 
+                coddoc: $('#coddocr').val(), 
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            console.log(response);
+            if(response['flag'] == true){
+                if(response['data'] != ''){
+                    $('#nomrep').val(response['data']['prinom']+" "+response['data']['segnom']+" "+response['data']['priape']+" "+response['data']['segape']);
+                    $('#prinom').val(response['data']['prinom']);
+                    $('#segnom').val(response['data']['segnom']);
+                    $('#priape').val(response['data']['priape']);
+                    $('#segape').val(response['data']['segape']);
+                    $('#sexo').val(response['data']['sexo']);
+                    $('#fecnac').val(response['data']['fecnac']);
+                    var telefono = response['data']['telefono'];
+                    var celular = response['data']['celular'];
+                    iguala(celular,telefono);
+                }else{
+                    $('#nomrep').val('');
+                    $('#prinom').val('');
+                    $('#segnom').val('');
+                    $('#priape').val('');
+                    $('#segape').val('');
+                    $('#sexo').val('');
+                    $('#fecnac').val('');
+                }
+            }else{
+                $('#nomrep').val('');
+                $('#prinom').val('');
+                $('#segnom').val('');
+                $('#priape').val('');
+                $('#segape').val('');
+                $('#sexo').val('');
+                $('#fecnac').val('');
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+
+    function dattra2(){
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("subsidio/dattra"),
+            data: {
+                cedtra: $('#cedadm').val(), 
+                coddoc: $('#docadm').val(), 
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            console.log(response);
+            if(response['flag'] == true){
+                if(response['data'] != ''){
+                console.log(response);
+                    $('#nomsub').val(response['data']['prinom']+" "+response['data']['segnom']+" "+response['data']['priape']+" "+response['data']['segape']);
+                    $('#prinoma').val(response['data']['prinom']);
+                    $('#segnoma').val(response['data']['segnom']);
+                    $('#priapea').val(response['data']['priape']);
+                    $('#segapea').val(response['data']['segape']);
+                    $('#telsub').val(response['data']['telefono']);
+                    $('#celsub').val(response['data']['celular']);
+                    $('#fecnaca').val(response['data']['fecnac']);
+                    $('#sexoa').val(response['data']['sexo']);
+                }else{
+                    $('#nomsub').val('');
+                    $('#prinoma').val('');
+                    $('#segnoma').val('');
+                    $('#priapea').val('');
+                    $('#segapea').val('');
+                    $('#telsub').val('');
+                    $('#celsub').val('');
+                    $('#fecnaca').val('');
+                    $('#sexoa').val('');
+                }
+            }else{
+                $('#nomsub').val('');
+                $('#prinoma').val('');
+                $('#segnoma').val('');
+                $('#priapea').val('');
+                $('#segapea').val('');
+                $('#telsub').val('');
+                $('#celsub').val('');
+                $('#fecnaca').val('');
+                $('#sexoa').val('');
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+    function act(){
+        var request  = $.ajax({
+            type: "POST",
+            url:Utils.getKumbiaURL("particular/actividad"),
+            data: {
+                codact: $('#codact').val(), 
+            }
+        });
+        request.done(function( transport ) {
+            var response = jQuery.parseJSON(transport);
+            if(response != false){
+                $('#objemp').html(response['data']);
+                $('#objemp').trigger("chosen:updated");
+                $('#objemp').focus();
+            }
+        });
+        request.fail(function( jqXHR, textStatus ) {
+            Messages.display(response['msg'],"error");
+        });
+    }
+
+function digito(){
+    var vpri, x, y, z, i, nit1, dv1;
+     nit1=$("#nit").val();
+     
+     if(nit1 != ''){
+         if (isNaN(nit1)){
+             alert('El valor digitado no es un n\u00FAmero v\u00E1lido: '+nit1);
+             //obj.value = "";
+         }else {
+            vpri = new Array(16);
+            x=0 ; y=0 ; z=nit1.length ;
+            vpri[1]=3;
+            vpri[2]=7;
+            vpri[3]=13;
+            vpri[4]=17;
+            vpri[5]=19;
+            vpri[6]=23;
+            vpri[7]=29;
+            vpri[8]=37;
+            vpri[9]=41;
+            vpri[10]=43;
+            vpri[11]=47;
+            vpri[12]=53;
+            vpri[13]=59;
+            vpri[14]=67;
+            vpri[15]=71;
+            for(i=0 ; i<z ; i++) {
+                y=(nit1.substr(i,1));
+                x+=(y*vpri[z-i]);
+            }
+            y=x%11;
+            if (y > 1){
+                dv1=11-y;
+            }else{
+                dv1=y;
+            }
+            $('#digver').val(dv1);
+        }
+     }else{
+         //obj.value = "";
+        $('#digver').val('');
+     }
+}
+    function traerZona(){
+        if($('#codciu').val() == ""){
+            $('#codciu').focus();
+            Messages.display("Por favor seleccionar el Municipio. ","warning");
+        }else{
+            var ciures = $('#codciu').val();
+            var request  = $.ajax({
+                type: "POST",
+                url:Utils.getKumbiaURL("subsidio/traerZona"),
+                data: {
+                    ciures :ciures,
+                }
+            });
+            request.done(function( transport ) {
+                var response = jQuery.parseJSON(transport);
+                if(response != false){
+                    $("#codzon").attr("disabled",false)
+                    $('#codzon').html(response);
+                    $('#codzon').trigger("chosen:updated");
+                    $('#codzon').focus();
+                }
+            });
+            request.fail(function( jqXHR, textStatus ) {
+                Messages.display(response['msg'],"error");
+            });
+        }
+    }
+
+valrep = function(){
+    $('#nomrep').val($('#prinom').val()+" "+$('#segnom').val()+" "+$('#priape').val()+" "+$('#segape').val());
+}
+valadm = function(){
+    $('#nomsub').val($('#prinoma').val()+" "+$('#segnoma').val()+" "+$('#priapea').val()+" "+$('#segapea').val());
+}
+
+function doc(){
+    if($('#coddocr').val() != '@'){
+        $("#cedrep").attr("readonly",false);
+        if($('#cedrep').val() != ''){
+            dattra();
+        }
+    }else{
+        $("#cedrep").attr("readonly",true);
+        //dattra();
+    }
+}
+
+function doc2(){
+    if($('#docadm').val() != '@'){
+        $("#cedadm").attr("readonly",false);
+        if($('#cedadm').val() != ''){
+            dattra2();
+        }
+    }else{
+        $("#cedadm").attr("readonly",true);
+        //dattra2();
+    }
+}
+
+</script>
+ <br>
+ <?php echo Tag::form(Router::getController()."/addempresa","id: form","autocomplete: off","enctype: multipart/form-data"); ?>
+ <div>
+ <!--
+    <table class='table table-bordered'>
+        <tr>
+            <td><p>Los Campos marcados con un asterico(*) son obligatorios</p></td>
+        </tr>
+    </table>--!>
+    <table style="margin: auto; border-collapse: separate; border-spacing: 7px;">
+        <tr style="font-size: 1.2em; height: 30px;">
+            <td colspan="4"><b>Datos de la Empresa</b></td>
+        </tr>
+        <tr>
+            <td colspan="4">&nbsp;</td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Nombre &oacute; Razón Social:</label></td>
+            <td colspan="3"><?php echo Tag::textUpperField("razsoc","size: 100","style: width: 575px;","class: form-control"); ?></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Sigla:</label></td>
+            <td colspan="3"><?php echo Tag::textUpperField("sigla","size: 100","style: width: 575px;","class: form-control"); ?></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Nit:</label></td>
+            <td><?php echo Tag::numericField("nit","onchange: traerNit()","maxlength: 15","style: width: 190px","class: form-control","readonly: readonly"); ?>
+            <?php echo Tag::hiddenField("coddoc","maxlength: 15","style: width: 190px","class: form-control","readonly: readonly"); ?></td>
+            <td style='text-align:right;'><label>Digito de verificacion:</label></td>
+            <td><?php echo Tag::numericField("digver","maxlength: 15","style: width: 190px","class: form-control","readonly: readonly"); ?></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Tipo de Sociedad :</label></td>
+            <td><?php echo Tag::selectStatic("tipsoc",$tipsoc,"style: width: 197px","use_dummy: true","onchange: tipSoc()","class: form-control"); ?></td>
+            <!--
+            <td style='text-align:right;'><label>Sector</label></td>
+            <td><?php //echo Tag::select("sector",$Migra091->find("iddefinicion=16"),"using: iddetalledef,detalledefinicion",'style: width: 250px',"useDummy: yes","class: form-control"); ?></td>
+            -->
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Obj.Principal Del Negocio:</label></td>
+            <td><?php echo Tag::selectStatic("codact",$migra079,'style: width: 250px',"useDummy: yes","class: form-control",'onchange: act();'); ?></td>
+            <td style='text-align:right;'><label>Actividad Econ&oacute;mica:</label></td>
+            <td><?php echo Tag::selectStatic("objemp",array(),'style: width: 250px',"useDummy: yes","class: form-control"); ?></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Fecha Constitución:</label></td>
+            <td><?php echo TagUser::Calendar("feccon","class: form-control"); ?></td>
+            <td style='text-align:right;'><label>Tipo de Afiliación:</label></td>
+            <td><?php echo Tag::selectStatic("calemp",array("E"=>"Empresa"), "style: width: 197px","onchange: validaCalemp()","class: form-control"); ?></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Direcci&oacute;n Establecimiento:</label></td>
+            <td colspan="2"> <?php echo Tag::numericField("direccion","readonly: true","style: width: 325px; margin-left: 0px;","class: form-control") ?> </td>
+            <td><?php echo Tag::Button("Cambiar",'class: submit','style: width: 100px; margin-left: 33px;',"onclick: cambiarDireccion('direccion');","class: btn btn-primary"); ?></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Departamento:</label></td>
+            <td><?php echo Tag::select("depart",$Gener07->find(),"using: coddep,detdep","useDummy: yes","style: width: 197px;","onchange: traerCiudad()","class: form-control"); ?></td>
+            <td style='text-align:right;'><label>Municipio:</label></td>
+            <td><?php echo Tag::selectStatic("codciu",array(),"style: width: 197px","useDummy: yes","class: form-control","onchange: traerZona()"); ?></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Zona:</label></td>
+            <td><?php echo Tag::selectStatic("codzon",array(),"style: width: 174px","useDummy: yes","class: form-control","onchange: traerBarrio()"); ?></td>
+            <td style='text-align:right;'><label>Barrio :</label></td>
+            <td><?php echo Tag::selectStatic("barrio",array(),"style: width: 197px","useDummy: yes","class: form-control"); ?></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Tel&eacute;fono Fijo:</label></td>
+            <td><?php echo Tag::numericField("telefono"," maxlength: 10","style: width: 190px","class: form-control"); ?></td>
+            <td style='text-align:right;'><label>Tel&eacute;fono Celular:</label></td>
+            <td><?php echo Tag::numericField("telcel","maxlength: 10","style: width: 190px","class: form-control"); ?></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Fax:</label></td>
+            <td><?php echo Tag::numericField("fax","maxlength: 10","style: width: 190px","class: form-control"); ?></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Entidad de seguridad social:</label></td>
+            <td colspan='2'><?php echo Tag::textField("segsoc","style: width: 325px","class: form-control"); ?></td>
+        </tr>
+        <tr>
+            <td colspan="4">&nbsp;</td>
+        </tr>
+        <tr style="font-size: 1.2em; height: 30px;">
+            <td colspan="4"><b>Datos de Env&iacute;o de Correspondencia</b></td>
+        </tr>
+        <tr>
+            <td colspan="4">&nbsp;</td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Direcci&oacute;n de Env&iacute;o:</label></td>
+            <td colspan="2"> <?php echo Tag::numericField("direnvio","readonly: true","style: width: 325px; margin-left: 0px;","class: form-control") ?> </td>
+            <td><?php echo Tag::Button("Cambiar",'class: submit','style: width: 100px; margin-left: 33px;',"onclick: cambiarDireccion('direnvio');","class: btn btn-primary"); ?></td>
+        <tr>
+        <tr>
+            <td style='text-align:right;'><label>Departamento Envio:</label></td>
+            <td><?php echo Tag::select("departen",$Gener07->find(),"using: coddep,detdep","useDummy: yes","style: width: 197px;","onchange: traerCiudad2()","class: form-control"); ?></td>
+            <td style='text-align:right;'><label>Municipio de Env&iacute;o:</label></td>
+            <td><?php echo Tag::selectStatic("codciuen",array(),"style: width: 198px","useDummy: yes","class: form-control","onchange: traerBarrio2()"); ?></td>
+        <tr>
+        <tr>
+            <td style='text-align:right;'><label>Email:</label></td>
+            <td><?php echo Tag::textField("email","style: width: 191px","onkeypress: return valideOnlyEmail(event);","class: form-control","onblur: validaemail();"); ?></td>
+            <td style='text-align:right;'><label>Barrio de Env&iacute;o:</label></td>
+            <td><?php echo Tag::selectStatic("barrioen",array(),"style: width: 197px","useDummy: yes","class: form-control"); ?></td>
+        </tr>
+        <tr>
+            <td colspan="4">&nbsp;</td>
+        </tr>
+        <tr style="font-size: 1.2em; height: 30px;">
+            <td colspan="4"><b>Datos del representante legal</b></td>
+        </tr>
+        <tr>
+            <td colspan="4">&nbsp;</td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Tipo de Documento:</label></td>
+            <td><?php echo Tag::selectStatic("coddocr",array("2"=>"Tarjeta de Identidad","1"=>"Cedula de ciudadania","4"=>"Cedula Extranjera","3"=>"Pasaporte",'4548'=>'Carnet Diplomatico'),"useDummy: yes","style: width: 216px;","class: form-control","onchange: doc()"); ?></td>
+            <td style='text-align:right;'><label>Cédula:</label></td>
+            <td><?php echo Tag::numericField("cedrep","maxlength: 13","style: width: 195px;","onchange: validadoc()","class: form-control","onchange: dattra()"); ?></td>
+        </tr>
+        <tr class='ocl_rep'>
+            <td style='text-align:right;'><label>Nombre y Apellido:</label></td>
+            <td colspan="3"><?php echo Tag::textUpperField("nomrep","style: width: 578px;","onkeydown: validOnlyLetter(event);","onchange: iguala()","class: form-control"); ?></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Primer Apellido:</label></td>
+            <td><?php echo Tag::textUpperField("priape","style: width: 190px;","onkeydown: validOnlyLetter(event);","class: form-control","onchange: valrep(),iguala()"); ?></td>
+            <td style='text-align:right;'><label>Segundo Apellido:</label></td>
+            <td><?php echo Tag::textUpperField("segape","style: width: 197px;","onkeydown: validOnlyLetter(event);","class: form-control","onchange: valrep(),iguala()"); ?></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Primer Nombre:</label></td>
+            <td><?php echo Tag::textUpperField("prinom","style: width: 190px;","onkeydown: validOnlyLetter(event);","class: form-control","onchange: valrep(),iguala()"); ?></td>
+            <td style='text-align:right;'><label>Segundo Nombre:</label></td>
+            <td><?php echo Tag::textUpperField("segnom","style: width: 197px;","onkeydown: validOnlyLetter(event);","class: form-control","onchange: valrep(),iguala()"); ?></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Genero:</label></td>
+            <td><?php echo Tag::selectStatic("sexo",array("M"=>"Masculino","F"=>"Femenino"),"style: width: 174px;","use_dummy: true","class: form-control","onchange: iguala()"); ?></td>
+            <td style='text-align:right;'><label>Fecha de Nacimiento:</label></td>
+            <td><?php echo TagUser::calendar("fecnac","class: form-control","readonly: readonly","onchange: iguala()"); ?></td>
+        </tr>
+        <tr>
+            <td colspan="4">&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan="4">&nbsp;</td>
+        </tr>
+        <tr style="font-size: 1.2em; height: 30px;">
+            <td colspan="4"><b>Nombre Contacto Administrativo</b></td>
+        </tr>
+        <tr><td colspan="4">&nbsp;</td></tr>
+        <tr>
+            <td style='text-align:right;'><label>Tipo de Documento:</label></td>
+            <td><?php echo Tag::selectStatic("docadm",array("2"=>"Tarjeta de Identidad","1"=>"Cedula de ciudadania","4"=>"Cedula Extranjera","3"=>"Pasaporte",'4548'=>'Carnet Diplomatico'),"useDummy: yes","style: width: 216px;","class: form-control","onchange: doc2()"); ?></td>
+            <td style='text-align:right;'><label>Cédula:</label></td>
+            <td><?php echo Tag::numericField("cedadm","maxlength: 13","style: width: 195px;","onchange: validadoc()","class: form-control","onchange: dattra2()"); ?></td>
+        </tr>
+        <tr class='ocl_rep'>
+            <td style='text-align:right;'><label>Nombre y Apellido:</label></td>
+            <td colspan="3"><?php echo Tag::textUpperField("nomsub","style: width: 580px;","onkeydown: validOnlyLetter(event);","class: form-control"); ?></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Primer Apellido:</label></td>
+            <td><?php echo Tag::textUpperField("priapea","style: width: 190px;","onkeydown: validOnlyLetter(event);","class: form-control","onchange: valadm()"); ?></td>
+            <td style='text-align:right;'><label>Segundo Apellido:</label></td>
+            <td><?php echo Tag::textUpperField("segapea","style: width: 197px;","onkeydown: validOnlyLetter(event);","class: form-control","onchange: valadm()"); ?></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Primer Nombre:</label></td>
+            <td><?php echo Tag::textUpperField("prinoma","style: width: 190px;","onkeydown: validOnlyLetter(event);","class: form-control","onchange: valadm()"); ?></td>
+            <td style='text-align:right;'><label>Segundo Nombre:</label></td>
+            <td><?php echo Tag::textUpperField("segnoma","style: width: 197px;","onkeydown: validOnlyLetter(event);","class: form-control","onchange: valadm()"); ?></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Sexo:</label></td>
+            <td><?php echo Tag::selectStatic("sexoa",array("M"=>"Masculino","F"=>"Femenino"),"style: width: 174px;","use_dummy: true","class: form-control"); ?></td>
+            <td style='text-align:right;'><label>Fecha de Nacimiento:</label></td>
+            <td><?php echo TagUser::calendar("fecnaca","class: form-control","readonly: readonly"); ?></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Teléfon Fijo:</label></td>
+            <td><?php echo Tag::numericField("telsub","maxlength: 10","style: width: 190px","class: form-control"); ?></td>
+            <td style='text-align:right;'><label>Tel&eacute;fono Celular:</label></td>
+            <td><?php echo Tag::numericField("celsub","maxlength: 10","style: width: 197px","class: form-control"); ?></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Lugar Donde se Ejecuta la Mano de Obra:</label></td>
+            <td><?php echo Tag::textField("causalario","style: width: 191px","class: form-control"); ?></td>
+            <td style='text-align:right;'><label>Ultima Caja:</label></td>
+            <td><?php echo Tag::textField("ultcaj","style: width: 197px","class: form-control"); ?></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Cargo:</label></td>
+            <td><?php echo Tag::select("cargo",$Migra091->find('iddefinicion=21',"order: detalledefinicion asc"),"using: iddetalledef,detalledefinicion","style: width: 191px","class: form-control","useDummy: yes"); ?></td>
+        </tr>
+        <tr>
+            <td colspan="4">&nbsp;</td>
+        </tr>
+        <tr style="font-size: 1.2em; height: 30px;">
+            <td colspan="4"><b>&Uacute;ltima N&oacute;mina Causada</b></td>
+        </tr>
+        <tr><td colspan="4">&nbsp;</td></tr>
+        <tr>
+            <td style='text-align:right;'><label>Mes:</label></td>
+            <td><?php echo Tag::selectStatic("mesnomcau",array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"),"useDummy: yes","style: width: 210px;","class: form-control"); ?></td>
+            <td style='text-align:right;'><label>Total Trabajadores:</label></td>
+            <td><?php echo Tag::numericField("tottra","maxlength: 5","style: width: 100px","class: form-control"); ?></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Valor:</label></td>
+            <td><?php echo Tag::numericField("valnomcau","maxlenght: 12","class: form-control"); ?></td>
+        </tr>
+        <tr>
+            <td colspan="4">&nbsp;</td>
+        </tr>
+        <!--
+        <tr style="font-size: 1.2em; height: 30px;">
+            <td colspan="4"><b>Clase de Empresa</b></td>
+        </tr>
+        <tr>
+            <td style='text-align:right;'><label>Clase de Empresa</label></td>
+            <td><?php //echo Tag::selectStatic("tipemp",array('1'=>'Consorcio','2'=>'Union Libre','3'=>'Condominio','4'=>'Propiedad Horizontal'),'style: width: 250px',"useDummy: yes","class: form-control"); ?></td>
+        </tr>
+        -->
+        <tr>
+            <td colspan="4">&nbsp;</td>
+        </tr>
+        <tr>
+  	        <td colspan="4" align="center">
+                <?php echo Tag::hiddenField("formafi"); ?>
+                <?php echo Tag::hiddenField("codare","value: $codare"); ?>
+                <?php echo Tag::hiddenField("codope","value: $codope"); ?>
+                <?php echo Tag::button("Formulario","class: submit","onclick: modcod();","class: btn btn-success"); ?>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4">&nbsp;</td>
+        </tr>
+        <tr class="ocl_tr">
+            <td colspan="6">
+                <table id="adjuntos" style="width: 100%;">
+                </table>
+            </td>
+        </tr>
+        <tr class="ocl_tr" style='display: none;'>
+            <td colspan="4" align="center" ><?php echo Tag::button("Enviar","class: submit","onclick: addFormulario();","class: btn btn-success"); ?></td>
+        </tr>
+    </table>
+</div>
+    <div class="modal fade" id="modalDocumentos" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog  modal-lg" role="document" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">    
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title barra barra-center" id="myModalLabel" style='text-align:center;'>Documentos a Anexar</h4>
+                </div>
+                <div class="modal-body" style='height:450px;'>
+                    <div style="width: 80%; margin-left: auto; margin-right: auto;";>
+                        <form class="form-horizontal" >
+                            <div class="form-group">
+                                <div class="col-sm-12" style="margin-top: 2%">
+                                    <table>
+                                        <tr>
+                                            <td><label><b>Documento</b></label></td>
+                                            <td><label><b>Check</b></label></td>
+                                        </tr>
+                                        <?php echo $adjdoc;?>
+                                    </table>
+                                    <div class="col-sm-12" style="margin-top: 2%">
+                                        <?php echo Tag::button("Adjuntos","class: submit","onclick: downloadFormulario();","class: btn btn-info","margin-top:3%"); ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php echo Tag::endForm(); ?>
+
+
+    <div class="modal fade" id="modalDirecc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style=" width: 60%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title barra barra-center" id="myModalLabel">Cambio de Direccion</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="direcc"> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="modalInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog  modal-lg" role="document" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">    
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title barra barra-center" id="myModalLabel" style='text-align:center;'>Informaci&oacute;n</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="width: 90%; margin-left: auto; margin-right: auto;";>
+                        <form class="form-horizontal" >
+                            <div class="form-group">
+                                <p style="text-align: justify;">Señor usuario le invitamos a realizar la afiliación de su empresa a nuestra Caja de compensación familiar diligenciando la siguiente documentación:</p>
+                                <h4 style='margin: 15px;'>PERSONA NATURAL</h4>
+                                <ul style='margin-left:20px;'>
+                                    <li type="disc" style="text-align: justify;">Formulario de afiliación</li>
+                                    <li type="disc" style="text-align: justify;">Fotocopia de la cedula</li>
+                                    <li type="disc" style="text-align: justify;">Rut</li>
+                                    <li type="disc" style="text-align: justify;">Ultima nomina causada </li>
+                                    <li type="disc" style="text-align: justify;">En caso tal de aplicar c&aacute;mara de comercio adjuntarlo</li>
+                                </ul>
+                                <br>
+                                <h4 style='margin: 15px;'>PERSONA JURIDICA</h4>
+                                <ul style='margin-left:20px;'>
+                                    <li type="disc" style="text-align: justify;">Formulario de afiliación</li>
+                                    <li type="disc" style="text-align: justify;">Fotocopia de la cedula del representante legal</li>
+                                    <li type="disc" style="text-align: justify;">Rut</li>
+                                    <li type="disc" style="text-align: justify;">Cámara de comercio </li>
+                                    <li type="disc" style="text-align: justify;">Ultima nomina causada.</li>
+                                </ul>
+                                <br>
+                                <h4 style='margin: 15px;'>CONSORCIO O UNI&Oacute;N TEMPORAL</h4>
+                                <ul style='margin-left:20px;'>
+                                    <li type="disc" style="text-align: justify;">Formulario de afiliación</li>
+                                    <li type="disc" style="text-align: justify;">Fotocopia de la cedula del representante legal</li>
+                                    <li type="disc" style="text-align: justify;">Rut</li>
+                                    <li type="disc" style="text-align: justify;">Oficio donde indique cuál de los consorciados será el que esté a cargo del pago de aportes</li>
+                                    <li type="disc" style="text-align: justify;">Acta consorcial</li>
+                                    <li type="disc" style="text-align: justify;">Ultima nomina causada.</li>
+                                </ul>
+                                <br>
+                                <h4 style='margin: 15px;'>PROPIEDAD HORIZONTAL</h4>
+                                <ul style='margin-left:20px;'>
+                                    <li type="disc" style="text-align: justify;">Formulario de afiliación</li>
+                                    <li type="disc" style="text-align: justify;">Fotocopia de la cedula del representante legal</li>
+                                    <li type="disc" style="text-align: justify;">Rut</li>
+                                    <li type="disc" style="text-align: justify;">Cámara de comercio</li>
+                                    <li type="disc" style="text-align: justify;">Fotocopia de la cedula de ciudadanía del representante legal</li>
+                                    <li type="disc" style="text-align: justify;">Acta de nombramiento del nuevo administrador</li>
+                                </ul>
+                                <br>
+                                <h4 style='margin: 15px;'>COOPERATIVA</h4>
+                                <ul style='margin-left:20px;'>
+                                    <li type="disc" style="text-align: justify;">Formulario de afiliación</li>
+                                    <li type="disc" style="text-align: justify;">Fotocopia de la cedula del representante legal</li>
+                                    <li type="disc" style="text-align: justify;">Rut</li>
+                                    <li type="disc" style="text-align: justify;">Cámara de comercio</li>
+                                    <li type="disc" style="text-align: justify;">Fotocopia de la cedula de ciudadanía del representante legal</li>
+                                    <li type="disc" style="text-align: justify;">Cámara de comercio</li>
+                                    <li type="disc" style="text-align: justify;">Certificado de la superintendencia de economía y solidaria.</li>
+                                </ul>
+                                <br>
+                            </div>
+                        </form>
+                    </div >
+                </div>
+            </div>
+        </div>
+    </div>

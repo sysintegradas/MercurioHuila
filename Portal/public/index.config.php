@@ -36,3 +36,5 @@ define('KEF_ABS_PATH', $routeApp);
 
 //Indica si se debe usar el framework rápido ó el de debug
 define('KEF_OFAST', false);
+
+ini_set("display_errors", 0);

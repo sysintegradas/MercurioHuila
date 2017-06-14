@@ -20,20 +20,19 @@
  */
 
 
-//Path donde la aplicación está instalada
+/*
+ * Path donde la aplicación está instalada en el servidor
+ */
+//define('KEF_ABS_PATH', '/home/mercurio/public_html/comfamiliarhuila/Portal/');
 
-//Ubuntu Apache2
-//define('KEF_ABS_PATH', '/Users/syseu/www/kef/');
-define('KEF_ABS_PATH', '/home/mercurio/public_html/comfamiliarhuila/Portal/');
-//define('KEF_ABS_PATH', '/home/mercurio/public_html/Portal/');
-//define('KEF_ABS_PATH', '/Library/WebServer/Documents/kef/');
-//define('KEF_ABS_PATH', '/var/www/kef/');
 
-//OpenSuse Apache2
-//define('KEF_ABS_PATH', '/srv/www/htdocs/kef/');
 
-//Win XAMP
-//define('KEF_ABS_PATH', 'C:\xamp\htdocs\kef\');
+/*
+ * Path donde la aplicación está instalada localmente
+ */
+$routeApp = $_SERVER['DOCUMENT_ROOT']."/MercurioHuila/Portal/";
+define('KEF_ABS_PATH', $routeApp);
+
 
 //Indica si se debe usar el framework rápido ó el de debug
 define('KEF_OFAST', false);
